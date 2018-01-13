@@ -573,10 +573,11 @@
 		(new
 			(*parser <OffCode>)
 			(*parser (char #\-))
+			(*parser <OffCode>)
 			(*delayed (lambda () <FuncOrArray>))
 			(*parser <OffCode>)
-			(*caten 4)
-			(*pack-with (lambda (ws1 neg infix ws2) (if (number? infix)
+			(*caten 5)
+			(*pack-with (lambda (ws1 neg ws2 infix ws3) (if (number? infix)
 														(- 0 infix)
 														(list '- infix))))
 

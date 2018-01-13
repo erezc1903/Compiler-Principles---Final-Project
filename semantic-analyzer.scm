@@ -140,7 +140,7 @@
 
 (define handle-sequence-in-lambda
 		(lambda (exp)
-			(newline)(display "exp in handle-sequence-in-lambda: ") (display exp) (newline)
+			;(newline)(display "exp in handle-sequence-in-lambda: ") (display exp) (newline)
 			(cond ((and (= (length exp) 2) (not (list? (car exp))) (not (list? (cadr exp)))) (list exp))
 				  ((and (list? exp) (= (length exp) 2) (equal? (car exp) 'const)) (list exp))
 				  ((or (not (list? exp)) (null? exp)) exp)
@@ -182,7 +182,7 @@
 
 (define create-tc-app
 		(lambda (exp)
-			(newline)(display "exp in create-tc-app: ") (display exp) (newline)
+			;(newline)(display "exp in create-tc-app: ") (display exp) (newline)
 			(cond ((and (list? (car exp)) (or (equal? (caar exp) 'lambda-simple) (equal? (caar exp) 'lambda-opt))) (annotate-tc exp))
 				  ((and (= (length exp) 1) (list? (car exp)) (equal? (caar exp) 'applic)) (list 'tc-applic (annotate-tc (cadar exp)) (map annotate-tc (caddar exp))))
 				  ((and (= (length exp) 1) (list? (car exp)) (or (equal? (caar exp) 'seq) (equal? (caar exp) 'or))) (list (caar exp) (handle-sequence-in-lambda (cdar exp))))
@@ -376,7 +376,7 @@
 
 (define annotate-tc
   	(lambda (exp)
-  		(newline)(display "exp in annotate-tc: ") (display exp) (newline)
+  		;(newline)(display "exp in annotate-tc: ") (display exp) (newline)
   		(cond ((or (not (list? exp)) (null? exp)) exp)
   			  ((and (list? exp) (= (length exp) 2) (equal? (car exp) 'const)) exp)
   			  ((equal? (car exp) 'lambda-simple) (list (car exp) (cadr exp) (create-tc-app (cddr exp))))
@@ -401,99 +401,3 @@
 			  ((and (= (length exp) 1) (list? (car exp))) (annotate-tc (car exp)))
 			  (else exp))))
 
-
-;; parsed exp
-
-'(define (var make-monitored)
-  (lambda-simple
-    (proc)
-    (applic
-      (lambda-simple
-        (counter how-many-calls reset-count compute dispatch)
-        (seq ((set (var counter) (const 0)) (set (var how-many-calls) (lambda-simple () (var counter)))
-               (set (var reset-count)
-                    (lambda-simple () (set (var counter) (const 0))))
-               (set (var compute)
-                    (lambda-simple
-                      (arg)
-                      (seq ((set (var counter)
-                                 (applic
-                                   (var +)
-                                   ((var counter) (const 1))))
-                             (applic (var proc) ((var arg)))))))
-               (set (var dispatch)
-                    (lambda-simple
-                      (op arg)
-                      (if3 (applic
-                             (var eq?)
-                             ((var op) (const how-many-calls?)))
-                           (applic (var how-many-calls) ())
-                           (if3 (applic
-                                  (var eq?)
-                                  ((var op) (const reset-count)))
-                                (applic (var reset-count) ())
-                                (if3 (applic
-                                       (var eq?)
-                                       ((var op) (const compute)))
-                                     (applic (var compute) ((var arg)))
-                                     (const 0))))))
-               (applic (lambda-simple () (var dispatch)) ()))))
-      ((const #f) (const #f) (const #f) (const #f) (const #f)))))
-
-;; final result
-
-
-'(def (fvar make-monitored)
-     (lambda-simple
-       (proc)
-       (tc-applic
-         (lambda-simple
-           (counter how-many-calls reset-count compute dispatch)
-           (seq ((set (pvar counter 0) (box (pvar counter 0)))
-                  (set (pvar how-many-calls 1)
-                       (box (pvar how-many-calls 1)))
-                  (set (pvar reset-count 2) (box (pvar reset-count 2)))
-                  (set (pvar compute 3) (box (pvar compute 3)))
-                  (box-set (pvar counter 0) (const 0))
-                  (box-set
-                    (pvar how-many-calls 1)
-                    (lambda-simple () (box-get (bvar counter 0 0))))
-                  (box-set
-                    (pvar reset-count 2)
-                    (lambda-simple
-                      ()
-                      (box-set (bvar counter 0 0) (const 0))))
-                  (box-set
-                    (pvar compute 3)
-                    (lambda-simple
-                      (arg)
-                      (seq ((box-set
-                              (bvar counter 0 0)
-                              (applic
-                                (fvar +)
-                                ((box-get (bvar counter 0 0)) (const 1))))
-                             (tc-applic (bvar proc 1 0) ((pvar arg 0)))))))
-                  (set (pvar dispatch 4)
-                       (lambda-simple
-                         (op arg)
-                         (if3 (applic
-                                (fvar eq?)
-                                ((pvar op 0) (const how-many-calls?)))
-                              (tc-applic
-                                (box-get (bvar how-many-calls 0 1))
-                                ())
-                              ((if3 (applic
-                                      (fvar eq?)
-                                      ((pvar op 0) (const reset-count)))
-                                    (tc-applic
-                                      (box-get (bvar reset-count 0 2))
-                                      ())
-                                    (if3 (applic
-                                           (fvar eq?)
-                                           ((pvar op 0) (const compute)))
-                                         (tc-applic
-                                           (box-get (bvar compute 0 3))
-                                           ((pvar arg 1)))
-                                         (const 0)))))))
-                  (pvar dispatch 4))))
-         ((const #f) (const #f) (const #f) (const #f) (const #f)))))
