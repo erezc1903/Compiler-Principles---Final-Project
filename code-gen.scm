@@ -62,4 +62,18 @@
 	(lambda ()
 		(remove-duplicates (make_symbol_table (expression_from_file "input_file.scm")))))
 
+(define create_const_for_assembly
+	(lambda (con num)
+		(cond ((integer? con) (string-append "const" (number->string num) ": dq MAKE_LITERAL(T_INTEGER, " (number->string con) ")"))
+			  ((number? con) (string-append "const" (number->string num) ": dq MAKE_LITERAL(T_FRACTION, " (number->string con) ")"))
+			  ((boolean? con) (string-append "const" (number->string num) ": dq MAKE_LITERAL(T_BOOL, " (format "~a" con) ")"))
+			  ((char? con) (string-append "const" (number->string num) ": dq MAKE_LITERAL(T_CHAR, " (string con) ")"))
+			  )))
+
+(define index -1)
+
+(define create_const_lines
+	(lambda ()
+		(map (lambda (e) (set! index (+ index 1)) (create_const_for_assembly e index)) (const_table))))
+
 
