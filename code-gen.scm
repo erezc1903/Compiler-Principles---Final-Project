@@ -30,30 +30,65 @@
 								(cons ch (run)))))))
 				(run)))))
 
-(define string->file
-	(lambda (out-file)
-		(let ((out-port (open-output-file out-file))
-			  (const-table (const_table))
-			  (symbol-table (symbol_table)))
+(define compile-scheme-file
+	(lambda (in-file out-file)
+		(let* ((in-port (pipeline (file->list in-file)))
+			  (out-port (open-output-file out-file 'replace))
+			  (const-table (const_table in-port))
+			  (symbol-table (symbol_table in-port))
+			  (global_env (global_env in-port))
+			  (index -1))
+			(display "const-table: ") (display const-table) (newline)
+			(fprintf out-port "%include \"scheme.s\"") (newline out-port) (newline out-port)
 
 			(cond ((not (null? const-table))
 				(begin 
-					(write "section .data:" out-port)
+					(fprintf out-port "section .data") (newline out-port) (newline out-port)
+					(fprintf out-port "print_format:") (newline out-port) 
+					(fprintf out-port "\tdb \"%d\", 10, 0") (newline out-port) (newline out-port)
+					(display (map (lambda (e) (set! index (+ index 1)) (create_const_for_assembly e index)) const-table))
+					(set! index -1))))
+			(fprintf out-port "section .bss") (newline out-port) (newline out-port)
+			(fprintf out-port "section .text") (newline out-port) (newline out-port)
+			(fprintf out-port "\textern exit, printf, scanf, malloc") (newline out-port) (newline out-port)
+			(fprintf out-port "\tglobal main") (newline out-port) (newline out-port)
+			(fprintf out-port "main:") (newline out-port) (newline out-port)
+			(fprintf out-port "\tpush rbp") (newline out-port)
+			(fprintf out-port "\tmov rax, qword [const2]") (newline out-port)
+			(fprintf out-port "\tpush rax") (newline out-port)
+			(fprintf out-port "\tcall write_sob") (newline out-port)
+			(fprintf out-port "\tadd rsp, 8") (newline out-port)
+			(fprintf out-port "\tpop rbp") (newline out-port)
+			(fprintf out-port "\tret") (newline out-port)
+					 
+        
+
+
+					;(fprintf (create_const_lines const-table) out-port)
 					(fresh-line out-port)
-					(map (lambda (e) (set! index (+ index 1)) (write (create_const_for_assembly e index) out-port) (newline out-port) (newline out-port)) const-table)
-					;(write (create_const_lines const-table) out-port)
-					(fresh-line out-port))))
 
 			
 			;(fresh-line out-port)
 			;(fresh-line out-port)
-			;(write (symbol_table) out-port)
+			;(fprintf (symbol_table) out-port)
 			(close-output-port out-port))))
 
+;(define create_list_for_assembly
+;	(lambda (lst)
+;		))
 
-(define expressions_from_file
-	(lambda (file_name)
-		(pipeline (file->list file_name))))
+(define break-list-to-components
+	(lambda (lst len)
+		(cond ((= len 0) (list '()))
+			  (else (cons (list-head lst len) (break-list-to-components (cdr lst) (- len 1)))))))
+
+(define expand-const-table
+	(lambda (lst)
+		(cond ((or (not (list? lst)) (null? lst)) lst)
+			  ((and (list? lst) (> (length lst) 0) (not (list? (car lst)))) (cons (car lst) (expand-const-table (cdr lst))))
+			  ((and (list? lst) (> (length lst) 0) (list? (car lst))) (append (break-list-to-components (car lst) (length (car lst))) (expand-const-table (cdr lst))))
+		)))
+
 
 (define make_const_table
 	(lambda (exp)
@@ -69,32 +104,43 @@
 			  (else (cons (car exp) (remove-duplicates (cdr exp)))))))
 
 (define const_table
-	(lambda ()
-		(remove-duplicates (make_const_table (expressions_from_file "input_file.scm")))))
+	(lambda (input-file)
+		(remove-duplicates (expand-const-table (make_const_table input-file)))))
 
 (define make_symbol_table
 	(lambda (exp)
 		(cond ((and (list? exp) (null? exp)) exp)
-			  ((and (list? exp) (or (equal? (car exp) 'fvar) (equal? (car exp) 'bvar) (equal? (car exp) 'pvar))) (list (cadr exp)))
+			  ((and (list? exp) (or (equal? (car exp) 'bvar) (equal? (car exp) 'pvar))) (list (cadr exp)))
 			  ((and (list? exp) (list? (car exp))) (append (make_symbol_table (car exp)) (make_symbol_table (cdr exp))))
 			  ((and (list? exp) (> (length exp) 0) (not (list? (car exp)))) (make_symbol_table (cdr exp))))))
 
 (define symbol_table
-	(lambda ()
-		(remove-duplicates (make_symbol_table (expressions_from_file "input_file.scm")))))
+	(lambda (input-file)
+		(remove-duplicates (make_symbol_table input-file))))
+
+(define make_global_env
+	(lambda (exp)
+		(cond ((and (list? exp) (null? exp)) exp)
+			  ((and (list? exp) (equal? (car exp) 'fvar)) (list (cadr exp)))
+			  ((and (list? exp) (list? (car exp))) (append (make_global_env (car exp)) (make_global_env (cdr exp))))
+			  ((and (list? exp) (> (length exp) 0) (not (list? (car exp)))) (make_global_env (cdr exp))))))
+
+(define global_env
+	(lambda (input-file)
+		(remove-duplicates (make_global_env input-file))))
 
 (define create_const_for_assembly
 	(lambda (con num)
-		(cond ((integer? con) (string-append "sobInt" (number->string num) ": dq MAKE_LITERAL(T_INTEGER, " (number->string con) ")"))
-			  ((number? con) (string-append "const" (number->string num) ": dq MAKE_LITERAL(T_FRACTION, " (number->string con) ")"))
-			  ((boolean? con) (string-append "const" (number->string num) ": dq MAKE_LITERAL(T_BOOL, " (format "~a" con) ")"))
-			  ((char? con) (string-append "const" (number->string num) ": dq MAKE_LITERAL(T_CHAR, " (string con) ")"))
-			  )))
+		(cond ((integer? con) (list (string-append "const" (number->string num) ":" "\n" "\tdq MAKE_LITERAL(T_INTEGER, " (number->string con) ")")))
+			  ((number? con) (list (string-append "const" (number->string num) ":" "\n" "\tdq MAKE_LITERAL(T_FRACTION, " (number->string con) ")")))
+			  ((boolean? con) (if (equal? con #t)
+			  					  (list (string-append "const" (number->string num) ":" "\n" "\tdq SOB_TRUE"))
+			  					  (list (string-append "const" (number->string num) ":" "\n" "\tdq SOB_FALSE"))))
+			  ((char? con) (list (string-append "const" (number->string num) ":" "\n" "\tdq MAKE_LITERAL(T_CHAR, " (string con) ")")))
+			  ((string? con) (list (string-append "const" (number->string num) ":" "\n" "\tdq MAKE_LITERAL_STRING " con)))
+			  ((null? con) (list (string-append "const" (number->string num) ":" "\n" "\tdq SOB_NIL")))
+			  ((list? con) (create_list_for_assembly con)))))
 
-(define index -1)
 
-(define create_const_lines
-	(lambda (const-table)
-		(map (lambda (e) (set! index (+ index 1)) (create_const_for_assembly e index)) const-table)))
 
 
