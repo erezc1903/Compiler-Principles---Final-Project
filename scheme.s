@@ -147,48 +147,48 @@
 
 section .data
 start_of_data:
-sobNil:
-	dq SOB_NIL
-sobInt3:
-	dq MAKE_LITERAL(T_INTEGER, 3)
-sobInt2:
-	dq MAKE_LITERAL(T_INTEGER, 2)
-sobInt1:
-	dq MAKE_LITERAL(T_INTEGER, 1)
-sobPair3N:
-	dq MAKE_LITERAL_PAIR(sobInt3, sobNil)
-sobPair23N:
-	dq MAKE_LITERAL_PAIR(sobInt2, sobPair3N)
-sobPair123N:
-	dq MAKE_LITERAL_PAIR(sobInt1, sobPair23N)
-sobPair12:
-	dq MAKE_LITERAL_PAIR(sobInt1, sobInt2)
-sobPairA:
-	dq MAKE_LITERAL_PAIR(sobPair12, sobNil)
-sobPairB:
-	dq MAKE_LITERAL_PAIR(sobPair123N, sobPairA)
-sobPairC:
-	dq MAKE_LITERAL_PAIR(sobInt3, sobPair12)
-sobPairNN:
-	dq MAKE_LITERAL_PAIR(sobNil, sobNil)
-sob1:
-	dq MAKE_LITERAL_PAIR(sobInt1, sobPairNN)
-sob2:
-	dq MAKE_LITERAL_PAIR(sobInt2, sob1)
-sob3:
-	dq MAKE_LITERAL_PAIR(sob2, sob2)
-sob4:
-	dq MAKE_LITERAL_PAIR(sobInt1, sobNil)
-sob5:
-	dq MAKE_LITERAL_PAIR(sob4, sobNil)
-sob6:
-	dq 0, 0 		; closure: wait for later!
-sob7:
-	MAKE_LITERAL_STRING "Mayer", CHAR_NEWLINE, "Goldberg", CHAR_TAB, "<=="
-sob8:
-	dq MAKE_LITERAL_PAIR(sob7, sobPairB)
-sobVec1:
-	MAKE_LITERAL_VECTOR sob8, sob7, sobInt1, sobInt2, sobInt3, sob4 
+# sobNil:
+# 	dq SOB_NIL
+# sobInt3:
+# 	dq MAKE_LITERAL(T_INTEGER, 3)
+# sobInt2:
+# 	dq MAKE_LITERAL(T_INTEGER, 2)
+# sobInt1:
+# 	dq MAKE_LITERAL(T_INTEGER, 1)
+# sobPair3N:
+# 	dq MAKE_LITERAL_PAIR(sobInt3, sobNil)
+# sobPair23N:
+# 	dq MAKE_LITERAL_PAIR(sobInt2, sobPair3N)
+# sobPair123N:
+# 	dq MAKE_LITERAL_PAIR(sobInt1, sobPair23N)
+# sobPair12:
+# 	dq MAKE_LITERAL_PAIR(sobInt1, sobInt2)
+# sobPairA:
+# 	dq MAKE_LITERAL_PAIR(sobPair12, sobNil)
+# sobPairB:
+# 	dq MAKE_LITERAL_PAIR(sobPair123N, sobPairA)
+# sobPairC:
+# 	dq MAKE_LITERAL_PAIR(sobInt3, sobPair12)
+# sobPairNN:
+# 	dq MAKE_LITERAL_PAIR(sobNil, sobNil)
+# sob1:
+# 	dq MAKE_LITERAL_PAIR(sobInt1, sobPairNN)
+# sob2:
+# 	dq MAKE_LITERAL_PAIR(sobInt2, sob1)
+# sob3:
+# 	dq MAKE_LITERAL_PAIR(sob2, sob2)
+# sob4:
+# 	dq MAKE_LITERAL_PAIR(sobInt1, sobNil)
+# sob5:
+# 	dq MAKE_LITERAL_PAIR(sob4, sobNil)
+# sob6:
+# 	dq 0, 0 		; closure: wait for later!
+# sob7:
+# 	MAKE_LITERAL_STRING "Mayer", CHAR_NEWLINE, "Goldberg", CHAR_TAB, "<=="
+# sob8:
+# 	dq MAKE_LITERAL_PAIR(sob7, sobPairB)
+# sobVec1:
+# 	MAKE_LITERAL_VECTOR sob8, sob7, sobInt1, sobInt2, sobInt3, sob4 
 
 section .bss
 

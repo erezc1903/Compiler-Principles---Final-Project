@@ -81,6 +81,7 @@
 			;(newline)(display "exp in pe->lex-pe-pvar: ") (display exp) (newline)
 			(cond ((and (> (length exp) 1) (equal? (car exp) 'seq)) (list (car exp) (map pe->lex-pe (cadr exp))))
 				  ((and (> (length exp) 1) (equal? (car exp) 'or)) (list (car exp) (map pe->lex-pe (cadr exp))))
+				  ((and (list? exp) (> (length exp) 0) (equal? (car exp) 'const)) exp)
 				  ((and (list? exp) (= (length exp) 2) (not (list? (car exp))) (not (list? (cadr exp)))) exp)
 				  ((and (list? exp) (= (length exp) 2) (not (list? (car exp))) (list? (cadr exp))) (list (car exp) (pe->lex-pe-pvar (cdr exp))))
 				  ((and (not (null? exp)) (equal? (car exp) 'lambda-simple)) ;(newline) (display "(car (check-if-in-params (cadr exp) (cddr exp))) in pe->lex-pe-pvar:") (display (car (check-if-in-params (cadr exp) (cddr exp)))) (newline) 
@@ -102,6 +103,7 @@
 			;(display "lst in a pe->lex-pe-fvar: ") (display lst) (newline)
 			(cond ((and (> (length exp) 1) (equal? (car exp) 'seq)) (list (car exp) (map pe->lex-pe (cadr exp))))
 				  ((and (> (length exp) 1) (equal? (car exp) 'or)) (list (car exp) (map pe->lex-pe (cadr exp))))
+				  ((and (list? exp) (> (length exp) 0) (equal? (car exp) 'const)) exp)
 				  ((and (list? exp) (= (length exp) 2) (not (list? (car exp))) (list? (cadr exp))) (list (car exp) (pe->lex-pe-fvar (cdr exp) lst)))
 				  ((and (not (null? exp)) (equal? (car exp) 'lambda-simple)) (list (car exp) (cadr exp) (car (check-if-free (cddr exp) (append lst (cadr exp))))))
 				  ((and (not (null? exp)) (equal? (car exp) 'lambda-opt)) (list (car exp) (cadr exp) (caddr exp) (car (check-if-free (cdddr exp) (append lst (append (cadr exp) (list (caddr exp))))))))
@@ -122,6 +124,7 @@
 			;(display "lst in a pe->lex-pe-bvar: ") (display lst) (newline)
 			(cond ((or (not (list? exp)) (null? exp)) exp)
 				  ((and (list? exp) (= (length exp) 1) (list? (car exp)) (null? (car exp))) (car exp))
+				  ((and (list? exp) (> (length exp) 0) (equal? (car exp) 'const)) exp)
 				  ((and (list? exp) (= (length exp) 2) (not (list? (car exp))) (not (list? (cadr exp)))) exp)
 				  ((and (> (length exp) 1) (equal? (car exp) 'seq)) (list (car exp) (map pe->lex-pe (cadr exp))))
 				  ((and (> (length exp) 1) (equal? (car exp) 'or)) (list (car exp) (map pe->lex-pe (cadr exp))))
@@ -135,7 +138,6 @@
 				  ((and (> (length exp) 1) (list? (car exp)) (list (pe->lex-pe-bvar (car exp) lst) (list (pe->lex-pe-bvar (cdr exp) lst)))))
 				  ((and (= (length exp) 1) (list? (car exp))) (pe->lex-pe-bvar (car exp) lst))
 				  (else exp))))
-'((if3 (if3 (applic (fvar =) ((pvar num 1) (const 0))) (applic (fvar null?) ((pvar exp 0))) (const #f)) (const #t) (if3 (or ((applic (fvar <) ((pvar num 1) (const 0))) (applic (fvar null?) ((pvar exp 0))))) (const #f) (if3 (applic (fvar char=?) ((applic (fvar car) ((pvar exp 0))) (const ())) (applic (box-get (bvar are-parentheses-balanced-list? 0 0)) ((applic (fvar cdr) ((pvar exp 0))) (applic (fvar +) ((pvar num 1) (const 1))))) (if3 (applic (fvar char=?) ((applic (fvar car) ((pvar exp 0))) (const )))) (applic (box-get (bvar are-parentheses-balanced-list? 0 0)) ((applic (fvar cdr) ((pvar exp 0))) (applic (fvar -) ((pvar num 1) (const 1))))) (applic (box-get (bvar are-parentheses-balanced-list? 0 0)) ((applic (fvar cdr) ((pvar exp 0))) (pvar num 1))))))))
 
 
 (define handle-sequence-in-lambda
