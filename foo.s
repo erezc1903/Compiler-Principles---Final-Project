@@ -6,22 +6,19 @@ print_format:
 	db "%d", 10, 0
 
 sobVector0:
-	dq MAKE_LITERAL_VECTOR sobPair9, sobString8, sobVector2
+	MAKE_LITERAL_VECTOR sobString4, sobInt45, sobInt100, sobString3
 
-sobString1:
-	dq MAKE_LITERAL_STRING "fg"
-
-sobVector2:
-	dq MAKE_LITERAL_VECTOR sobString5, sobInt45, sobSymbolc, sobInt100, sobString1
-
-sobSymbolc:
-	dq MAKE_LITERAL(T_SYMBOL, c)
+sobVector1:
+	MAKE_LITERAL_VECTOR sobPair8, sobString7, sobVector0
 
 sobInt100:
 	dq MAKE_LITERAL(T_INTEGER, 100)
 
-sobString5:
-	dq MAKE_LITERAL_STRING "30"
+sobString3:
+	MAKE_LITERAL_STRING "fg"
+
+sobString4:
+	MAKE_LITERAL_STRING "30"
 
 sobInt45:
 	dq MAKE_LITERAL(T_INTEGER, 45)
@@ -29,14 +26,20 @@ sobInt45:
 sobNil:
 	dq SOB_NIL
 
-sobString8:
-	dq MAKE_LITERAL_STRING "25"
+sobString7:
+	MAKE_LITERAL_STRING "25"
 
-sobPair9:
+sobPair8:
 	dq MAKE_LITERAL_PAIR(sobInt20, sobNil)
 
 sobInt20:
 	dq MAKE_LITERAL(T_INTEGER, 20)
+
+sobInt1:
+	dq MAKE_LITERAL(T_INTEGER, 1)
+
+sobInt23:
+	dq MAKE_LITERAL(T_INTEGER, 23)
 
 section .bss
 
@@ -49,7 +52,7 @@ section .text
 main:
 
 	push rbp
-	mov rax, qword [const2]
+	mov rax, qword [sobInt1]
 	push rax
 	call write_sob
 	add rsp, 8

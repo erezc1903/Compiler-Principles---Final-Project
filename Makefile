@@ -1,7 +1,7 @@
 
 
 %:
-	echo '(load "code-gen.scm" (compile-scheme-file "$(MAKECMDGOALS).scm" "$(MAKECMDGOALS).s")' | scheme -q
+	echo '(load "code-gen.scm") (compile-scheme-file "$(MAKECMDGOALS).scm" "$(MAKECMDGOALS).s")' | scheme -q
 	nasm -f elf64 $(MAKECMDGOALS).s
 	gcc -lc -o $(MAKECMDGOALS) $(MAKECMDGOALS).o
 

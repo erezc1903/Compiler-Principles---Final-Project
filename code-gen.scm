@@ -40,7 +40,7 @@
 			  (symbol-table (symbol_table in-port))
 			  (global_env (global_env in-port)))
 
-			  (display "const-table: ") (display const-table) (newline)
+			(display "const-table: ") (display const-table) (newline)
 			(fprintf out-port "%include \"scheme.s\"") (newline out-port) (newline out-port)
 			(display "pairs_of_name_and_object: ") (display const-table-as-list-of-pairs) (newline) (newline)
 			(cond ((not (null? const-table))
@@ -57,7 +57,7 @@
 			(fprintf out-port "\tglobal main") (newline out-port) (newline out-port)
 			(fprintf out-port "main:") (newline out-port) (newline out-port)
 			(fprintf out-port "\tpush rbp") (newline out-port)
-			(fprintf out-port "\tmov rax, qword [const2]") (newline out-port)
+			(fprintf out-port "\tmov rax, qword [sobInt1]") (newline out-port)
 			(fprintf out-port "\tpush rax") (newline out-port)
 			(fprintf out-port "\tcall write_sob") (newline out-port)
 			(fprintf out-port "\tadd rsp, 8") (newline out-port)
@@ -80,8 +80,8 @@
 
 (define break-list-to-components
 	(lambda (lst)
-		(display "break-list-to-components") (newline) 
-		(display "break-list-to-components lst: ") (display lst) (newline) (newline)
+		;(display "break-list-to-components") (newline) 
+		;(display "break-list-to-components lst: ") (display lst) (newline) (newline)
 		(cond ((vector? lst) (expand-vector (vector->list lst)))
 			  ((or (not (pair? lst)) (null? lst)) lst)
 			  ((or (list? (car lst)) (pair? (car lst))) (append (expand-const-table (list (car lst))) (list (cdr lst)) (break-list-to-components (cdr lst))))
@@ -89,8 +89,8 @@
 
 (define expand-const-table
 	(lambda (lst)
-		(display "expand-const-table") (newline) 
-		(display "expand-const-table lst: ") (display lst) (newline) (newline)
+		;(display "expand-const-table") (newline) 
+		;(display "expand-const-table lst: ") (display lst) (newline) (newline)
 		(cond ((and (list? lst) (> (length lst) 0) (vector? (car lst))) 
 					(append (vector->list (car lst)) (expand-vector (vector->list (car lst))) (list (car lst)) (expand-const-table (cdr lst))))		
 			  ((and (list? lst) (> (length lst) 0) (or (list? (car lst)) (pair? (car lst)))) (append (break-list-to-components (car lst)) (list (car lst)) (expand-const-table (cdr lst))))
@@ -101,7 +101,7 @@
 
 (define expand-vector
 	(lambda (vec) 
-		(display "expand-vector: ") (display vec) (newline) (newline)
+		;(display "expand-vector: ") (display vec) (newline) (newline)
 					(cond ((null? vec) vec)
 						((or (list? (car vec)) (pair? (car vec))) (append (break-list-to-components (car vec)) (expand-const-table (cdr vec))))
 						((vector? (car vec)) (append (expand-vector (vector->list (car vec))) (expand-const-table (cdr vec))))
@@ -122,8 +122,8 @@
 
 (define const_table
 	(lambda (input-file)
-		(display "const-table: ") (display (make_const_table input-file)) (newline) (newline)
-		(display "input-file: ") (display input-file) (newline) (newline)
+		;(display "const-table: ") (display (make_const_table input-file)) (newline) (newline)
+		;(display "input-file: ") (display input-file) (newline) (newline)
 
 		(remove-duplicates (expand-const-table (make_const_table input-file)))))
 
@@ -160,16 +160,16 @@
 			  					  (string-append "sobFalse:" "\n" "\tdq SOB_FALSE\n")))
 			  ((char? con) (string-append (find-const-in-pairs con table-in-pairs) "\n" "\tdq MAKE_LITERAL(T_CHAR, " (string con) ")\n\n"))
 			  ((symbol? con) (string-append (find-const-in-pairs con table-in-pairs) ":" "\n" "\tdq MAKE_LITERAL(T_SYMBOL, " (symbol->string con) ")\n\n"))
-			  ((string? con) (string-append (find-const-in-pairs con table-in-pairs) ":" "\n" "\tdq MAKE_LITERAL_STRING \"" con "\"\n\n"))
+			  ((string? con) (string-append (find-const-in-pairs con table-in-pairs) ":" "\n" "\tMAKE_LITERAL_STRING \"" con "\"\n\n"))
 			  ((null? con) (string-append "sobNil:" "\n" "\tdq SOB_NIL\n\n"))
-			  ((vector? con) (string-append (find-const-in-pairs con table-in-pairs) ":" "\n" "\tdq MAKE_LITERAL_VECTOR " (trim-last-comma (get-components-from-pairs con table-in-pairs)) "\n\n"))
+			  ((vector? con) (string-append (find-const-in-pairs con table-in-pairs) ":" "\n" "\tMAKE_LITERAL_VECTOR " (trim-last-comma (get-components-from-pairs con table-in-pairs)) "\n\n"))
 			  ((and (list? con) (> (length con) 1) (list? (cadr con))) (string-append (find-const-in-pairs con table-in-pairs) ":" "\n" "\tdq MAKE_LITERAL_PAIR (" (find-const-in-pairs (car con) table-in-pairs) ", " (find-const-in-pairs (cadr con) table-in-pairs) ")\n\n"))
 			  ((or (list? con) (pair? con)) (string-append (find-const-in-pairs con table-in-pairs) ":" "\n" "\tdq MAKE_LITERAL_PAIR(" (find-const-in-pairs (car con) table-in-pairs) ", " (find-const-in-pairs (cdr con) table-in-pairs) ")\n\n"))
 			  )))
 
 (define trim-last-comma
 	(lambda (str)
-		(display "trim-last-comma: ") (display str) (newline) (newline)
+		;(display "trim-last-comma: ") (display str) (newline) (newline)
 		(substring str 0 (- (string-length str) 2))))
 
 (define find-const-in-pairs
