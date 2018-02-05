@@ -1,2 +1,8 @@
 
-(begin #t 2 (if #t (or #f 8 #t) 3))
+(begin #t 2 (if x (or #f y #t) 3))
+
+(define x 10)
+
+(if 7 8 9)
+
+(define y 1)

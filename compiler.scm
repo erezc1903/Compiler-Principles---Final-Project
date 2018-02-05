@@ -32,14 +32,15 @@
 
 
 (define code-gen
-	  (lambda (pe const-table)
+	  (lambda (pe const-table global-env)
 	  	;(display "const-table in code-gen: ") (display const-table) (newline)
 	  	;(display "pe in code-gen: ") (display pe) (newline) (newline)
 	      (string-append  
 	      	(cond ((tagged-by? pe 'const) (string-append "\tmov rax, qword [" (find-const-in-pairs (cadr pe) const-table) "]\n"))
-			       ((tagged-by? pe 'if3) (handle_if pe const-table))
-			       ((tagged-by? pe 'seq) (handle_seq pe const-table))
-			       ((tagged-by? pe 'or) (handle_or (cadr pe) (make-end-label-for-or) const-table))
+			       ((tagged-by? pe 'if3) (handle_if pe const-table global-env))
+			       ((tagged-by? pe 'seq) (handle_seq pe const-table global-env))
+			       ((tagged-by? pe 'or) (handle_or (cadr pe) (make-end-label-for-or) const-table global-env))
+			       ((tagged-by? pe 'def) (handle_define (cdr pe) const-table global-env))
 			       ;((tagged-by? pe 'applic) (handle_applic pe))
 			       ;((tagged-by? pe 'tc-applic) (handle_tc_applic pe))
 			       ;((tagged-by? pe 'lambda-simple) (handle_lambda_simple pe))
@@ -48,7 +49,6 @@
 			       ;((tagged-by? pe 'pvar) (handle_pvar_get pe))
 			       ;((tagged-by? pe 'bvar) (handle_bvar_get pe))
 			       ;((tagged-by? pe 'fvar) (handle_fvar_get pe))
-			       ;((tagged-by? pe 'def) (handle_define pe))
 			       ;((tagged-by? pe 'set) (cond ((tagged-by? (cadr pe) 'pvar) (handle_pvar_set pe))
 							   ;((tagged-by? (cadr pe) 'bvar) (handle_bvar_set pe))
 							   ;((tagged-by? (cadr pe) 'fvar) (handle_fvar_set pe))))
@@ -67,23 +67,27 @@
 			  (out-port (open-output-file out-file 'replace))
 			  (index -1)
 			  (const-table (const_table input))
-			  (const-table-as-list-of-pairs (map (lambda (e) (set! index (+ index 1)) (pairs_of_name_and_object e index)) const-table)))
+			  (const-table-as-list-of-pairs (map (lambda (e) (set! index (+ index 1)) (pairs_of_name_and_object e index)) const-table))
+			  (global-env (global_env input)))
 			  ;(symbol-table (symbol_table input))
-			  ;(global_env (global_env input)))
 
 			;(display "input: ") (display input) (newline) (newline)
 			(fprintf out-port "%include \"scheme.s\"\n\n") 
 			
 			(fprintf out-port "section .bss\n\n") 
-
+			
 			(fprintf out-port "section .data\n\n") 
+
+			(fprintf out-port (create_global_env_for_assembly global-env))
+
 			(fprintf out-port (create_const_for_assembly const-table const-table-as-list-of-pairs 0))
+
 			(fprintf out-port "\n\nsection .text\n\n")
 			(fprintf out-port "\textern exit, printf, scanf, malloc\n\n")
 			(fprintf out-port "\tglobal main\n\n")
 			(fprintf out-port "main:\n\n")
 			
-			(map (lambda (pe) (fprintf out-port (code-gen pe const-table-as-list-of-pairs))) input) 
+			(map (lambda (pe) (fprintf out-port (code-gen pe const-table-as-list-of-pairs global-env))) input) 
 
 			(fprintf out-port "\tpush rbp") (newline out-port)
 			(fprintf out-port "\tpush rax") (newline out-port)
@@ -96,12 +100,37 @@
 
 
 ;=========================================================================================================================================
+;======================================================= FUNCTIONS FOR DEF EXPRESSION ====================================================
+;=========================================================================================================================================
+
+(define handle_define
+	(lambda (def-exp const-table global-env)
+		(let ((free-var (find-var-in-global-env (car def-exp) global-env)))
+				(string-append 
+					(code-gen (cadr def-exp) const-table global-env)
+					"\tmov rbx, " (symbol->string free-var) "\n" 
+					"\tmov qword [rbx], rax\n\n"))))
+
+(define find-var-in-global-env
+	(lambda (var global-env)
+		(if (equal? (cadr var) (car global-env))
+			(cadr var)
+			(find-var-in-global-env var (cdr global-env)))))
+
+
+;=========================================================================================================================================
+;======================================================= END OF FUNCTIONS FOR DEF EXPRESSION =============================================
+;=========================================================================================================================================
+
+
+
+;=========================================================================================================================================
 ;======================================================= FUNCTIONS FOR SEQ EXPRESSION ====================================================
 ;=========================================================================================================================================
 
 (define handle_seq
-  (lambda (seq-exp const-table)
-    (fold-left (lambda (res exp) (string-append res (code-gen exp const-table))) "" (cadr seq-exp))
+  (lambda (seq-exp const-table global-env)
+    (fold-left (lambda (res exp) (string-append res (code-gen exp const-table global-env))) "" (cadr seq-exp))
     ))
 
 
@@ -117,14 +146,14 @@
 
 
 (define handle_or
-		(lambda (or-exp end-label const-table)
+		(lambda (or-exp end-label const-table global-env)
 				(if (null? or-exp) 
 					(string-append end-label ":\n\n")
 					(string-append 
-						(code-gen (car or-exp) const-table)
+						(code-gen (car or-exp) const-table global-env)
 						"\tcmp rax, SOB_FALSE\n" 
-						"\tjne " end-label "\n\n"
-						(handle_or (cdr or-exp) end-label const-table)))))
+						"\tjne " end-label "\n"
+						(handle_or (cdr or-exp) end-label const-table global-env)))))
 
 (define make-end-label-for-or
 	(let ((num 100))
@@ -143,7 +172,7 @@
 ;=========================================================================================================================================
 
 (define handle_if
-		(lambda (if-exp const-table)
+		(lambda (if-exp const-table global-env)
 			;(display "if-exp in handle_if: ") (display if-exp) (newline) 
 			;(display "cadr if-exp in handle_if: ") (display (code-gen (cadr if-exp) const-table)) (newline)
 			;(display "caddr if-exp in handle_if: ") (display (code-gen (caddr if-exp) const-table)) (newline)
@@ -151,14 +180,14 @@
 			(let ((dif-label (make-dif-label))
 				  (end-label (make-end-label)))
 				 (string-append 
-					(code-gen (cadr if-exp) const-table) 
+					(code-gen (cadr if-exp) const-table global-env) 
 					"\tcmp rax, SOB_FALSE\n" 
 					"\tje " dif-label "\n"
-					(code-gen (caddr if-exp) const-table) "\n"
+					(code-gen (caddr if-exp) const-table global-env) "\n"
 					"\tjmp " end-label "\n"
 					dif-label ":\n"
-					"\t" (code-gen (cadddr if-exp) const-table) "\n"
-					end-label ":\n")
+					"\t" (code-gen (cadddr if-exp) const-table global-env) "\n"
+					end-label ":\n\n")
 					)))
 
 
@@ -178,27 +207,6 @@
 ;=========================================================================================================================================
 ;======================================================= END OF FUNCTIONS FOR IF EXPRESSION ==============================================
 ;=========================================================================================================================================
-
-;(define make_application_for_assembly
-;		(lambda (app)
-;			(cond ((equal? (car app) '(fvar +)) (make_add_for_assembly (cadr app)))
-;				  ((equal? (car app) '(fvar car)) (make_car_for_assembly (cadr app)))
-;				)))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -323,6 +331,7 @@
 ;=========================================================================================================================================
 ;======================================================= FUNCTIONS FOR SYMBOL TABLE ======================================================
 ;=========================================================================================================================================
+
 (define make_symbol_table
 	(lambda (exp)
 		(cond ((and (list? exp) (null? exp)) exp)
@@ -352,6 +361,12 @@
 (define global_env
 	(lambda (input-file)
 		(remove-duplicates (make_global_env input-file))))
+
+(define create_global_env_for_assembly
+		(lambda (global-env-table)
+			(if (null? global-env-table)
+				""
+				(string-append (symbol->string (car global-env-table)) ":\n" "\tdq SOB_UNDEFINED\n\n" (create_global_env_for_assembly (cdr global-env-table))))))
 
 ;=========================================================================================================================================
 ;======================================================= END OF FUNCTIONS FOR GLOBAL ENV =================================================
