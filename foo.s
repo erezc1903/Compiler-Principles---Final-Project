@@ -1,47 +1,18 @@
 %include "scheme.s"
 
+section .bss
+
 section .data
 
-print_format:
-	db "%d", 10, 0
-
-sobVector0:
-	MAKE_LITERAL_VECTOR sobString4, sobInt45, sobInt100, sobString3
-
-sobVector1:
-	MAKE_LITERAL_VECTOR sobPair8, sobString7, sobVector0
-
-sobInt100:
-	dq MAKE_LITERAL(T_INTEGER, 100)
-
-sobString3:
-	MAKE_LITERAL_STRING "fg"
-
-sobString4:
-	MAKE_LITERAL_STRING "30"
-
-sobInt45:
-	dq MAKE_LITERAL(T_INTEGER, 45)
-
-sobNil:
-	dq SOB_NIL
-
-sobString7:
-	MAKE_LITERAL_STRING "25"
-
-sobPair8:
-	dq MAKE_LITERAL_PAIR(sobInt20, sobNil)
-
-sobInt20:
-	dq MAKE_LITERAL(T_INTEGER, 20)
-
+sobFalse:
+	dq SOB_FALSE
 sobInt1:
 	dq MAKE_LITERAL(T_INTEGER, 1)
 
-sobInt23:
-	dq MAKE_LITERAL(T_INTEGER, 23)
+sobInt2:
+	dq MAKE_LITERAL(T_INTEGER, 2)
 
-section .bss
+
 
 section .text
 
@@ -51,10 +22,20 @@ section .text
 
 main:
 
-	push rbp
+mov rax, qword [sobFalse]
+cmp rax, SOB_FALSE
+je L0
 	mov rax, qword [sobInt1]
+
+jmp Lend0
+L0:
+	mov rax, qword [sobInt2]
+
+Lend0:
+	push rbp
 	push rax
-	call write_sob
+	call write_sob_if_not_void
 	add rsp, 8
 	pop rbp
 	ret
+
