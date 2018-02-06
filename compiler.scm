@@ -71,7 +71,7 @@
 			  (global-env (global_env input)))
 			  ;(symbol-table (symbol_table input))
 
-			;(display "input: ") (display input) (newline) (newline)
+			(display "input: ") (display input) (newline) (newline)
 			(fprintf out-port "%include \"scheme.s\"\n\n") 
 			
 			(fprintf out-port "section .bss\n\n") 
@@ -86,13 +86,18 @@
 			(fprintf out-port "\textern exit, printf, scanf, malloc\n\n")
 			(fprintf out-port "\tglobal main\n\n")
 			(fprintf out-port "main:\n\n")
-			
-			(map (lambda (pe) (fprintf out-port (code-gen pe const-table-as-list-of-pairs global-env))) input) 
+			(fprintf out-port "\tpush rbp\n") 
+			(fprintf out-port "\tmov rbp, rsp\n")
 
-			(fprintf out-port "\tpush rbp") (newline out-port)
-			(fprintf out-port "\tpush rax") (newline out-port)
-			(fprintf out-port "\tcall write_sob_if_not_void") (newline out-port)
-			(fprintf out-port "\tadd rsp, 8") (newline out-port)
+			(for-each (lambda (pe) 
+					(fprintf out-port 
+						(string-append "\n; start\n" (code-gen pe const-table-as-list-of-pairs global-env)
+							"\tpush rax\n"
+							"\tcall write_sob_if_not_void\n"
+							"\tadd rsp, 8\n"
+							"\n; end\n"))) input) 
+
+			(fprintf out-port "\tmov rsp, rbp\n")
 			(fprintf out-port "\tpop rbp") (newline out-port)
 			(fprintf out-port "\tret\n\n") 
 
@@ -109,7 +114,8 @@
 				(string-append 
 					(code-gen (cadr def-exp) const-table global-env)
 					"\tmov rbx, " (symbol->string free-var) "\n" 
-					"\tmov qword [rbx], rax\n\n"))))
+					"\tmov qword [rbx], rax\n"
+					"\tmov rax, SOB_VOID\n\n"))))
 
 (define find-var-in-global-env
 	(lambda (var global-env)

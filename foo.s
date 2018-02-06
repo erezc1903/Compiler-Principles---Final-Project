@@ -7,22 +7,14 @@ section .data
 x:
 	dq SOB_UNDEFINED
 
-y:
-	dq SOB_UNDEFINED
-
-sobInt2:
-	dq MAKE_LITERAL(T_INTEGER, 2)
-
-sobFalse:
-	dq SOB_FALSE
-sobTrue:
-	dq SOB_TRUE
-
-sobInt3:
-	dq MAKE_LITERAL(T_INTEGER, 3)
+sobInt5:
+	dq MAKE_LITERAL(T_INTEGER, 5)
 
 sobInt10:
 	dq MAKE_LITERAL(T_INTEGER, 10)
+
+sobInt333:
+	dq MAKE_LITERAL(T_INTEGER, 333)
 
 sobInt7:
 	dq MAKE_LITERAL(T_INTEGER, 7)
@@ -32,9 +24,6 @@ sobInt8:
 
 sobInt9:
 	dq MAKE_LITERAL(T_INTEGER, 9)
-
-sobInt1:
-	dq MAKE_LITERAL(T_INTEGER, 1)
 
 
 
@@ -46,6 +35,53 @@ section .text
 
 main:
 
+	push rbp
+	mov rbp, rsp
+
+; start
+	mov rax, qword [sobInt5]
+	push rax
+	call write_sob_if_not_void
+	add rsp, 8
+
+; end
+
+; start
+	mov rax, qword [sobInt10]
+	push rax
+	call write_sob_if_not_void
+	add rsp, 8
+
+; end
+
+; start
+	mov rax, qword [sobInt8]
+	push rax
+	call write_sob_if_not_void
+	add rsp, 8
+
+; end
+
+; start
+	mov rax, qword [sobInt333]
+	mov rbx, x
+	mov qword [rbx], rax
+	mov rax, SOB_VOID
+
+	push rax
+	call write_sob_if_not_void
+	add rsp, 8
+
+; end
+
+; start
+	push rax
+	call write_sob_if_not_void
+	add rsp, 8
+
+; end
+
+; start
 	mov rax, qword [sobInt7]
 	cmp rax, SOB_FALSE
 	je L0
@@ -57,39 +93,12 @@ L0:
 
 Lend0:
 
-	mov rax, qword [sobInt1]
-	mov rbx, y
-	mov qword [rbx], rax
-
-	mov rax, qword [sobTrue]
-	mov rax, qword [sobInt2]
-	cmp rax, SOB_FALSE
-	je L1
-	mov rax, qword [sobFalse]
-	cmp rax, SOB_FALSE
-	jne Lend101
-	cmp rax, SOB_FALSE
-	jne Lend101
-	mov rax, qword [sobTrue]
-	cmp rax, SOB_FALSE
-	jne Lend101
-Lend101:
-
-
-	jmp Lend1
-L1:
-		mov rax, qword [sobInt3]
-
-Lend1:
-
-	mov rax, qword [sobInt10]
-	mov rbx, x
-	mov qword [rbx], rax
-
-	push rbp
 	push rax
 	call write_sob_if_not_void
 	add rsp, 8
+
+; end
+	mov rsp, rbp
 	pop rbp
 	ret
 
