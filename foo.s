@@ -4,19 +4,17 @@ section .bss
 
 section .data
 
-not:
-	dq SOB_UNDEFINED
+sobFrac2_3:
+	dq MAKE_LITERAL_FRACTION (sobInt2, sobInt3)
 
 sobInt2:
 	dq MAKE_LITERAL (T_INTEGER, 2)
 
-sobInt1:
-	dq MAKE_LITERAL (T_INTEGER, 1)
-
-sobFalse:
-	dq SOB_FALSE
 sobInt3:
 	dq MAKE_LITERAL (T_INTEGER, 3)
+
+sobInt0:
+	dq MAKE_LITERAL (T_INTEGER, 0)
 
 
 
@@ -28,7 +26,7 @@ section .text
 
 ; =============================== PRIMITIVE FUNCTIONS =========================
 
-handle_pair?:
+pair?:
 	push rbp
 	mov rbp, rsp
 	mov rax, qword [rbp + 2*8]
@@ -47,7 +45,7 @@ donePair?:
 	ret
 
 
-handle_boolean?:
+boolean?:
 	push rbp
 	mov rbp, rsp
 	mov rax, qword [rbp + 2*8]
@@ -66,7 +64,7 @@ doneBoolean?:
 	ret
 
 
-handle_integer?:
+integer?:
 	push rbp
 	mov rbp, rsp
 	mov rax, qword [rbp + 2*8]
@@ -85,7 +83,7 @@ doneInteger?:
 	ret
 
 
-handle_null?:
+null?:
 	push rbp
 	mov rbp, rsp
 	mov rax, qword [rbp + 2*8]
@@ -104,7 +102,7 @@ doneNull?:
 	ret
 
 
-handle_number?:
+number?:
 	push rbp
 	mov rbp, rsp
 	mov rax, qword [rbp + 2*8]
@@ -125,7 +123,7 @@ doneNumber?:
 	ret
 
 
-handle_char?:
+char?:
 	push rbp
 	mov rbp, rsp
 	mov rax, qword [rbp + 2*8]
@@ -144,7 +142,7 @@ doneChar?:
 	ret
 
 
-handle_string?:
+string?:
 	push rbp
 	mov rbp, rsp
 	mov rax, qword [rbp + 2*8]
@@ -163,7 +161,7 @@ doneString?:
 	ret
 
 
-handle_vector?:
+vector?:
 	push rbp
 	mov rbp, rsp
 	mov rax, qword [rbp + 2*8]
@@ -182,7 +180,7 @@ doneVector?:
 	ret
 
 
-handle_not:
+not:
 	push rbp
 	mov rbp, rsp
 	mov rax, qword [rbp + 2*8]
@@ -203,6 +201,51 @@ doneNot:
 	leave
 	ret
 
+
+rational?:
+	push rbp
+	mov rbp, rsp
+	mov rax, qword [rbp + 2*8]
+	mov rbx, rax
+	TYPE rbx
+	cmp rbx, T_FRACTION
+	je trueRational?
+	cmp rbx, T_INTEGER
+	je trueRational?
+	mov rax, SOB_FALSE
+	jmp doneRational?
+
+trueRational?:
+	mov rax, SOB_TRUE
+
+doneRational?:
+	leave
+	ret
+
+
+zero?:
+	push rbp
+	mov rbp, rsp
+	mov rax, qword [rbp + 2*8]
+	mov rbx, rax
+	TYPE rbx
+	cmp rbx, T_INTEGER
+	je chechIfZero
+	mov rax, SOB_FALSE
+	jmp doneZero?
+
+chechIfZero:
+	cmp rax, MAKE_LITERAL(T_INTEGER, 0)
+	je isZero
+	mov rax, SOB_FALSE
+	jmp doneZero?
+
+isZero:
+	mov rax, SOB_TRUE
+doneZero?:
+	leave
+	ret
+
 ; =============================== PRIMITIVE FUNCTIONS =========================
 main:
 
@@ -219,19 +262,9 @@ main:
 
 ; start
 
-	mov rax, qword [sobInt1]
-	cmp rax, SOB_FALSE
-	je L0
 	mov rax, qword [sobInt2]
-
-	jmp Lend0
-L0:
-		mov rax, qword [sobInt3]
-
-Lend0:
-
 	push rax
-	call handle_not
+	call zero?
 	add rsp, 8
 
 	push rax
@@ -242,19 +275,22 @@ Lend0:
 
 ; start
 
-	mov rax, qword [sobInt1]
-	cmp rax, SOB_FALSE
-	je L1
-	mov rax, qword [sobFalse]
-
-	jmp Lend1
-L1:
-		mov rax, qword [sobInt3]
-
-Lend1:
+	mov rax, qword [sobFrac2_3]
+	push rax
+	call zero?
+	add rsp, 8
 
 	push rax
-	call handle_not
+	call write_sob_if_not_void
+	add rsp, 8
+
+; end
+
+; start
+
+	mov rax, qword [sobInt0]
+	push rax
+	call zero?
 	add rsp, 8
 
 	push rax

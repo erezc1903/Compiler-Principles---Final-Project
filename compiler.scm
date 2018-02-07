@@ -128,7 +128,9 @@
 				(handle_string?)
 				;(handle_symbol?)
 				(handle_vector?)
-				(handle_not) "")))
+				(handle_not)
+				(handle_rational?)
+				(handle_zero?) "")))
 
 
 
@@ -141,7 +143,7 @@
 		(lambda (app-exp args const-table global-env)
 			(cond ((equal? app-exp '(fvar boolean?)) (string-append "\n" (code-gen (car args) const-table global-env) 
 				  														"\tpush rax\n"
-				  														"\tcall handle_boolean?\n"
+				  														"\tcall boolean?\n"
 				  														"\tadd rsp, 8\n\n"))
 				  ;((equal? app-exp '(fvar symbol?)) (string-append "\n" (code-gen (car args) const-table global-env) 
 				  ;														"\tpush rax\n"
@@ -149,35 +151,43 @@
 				  ;														"\tadd rsp, 8\n\n"))
 				  ((equal? app-exp '(fvar char?)) (string-append "\n" (code-gen (car args) const-table global-env) 
 				  														"\tpush rax\n"
-				  														"\tcall handle_char?\n"
+				  														"\tcall char?\n"
+				  														"\tadd rsp, 8\n\n"))
+				  ((equal? app-exp '(fvar zero?)) (string-append "\n" (code-gen (car args) const-table global-env) 
+				  														"\tpush rax\n"
+				  														"\tcall zero?\n"
+				  														"\tadd rsp, 8\n\n"))
+				  ((equal? app-exp '(fvar rational?)) (string-append "\n" (code-gen (car args) const-table global-env) 
+				  														"\tpush rax\n"
+				  														"\tcall rational?\n"
 				  														"\tadd rsp, 8\n\n"))
 				  ((equal? app-exp '(fvar not)) (string-append "\n" (code-gen (car args) const-table global-env) 
 				  														"\tpush rax\n"
-				  														"\tcall handle_not\n"
+				  														"\tcall not\n"
 				  														"\tadd rsp, 8\n\n"))
 				  ((equal? app-exp '(fvar vector?)) (string-append "\n" (code-gen (car args) const-table global-env) 
 				  														"\tpush rax\n"
-				  														"\tcall handle_vector?\n"
+				  														"\tcall vector?\n"
 				  														"\tadd rsp, 8\n\n"))
 				  ((equal? app-exp '(fvar string?)) (string-append "\n" (code-gen (car args) const-table global-env) 
 				  														"\tpush rax\n"
-				  														"\tcall handle_string?\n"
+				  														"\tcall string?\n"
 				  														"\tadd rsp, 8\n\n"))
 				  ((equal? app-exp '(fvar integer?)) (string-append "\n" (code-gen (car args) const-table global-env) 
 				  														"\tpush rax\n"
-				  														"\tcall handle_integer?\n"
+				  														"\tcall integer?\n"
 				  														"\tadd rsp, 8\n\n"))
 				  ((equal? app-exp '(fvar null?)) (string-append "\n" (code-gen (car args) const-table global-env) 
 				  														"\tpush rax\n"
-				  														"\tcall handle_null?\n"
+				  														"\tcall null?\n"
 				  														"\tadd rsp, 8\n\n"))
 				  ((equal? app-exp '(fvar number?)) (string-append "\n" (code-gen (car args) const-table global-env) 
 				  														"\tpush rax\n"
-				  														"\tcall handle_number?\n"
+				  														"\tcall number?\n"
 				  														"\tadd rsp, 8\n\n"))
 				  ((equal? app-exp '(fvar pair?)) (string-append "\n" (code-gen (car args) const-table global-env) 
 				  														"\tpush rax\n"
-				  														"\tcall handle_pair?\n"
+				  														"\tcall pair?\n"
 				  														"\tadd rsp, 8\n\n")))))
 
 ;=========================================================================================================================================
@@ -213,12 +223,45 @@
 
 
 ;=========================================================================================================================================
+;======================================================= FUNCTIONS FOR ZERO? EXPRESSION ==================================================
+;=========================================================================================================================================
+
+(define handle_zero? 
+		(lambda () 
+			(string-append "\nzero?:\n"
+				"\tpush rbp\n"
+				"\tmov rbp, rsp\n"
+				"\tmov rax, qword [rbp + 2*8]\n"
+				"\tmov rbx, rax\n"
+				"\tTYPE rbx\n"
+				"\tcmp rbx, T_INTEGER\n"
+				"\tje chechIfZero\n"
+				"\tmov rax, SOB_FALSE\n"
+				"\tjmp doneZero?\n\n"
+				"chechIfZero:\n"
+				"\tcmp rax, MAKE_LITERAL(T_INTEGER, 0)\n"
+				"\tje isZero\n"
+				"\tmov rax, SOB_FALSE\n"
+				"\tjmp doneZero?\n\n"
+				"isZero:\n"
+				"\tmov rax, SOB_TRUE\n"
+				"doneZero?:\n"
+				"\tleave\n"
+				"\tret\n\n")))
+
+;=========================================================================================================================================
+;======================================================= END OF FUNCTIONS FOR ZERO? EXPRESSION ===========================================
+;=========================================================================================================================================
+
+
+
+;=========================================================================================================================================
 ;======================================================= FUNCTIONS FOR NOT EXPRESSION ====================================================
 ;=========================================================================================================================================
 
 (define handle_not 
 		(lambda () 
-			(string-append "\nhandle_not:\n"
+			(string-append "\nnot:\n"
 				"\tpush rbp\n"
 				"\tmov rbp, rsp\n"
 				"\tmov rax, qword [rbp + 2*8]\n"
@@ -244,12 +287,12 @@
 
 
 ;=========================================================================================================================================
-;======================================================= FUNCTIONS FOR STRING? EXPRESSION ================================================
+;======================================================= FUNCTIONS FOR VECTOR? EXPRESSION ================================================
 ;=========================================================================================================================================
 
 (define handle_vector? 
 		(lambda () 
-			(string-append "\nhandle_vector?:\n"
+			(string-append "\nvector?:\n"
 				"\tpush rbp\n"
 				"\tmov rbp, rsp\n"
 				"\tmov rax, qword [rbp + 2*8]\n"
@@ -266,7 +309,7 @@
 				"\tret\n\n")))
 
 ;=========================================================================================================================================
-;======================================================= END OF FUNCTIONS FOR STRING? EXPRESSION =========================================
+;======================================================= END OF FUNCTIONS FOR VECTOR? EXPRESSION =========================================
 ;=========================================================================================================================================
 
 
@@ -276,7 +319,7 @@
 
 (define handle_string? 
 		(lambda () 
-			(string-append "\nhandle_string?:\n"
+			(string-append "\nstring?:\n"
 				"\tpush rbp\n"
 				"\tmov rbp, rsp\n"
 				"\tmov rax, qword [rbp + 2*8]\n"
@@ -304,7 +347,7 @@
 
 (define handle_char? 
 		(lambda () 
-			(string-append "\nhandle_char?:\n"
+			(string-append "\nchar?:\n"
 				"\tpush rbp\n"
 				"\tmov rbp, rsp\n"
 				"\tmov rax, qword [rbp + 2*8]\n"
@@ -326,12 +369,12 @@
 
 
 ;=========================================================================================================================================
-;======================================================= FUNCTIONS FOR NULL? EXPRESSION ==================================================
+;======================================================= FUNCTIONS FOR PAIR? EXPRESSION ==================================================
 ;=========================================================================================================================================
 
 (define handle_pair?
 		(lambda ()
-			(string-append "\nhandle_pair?:\n"
+			(string-append "\npair?:\n"
 							"\tpush rbp\n"
 							"\tmov rbp, rsp\n"
 							"\tmov rax, qword [rbp + 2*8]\n"
@@ -347,21 +390,9 @@
 							"\tleave\n"
 							"\tret\n\n")))
 
-;(define make-true-label-for-pair?
-;	(let ((num 200))
-;			(lambda ()
-;				(set! num (+ num 1))
-;				(string-append "pairTrue" (number->string num)))))
-
-
-;(define make-done-label-for-pair?
-;	(let ((num 200))
-;			(lambda ()
-;				(set! num (+ num 1))
-;				(string-append "pairDone" (number->string num)))))
 
 ;=========================================================================================================================================
-;======================================================= END OF FUNCTIONS FOR NULL? EXPRESSION ===========================================
+;======================================================= END OF FUNCTIONS FOR PAIR? EXPRESSION ===========================================
 ;=========================================================================================================================================
 
 
@@ -373,7 +404,7 @@
 
 (define handle_boolean?
 		(lambda ()
-			(string-append "\nhandle_boolean?:\n"
+			(string-append "\nboolean?:\n"
 							"\tpush rbp\n"
 							"\tmov rbp, rsp\n"
 							"\tmov rax, qword [rbp + 2*8]\n"
@@ -390,21 +421,38 @@
 							"\tret\n\n")))
 
 
-;(define make-true-label-for-boolean?
-;	(let ((num 200))
-;			(lambda ()
-;				(set! num (+ num 1))
-;				(string-append "boolTrue" (number->string num)))))
-
-
-;(define make-done-label-for-boolean?
-;	(let ((num 200))
-;			(lambda ()
-;				(set! num (+ num 1))
-;				(string-append "boolDone" (number->string num)))))
 
 ;=========================================================================================================================================
 ;======================================================= END OF FUNCTIONS FOR BOOLEAN? EXPRESSION ========================================
+;=========================================================================================================================================
+
+;=========================================================================================================================================
+;======================================================= FUNCTIONS FOR INTEGER? EXPRESSION ===============================================
+;=========================================================================================================================================
+
+(define handle_rational?
+		(lambda ()
+			(string-append "\nrational?:\n"
+							"\tpush rbp\n"
+							"\tmov rbp, rsp\n"
+							"\tmov rax, qword [rbp + 2*8]\n"
+							"\tmov rbx, rax\n"
+							"\tTYPE rbx\n"
+							"\tcmp rbx, T_FRACTION\n"
+							"\tje trueRational?\n"
+							"\tcmp rbx, T_INTEGER\n"
+							"\tje trueRational?\n"
+							"\tmov rax, SOB_FALSE\n"
+							"\tjmp doneRational?\n\n"
+							"trueRational?:\n"
+							"\tmov rax, SOB_TRUE\n\n"
+							"doneRational?:\n"
+							"\tleave\n"
+							"\tret\n\n")))
+
+
+;=========================================================================================================================================
+;======================================================= END OF FUNCTIONS FOR INTEGER? EXPRESSION ========================================
 ;=========================================================================================================================================
 
 
@@ -414,7 +462,7 @@
 
 (define handle_integer?
 		(lambda ()
-			(string-append "\nhandle_integer?:\n"
+			(string-append "\ninteger?:\n"
 							"\tpush rbp\n"
 							"\tmov rbp, rsp\n"
 							"\tmov rax, qword [rbp + 2*8]\n"
@@ -431,19 +479,6 @@
 							"\tret\n\n")))
 
 
-;(define make-true-label-for-integer?
-;	(let ((num 200))
-;			(lambda ()
-;				(set! num (+ num 1))
-;				(string-append "integerTrue" (number->string num)))))
-
-
-;(define make-done-label-for-integer?
-;	(let ((num 200))
-;			(lambda ()
-;				(set! num (+ num 1))
-;				(string-append "integerDone" (number->string num)))))
-
 ;=========================================================================================================================================
 ;======================================================= END OF FUNCTIONS FOR INTEGER? EXPRESSION ========================================
 ;=========================================================================================================================================
@@ -455,7 +490,7 @@
 
 (define handle_null?
 		(lambda ()
-			(string-append "\nhandle_null?:\n"
+			(string-append "\nnull?:\n"
 							"\tpush rbp\n"
 							"\tmov rbp, rsp\n"
 							"\tmov rax, qword [rbp + 2*8]\n"
@@ -471,18 +506,6 @@
 							"\tleave\n"
 							"\tret\n\n")))
 
-;(define make-true-label-for-null?
-;	(let ((num 200))
-;			(lambda ()
-;				(set! num (+ num 1))
-;				(string-append "nullTrue" (number->string num)))))
-
-
-;(define make-done-label-for-null?
-;	(let ((num 200))
-;			(lambda ()
-;				(set! num (+ num 1))
-;				(string-append "nullDone" (number->string num)))))
 
 ;=========================================================================================================================================
 ;======================================================= END OF FUNCTIONS FOR NULL? EXPRESSION ===========================================
@@ -495,7 +518,7 @@
 
 (define handle_number?
 		(lambda ()
-			(string-append "\nhandle_number?:\n"
+			(string-append "\nnumber?:\n"
 							"\tpush rbp\n"
 							"\tmov rbp, rsp\n"
 							"\tmov rax, qword [rbp + 2*8]\n"
@@ -514,18 +537,6 @@
 							"\tret\n\n")))
 
 
-;(define make-true-label-for-number?
-;	(let ((num 200))
-;			(lambda ()
-;				(set! num (+ num 1))
-;				(string-append "numberTrue" (number->string num)))))
-
-
-;(define make-done-label-for-number?
-;	(let ((num 200))
-;			(lambda ()
-;				(set! num (+ num 1))
-;				(string-append "numberDone" (number->string num)))))
 
 ;=========================================================================================================================================
 ;======================================================= END OF FUNCTIONS FOR NUMBER? EXPRESSION =========================================
@@ -805,7 +816,7 @@
 
 (define create_global_env_for_assembly
 		(lambda (global-env-table-as-pairs)
-			(if (null? global-env-table-as-pairs)
+			(if (or (null? global-env-table-as-pairs) (primitive-procedures (cadar global-env-table-as-pairs)))
 				""
 				(string-append (caar global-env-table-as-pairs) ":\n" "\tdq SOB_UNDEFINED\n\n" (create_global_env_for_assembly (cdr global-env-table-as-pairs))))))
 
@@ -847,6 +858,14 @@
 		(cond ((null? exp) exp)
 			  ((member (car exp) (cdr exp)) (remove-duplicates (cdr exp)))
 			  (else (cons (car exp) (remove-duplicates (cdr exp)))))))
+
+(define primitive-procedures
+	(lambda (exp)
+		(member exp '(append apply < = > + / * - boolean? car cdr char->integer char? cons denominator
+			eq? integer? integer->char list make-string make-vector map not
+			null? number? numerator pair? procedure? rational? remainder set-car! set-cdr!
+			string-length string-ref string-set! string->symbol string? symbol? symbol->string
+			vector vector-length vector-ref vector-set! vector? zero?))))
 
 ;=========================================================================================================================================
 ;======================================================= END OF GENERAL UTILITY FUNCTIONS ================================================

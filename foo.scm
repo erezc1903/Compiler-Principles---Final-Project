@@ -43,9 +43,13 @@
 
 ;(char? a)
 
-(not (if 1 2 3))
+(zero? 2)
 
-(not (if 1 #f 3))
+(zero? 2/3)
+
+(zero? 0)
+
+;(not (if 1 #f 3))
 
 ;(vector? '#(7 8 "f"))
 
