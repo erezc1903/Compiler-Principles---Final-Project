@@ -67,7 +67,8 @@
 			  (index -1)
 			  (const-table (const_table input))
 			  (const-table-as-list-of-pairs (map (lambda (e) (set! index (+ index 1)) (pairs_of_name_and_object e index)) const-table))
-			  (global-env (global_env input)))
+			  (global-env (global_env input))
+			  (global-env-as-pairs (map pairs_of_label_and_name global-env)))
 			  ;(symbol-table (symbol_table input))
 
 			(display "input: ") (display input) (newline) (newline)
@@ -80,20 +81,27 @@
 			
 			(fprintf out-port "section .data\n\n") 
 
-			(fprintf out-port (create_global_env_for_assembly global-env))
+			(fprintf out-port (create_global_env_for_assembly global-env-as-pairs))
 
 			(fprintf out-port (create_const_for_assembly const-table const-table-as-list-of-pairs 0))
 
 			(fprintf out-port "\n\nsection .text\n\n")
 			(fprintf out-port "\textern exit, printf, scanf, malloc\n\n")
 			(fprintf out-port "\tglobal main\n\n")
+			
+			(fprintf out-port "; =============================== PRIMITIVE FUNCTIONS =========================\n")
+			(fprintf out-port (creat-primitive-procedures))
+			(fprintf out-port "; =============================== PRIMITIVE FUNCTIONS =========================\n")
+
 			(fprintf out-port "main:\n\n")
+
+
 			(fprintf out-port "\tpush rbp\n") 
 			(fprintf out-port "\tmov rbp, rsp\n")
 
 			(for-each (lambda (pe) 
 					(fprintf out-port 
-						(string-append "\n; start\n" (code-gen pe const-table-as-list-of-pairs global-env)
+						(string-append "\n; start\n" (code-gen pe const-table-as-list-of-pairs global-env-as-pairs)
 							"\tpush rax\n"
 							"\tcall write_sob_if_not_void\n"
 							"\tadd rsp, 8\n"
@@ -108,17 +116,44 @@
 
 
 
+(define creat-primitive-procedures
+		(lambda ()
+			(string-append
+				(handle_pair?)
+				(handle_boolean?)
+				(handle_integer?)
+				(handle_null?)
+				(handle_number?) "")))
+
+
+
+
 ;=========================================================================================================================================
 ;======================================================= FUNCTIONS FOR APP EXPRESSION ====================================================
 ;=========================================================================================================================================
 
 (define handle_applic
 		(lambda (app-exp args const-table global-env)
-			(cond ((equal? app-exp '(fvar boolean?)) (handle_boolean? (car args) (make-true-label-for-boolean?) (make-done-label-for-boolean?) const-table global-env))
-				  ((equal? app-exp '(fvar integer?)) (handle_integer? (car args) (make-true-label-for-integer?) (make-done-label-for-integer?) const-table global-env))
-				  ((equal? app-exp '(fvar null?)) (handle_null? (car args) (make-true-label-for-null?) (make-done-label-for-null?) const-table global-env))
-				  ((equal? app-exp '(fvar number?)) (handle_number? (car args) (make-true-label-for-number?) (make-done-label-for-number?) const-table global-env))
-				  ((equal? app-exp '(fvar pair?)) (handle_pair? (car args) (make-true-label-for-pair?) (make-done-label-for-pair?) const-table global-env)))))
+			(cond ((equal? app-exp '(fvar boolean?)) (string-append "\n" (code-gen (car args) const-table global-env) 
+				  														"\tpush rax\n"
+				  														"\tcall handle_boolean?\n"
+				  														"\tadd rsp, 8\n\n"))
+				  ((equal? app-exp '(fvar integer?)) (string-append "\n" (code-gen (car args) const-table global-env) 
+				  														"\tpush rax\n"
+				  														"\tcall handle_integer?\n"
+				  														"\tadd rsp, 8\n\n"))
+				  ((equal? app-exp '(fvar null?)) (string-append "\n" (code-gen (car args) const-table global-env) 
+				  														"\tpush rax\n"
+				  														"\tcall handle_null?\n"
+				  														"\tadd rsp, 8\n\n"))
+				  ((equal? app-exp '(fvar number?)) (string-append "\n" (code-gen (car args) const-table global-env) 
+				  														"\tpush rax\n"
+				  														"\tcall handle_number?\n"
+				  														"\tadd rsp, 8\n\n"))
+				  ((equal? app-exp '(fvar pair?)) (string-append "\n" (code-gen (car args) const-table global-env) 
+				  														"\tpush rax\n"
+				  														"\tcall handle_pair?\n"
+				  														"\tadd rsp, 8\n\n")))))
 
 ;=========================================================================================================================================
 ;======================================================= END OF FUNCTIONS FOR APP EXPRESSION =============================================
@@ -131,30 +166,35 @@
 ;=========================================================================================================================================
 
 (define handle_pair?
-		(lambda (arg true-label done-label const-table global-env)
-			(string-append (code-gen arg const-table global-env)
+		(lambda ()
+			(string-append "\nhandle_pair?:\n"
+							"\tpush rbp\n"
+							"\tmov rbp, rsp\n"
+							"\tmov rax, qword [rbp + 2*8]\n"
 							"\tmov rbx, rax\n"
 							"\tTYPE rbx\n"
 							"\tcmp rbx, T_PAIR\n"
-							"\tje " true-label "\n"
+							"\tje truePair?\n"
 							"\tmov rax, SOB_FALSE\n"
-							"\tjmp " done-label "\n"
-							true-label ":\n"
-							"\tmov rax, SOB_TRUE\n"
-							done-label ":\n")))
+							"\tjmp donePair?\n\n"
+							"truePair?:\n"
+							"\tmov rax, SOB_TRUE\n\n"
+							"donePair?:\n"
+							"\tleave\n"
+							"\tret\n\n")))
 
-(define make-true-label-for-pair?
-	(let ((num 200))
-			(lambda ()
-				(set! num (+ num 1))
-				(string-append "pairTrue" (number->string num)))))
+;(define make-true-label-for-pair?
+;	(let ((num 200))
+;			(lambda ()
+;				(set! num (+ num 1))
+;				(string-append "pairTrue" (number->string num)))))
 
 
-(define make-done-label-for-pair?
-	(let ((num 200))
-			(lambda ()
-				(set! num (+ num 1))
-				(string-append "pairDone" (number->string num)))))
+;(define make-done-label-for-pair?
+;	(let ((num 200))
+;			(lambda ()
+;				(set! num (+ num 1))
+;				(string-append "pairDone" (number->string num)))))
 
 ;=========================================================================================================================================
 ;======================================================= END OF FUNCTIONS FOR NULL? EXPRESSION ===========================================
@@ -166,31 +206,38 @@
 ;======================================================= FUNCTIONS FOR BOOLEAN? EXPRESSION ===============================================
 ;=========================================================================================================================================
 
+
 (define handle_boolean?
-		(lambda (arg true-label done-label const-table global-env)
-			(string-append (code-gen arg const-table global-env)
+		(lambda ()
+			(string-append "\nhandle_boolean?:\n"
+							"\tpush rbp\n"
+							"\tmov rbp, rsp\n"
+							"\tmov rax, qword [rbp + 2*8]\n"
 							"\tmov rbx, rax\n"
 							"\tTYPE rbx\n"
 							"\tcmp rbx, T_BOOL\n"
-							"\tje " true-label "\n"
+							"\tje trueBoolean?\n"
 							"\tmov rax, SOB_FALSE\n"
-							"\tjmp " done-label "\n"
-							true-label ":\n"
-							"\tmov rax, SOB_TRUE\n"
-							done-label ":\n")))
-
-(define make-true-label-for-boolean?
-	(let ((num 200))
-			(lambda ()
-				(set! num (+ num 1))
-				(string-append "boolTrue" (number->string num)))))
+							"\tjmp doneBoolean?\n\n"
+							"trueBoolean?:\n"
+							"\tmov rax, SOB_TRUE\n\n"
+							"doneBoolean?:\n"
+							"\tleave\n"
+							"\tret\n\n")))
 
 
-(define make-done-label-for-boolean?
-	(let ((num 200))
-			(lambda ()
-				(set! num (+ num 1))
-				(string-append "boolDone" (number->string num)))))
+;(define make-true-label-for-boolean?
+;	(let ((num 200))
+;			(lambda ()
+;				(set! num (+ num 1))
+;				(string-append "boolTrue" (number->string num)))))
+
+
+;(define make-done-label-for-boolean?
+;	(let ((num 200))
+;			(lambda ()
+;				(set! num (+ num 1))
+;				(string-append "boolDone" (number->string num)))))
 
 ;=========================================================================================================================================
 ;======================================================= END OF FUNCTIONS FOR BOOLEAN? EXPRESSION ========================================
@@ -202,30 +249,36 @@
 ;=========================================================================================================================================
 
 (define handle_integer?
-		(lambda (arg true-label done-label const-table global-env)
-			(string-append (code-gen arg const-table global-env)
+		(lambda ()
+			(string-append "\nhandle_integer?:\n"
+							"\tpush rbp\n"
+							"\tmov rbp, rsp\n"
+							"\tmov rax, qword [rbp + 2*8]\n"
 							"\tmov rbx, rax\n"
 							"\tTYPE rbx\n"
 							"\tcmp rbx, T_INTEGER\n"
-							"\tje " true-label "\n"
+							"\tje trueInteger?\n"
 							"\tmov rax, SOB_FALSE\n"
-							"\tjmp " done-label "\n"
-							true-label ":\n"
-							"\tmov rax, SOB_TRUE\n"
-							done-label ":\n")))
-
-(define make-true-label-for-integer?
-	(let ((num 200))
-			(lambda ()
-				(set! num (+ num 1))
-				(string-append "integerTrue" (number->string num)))))
+							"\tjmp doneInteger?\n\n"
+							"trueInteger?:\n"
+							"\tmov rax, SOB_TRUE\n\n"
+							"doneInteger?:\n"
+							"\tleave\n"
+							"\tret\n\n")))
 
 
-(define make-done-label-for-integer?
-	(let ((num 200))
-			(lambda ()
-				(set! num (+ num 1))
-				(string-append "integerDone" (number->string num)))))
+;(define make-true-label-for-integer?
+;	(let ((num 200))
+;			(lambda ()
+;				(set! num (+ num 1))
+;				(string-append "integerTrue" (number->string num)))))
+
+
+;(define make-done-label-for-integer?
+;	(let ((num 200))
+;			(lambda ()
+;				(set! num (+ num 1))
+;				(string-append "integerDone" (number->string num)))))
 
 ;=========================================================================================================================================
 ;======================================================= END OF FUNCTIONS FOR INTEGER? EXPRESSION ========================================
@@ -233,34 +286,39 @@
 
 
 ;=========================================================================================================================================
-;======================================================= FUNCTIONS FOR NULL? EXPRESSION =================================================
+;======================================================= FUNCTIONS FOR NULL? EXPRESSION ==================================================
 ;=========================================================================================================================================
 
 (define handle_null?
-		(lambda (arg true-label done-label const-table global-env)
-			(string-append (code-gen arg const-table global-env)
+		(lambda ()
+			(string-append "\nhandle_null?:\n"
+							"\tpush rbp\n"
+							"\tmov rbp, rsp\n"
+							"\tmov rax, qword [rbp + 2*8]\n"
 							"\tmov rbx, rax\n"
 							"\tTYPE rbx\n"
 							"\tcmp rbx, T_NIL\n"
-							"\tje " true-label "\n"
+							"\tje trueNull?\n"
 							"\tmov rax, SOB_FALSE\n"
-							"\tjmp " done-label "\n"
-							true-label ":\n"
-							"\tmov rax, SOB_TRUE\n"
-							done-label ":\n")))
+							"\tjmp doneNull?\n\n"
+							"trueNull?:\n"
+							"\tmov rax, SOB_TRUE\n\n"
+							"doneNull?:\n"
+							"\tleave\n"
+							"\tret\n\n")))
 
-(define make-true-label-for-null?
-	(let ((num 200))
-			(lambda ()
-				(set! num (+ num 1))
-				(string-append "nullTrue" (number->string num)))))
+;(define make-true-label-for-null?
+;	(let ((num 200))
+;			(lambda ()
+;				(set! num (+ num 1))
+;				(string-append "nullTrue" (number->string num)))))
 
 
-(define make-done-label-for-null?
-	(let ((num 200))
-			(lambda ()
-				(set! num (+ num 1))
-				(string-append "nullDone" (number->string num)))))
+;(define make-done-label-for-null?
+;	(let ((num 200))
+;			(lambda ()
+;				(set! num (+ num 1))
+;				(string-append "nullDone" (number->string num)))))
 
 ;=========================================================================================================================================
 ;======================================================= END OF FUNCTIONS FOR NULL? EXPRESSION ===========================================
@@ -272,41 +330,38 @@
 ;=========================================================================================================================================
 
 (define handle_number?
-		(lambda (arg true-label done-label const-table global-env)
-			(if (integer? arg)
-				(string-append (code-gen arg const-table global-env)
-								"\tmov rbx, rax\n"
-								"\tTYPE rbx\n"
-								"\tcmp rbx, T_INTEGER\n"
-								"\tje " true-label "\n"
-								"\tmov rax, SOB_FALSE\n"
-								"\tjmp " done-label "\n"
-								true-label ":\n"
-								"\tmov rax, SOB_TRUE\n"
-								done-label ":\n")
-				(string-append (code-gen arg const-table global-env)
-								"\tmov rbx, rax\n"
-								"\tTYPE rbx\n"
-								"\tcmp rbx, T_FRACTION\n"
-								"\tje " true-label "\n"
-								"\tmov rax, SOB_FALSE\n"
-								"\tjmp " done-label "\n"
-								true-label ":\n"
-								"\tmov rax, SOB_TRUE\n"
-								done-label ":\n"))))
-
-(define make-true-label-for-number?
-	(let ((num 200))
-			(lambda ()
-				(set! num (+ num 1))
-				(string-append "numberTrue" (number->string num)))))
+		(lambda ()
+			(string-append "\nhandle_number?:\n"
+							"\tpush rbp\n"
+							"\tmov rbp, rsp\n"
+							"\tmov rax, qword [rbp + 2*8]\n"
+							"\tmov rbx, rax\n"
+							"\tTYPE rbx\n"
+							"\tcmp rbx, T_INTEGER\n"
+							"\tje trueNumber?\n"
+							"\tcmp rbx, T_FRACTION\n"
+							"\tje trueNumber?\n"
+							"\tmov rax, SOB_FALSE\n"
+							"\tjmp doneNumber?\n\n"
+							"trueNumber?:\n"
+							"\tmov rax, SOB_TRUE\n\n"
+							"doneNumber?:\n"
+							"\tleave\n"
+							"\tret\n\n")))
 
 
-(define make-done-label-for-number?
-	(let ((num 200))
-			(lambda ()
-				(set! num (+ num 1))
-				(string-append "numberDone" (number->string num)))))
+;(define make-true-label-for-number?
+;	(let ((num 200))
+;			(lambda ()
+;				(set! num (+ num 1))
+;				(string-append "numberTrue" (number->string num)))))
+
+
+;(define make-done-label-for-number?
+;	(let ((num 200))
+;			(lambda ()
+;				(set! num (+ num 1))
+;				(string-append "numberDone" (number->string num)))))
 
 ;=========================================================================================================================================
 ;======================================================= END OF FUNCTIONS FOR NUMBER? EXPRESSION =========================================
@@ -323,14 +378,14 @@
 		(let ((free-var (find-var-in-global-env (car def-exp) global-env)))
 				(string-append 
 					(code-gen (cadr def-exp) const-table global-env)
-					"\tmov rbx, " (symbol->string free-var) "\n" 
+					"\tmov rbx, " free-var "\n" 
 					"\tmov qword [rbx], rax\n"
 					"\tmov rax, SOB_VOID\n\n"))))
 
 (define find-var-in-global-env
 	(lambda (var global-env)
-		(if (equal? (cadr var) (car global-env))
-			(cadr var)
+		(if (equal? (cadr var) (cadar global-env))
+			(caar global-env)
 			(find-var-in-global-env var (cdr global-env)))))
 
 
@@ -563,6 +618,8 @@
 	(lambda (input-file)
 		(remove-duplicates (make_symbol_table input-file))))
 
+
+
 ;=========================================================================================================================================
 ;======================================================= END OF FUNCTIONS FOR SYMBOL TABLE ===============================================
 ;=========================================================================================================================================
@@ -583,11 +640,30 @@
 		(remove-duplicates (make_global_env input-file))))
 
 (define create_global_env_for_assembly
-		(lambda (global-env-table)
-			(if (null? global-env-table)
+		(lambda (global-env-table-as-pairs)
+			(if (null? global-env-table-as-pairs)
 				""
-				(string-append (symbol->string (car global-env-table)) ":\n" "\tdq SOB_UNDEFINED\n\n" (create_global_env_for_assembly (cdr global-env-table))))))
+				(string-append (caar global-env-table-as-pairs) ":\n" "\tdq SOB_UNDEFINED\n\n" (create_global_env_for_assembly (cdr global-env-table-as-pairs))))))
 
+(define pairs_of_label_and_name
+	(lambda (fvar)
+		(let ((name (symbol->string fvar)))
+			(cond ((equal? "<" name) (list "greaterThen" fvar))
+				  ((equal? ">" name) (list "lessThen" fvar))
+				  ((equal? "=" name) (list "equal" fvar))
+				  ((equal? "+" name) (list "plus" fvar))
+				  ((equal? "/" name) (list "divide" fvar))
+				  ((equal? "*" name) (list "multiply" fvar))
+				  ((equal? "-" name) (list "substract" fvar))
+				  ((member #\! (string->list name)) (list (string-replace name '! 'B) fvar))
+				  ((member #\< (string->list name)) (list (string-replace name '< 'L) fvar))
+				  ((member #\> (string->list name)) (list (string-replace name '> 'G) fvar))
+				  ((member #\= (string->list name)) (list (string-replace name '= 'E) fvar))
+				  ((member #\+ (string->list name)) (list (string-replace name '+ 'P) fvar))
+				  ((member #\/ (string->list name)) (list (string-replace name '/ 'D) fvar))
+				  ((member #\* (string->list name)) (list (string-replace name '* 'M) fvar))
+				  ((member #\- (string->list name)) (list (string-replace name '- 'S) fvar))
+				  (else (list name fvar))))))
 ;=========================================================================================================================================
 ;======================================================= END OF FUNCTIONS FOR GLOBAL ENV =================================================
 ;=========================================================================================================================================

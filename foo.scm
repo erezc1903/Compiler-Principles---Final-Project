@@ -13,23 +13,33 @@
 
 ;(null? '())
 
--4
+;(define + 5)
+
+;-4
 
 2
 
--3/6
+;-3/6
 
-(number? -1/2)
+;(number? -1/2)
 
-(number? a)
+;(number? a)
 
-(pair? '())
+;(pair? '(1 2))
 
-;5
+;(integer? "-6")
 
-;10
+;;10
 
-;8
+;(boolean? 3)
+
+(number? 3)
+
+(number? '())
+
+(number? 2/4)
+
+
 ;(begin #t 2 (if x (or #f y #t) 3))
 
 ;(or #f #f 2 #f)

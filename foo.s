@@ -7,26 +7,20 @@ section .data
 number?:
 	dq SOB_UNDEFINED
 
-a:
-	dq SOB_UNDEFINED
-
-pair?:
-	dq SOB_UNDEFINED
-
-sobNegInt4:
-	dq MAKE_LITERAL (T_INTEGER, -4)
-
-sobNegFrac1_2:
-	dq MAKE_LITERAL_FRACTION (sobNegInt1, sobInt2)
-
-sobNegInt1:
-	dq MAKE_LITERAL (T_INTEGER, -1)
-
-sobInt2:
-	dq MAKE_LITERAL (T_INTEGER, 2)
+sobInt3:
+	dq MAKE_LITERAL (T_INTEGER, 3)
 
 sobNil:
 	dq SOB_NIL
+
+sobFrac1_2:
+	dq MAKE_LITERAL_FRACTION (sobInt1, sobInt2)
+
+sobInt1:
+	dq MAKE_LITERAL (T_INTEGER, 1)
+
+sobInt2:
+	dq MAKE_LITERAL (T_INTEGER, 2)
 
 
 
@@ -36,18 +30,109 @@ section .text
 
 	global main
 
+; =============================== PRIMITIVE FUNCTIONS =========================
+
+handle_pair?:
+	push rbp
+	mov rbp, rsp
+	mov rax, qword [rbp + 2*8]
+	mov rbx, rax
+	TYPE rbx
+	cmp rbx, T_PAIR
+	je truePair?
+	mov rax, SOB_FALSE
+	jmp donePair?
+
+truePair?:
+	mov rax, SOB_TRUE
+
+donePair?:
+	leave
+	ret
+
+
+handle_boolean?:
+	push rbp
+	mov rbp, rsp
+	mov rax, qword [rbp + 2*8]
+	mov rbx, rax
+	TYPE rbx
+	cmp rbx, T_BOOL
+	je trueBoolean?
+	mov rax, SOB_FALSE
+	jmp doneBoolean?
+
+trueBoolean?:
+	mov rax, SOB_TRUE
+
+doneBoolean?:
+	leave
+	ret
+
+
+handle_integer?:
+	push rbp
+	mov rbp, rsp
+	mov rax, qword [rbp + 2*8]
+	mov rbx, rax
+	TYPE rbx
+	cmp rbx, T_INTEGER
+	je trueInteger?
+	mov rax, SOB_FALSE
+	jmp doneInteger?
+
+trueInteger?:
+	mov rax, SOB_TRUE
+
+doneInteger?:
+	leave
+	ret
+
+
+handle_null?:
+	push rbp
+	mov rbp, rsp
+	mov rax, qword [rbp + 2*8]
+	mov rbx, rax
+	TYPE rbx
+	cmp rbx, T_NIL
+	je trueNull?
+	mov rax, SOB_FALSE
+	jmp doneNull?
+
+trueNull?:
+	mov rax, SOB_TRUE
+
+doneNull?:
+	leave
+	ret
+
+
+handle_number?:
+	push rbp
+	mov rbp, rsp
+	mov rax, qword [rbp + 2*8]
+	mov rbx, rax
+	TYPE rbx
+	cmp rbx, T_INTEGER
+	je trueNumber?
+	cmp rbx, T_FRACTION
+	je trueNumber?
+	mov rax, SOB_FALSE
+	jmp doneNumber?
+
+trueNumber?:
+	mov rax, SOB_TRUE
+
+doneNumber?:
+	leave
+	ret
+
+; =============================== PRIMITIVE FUNCTIONS =========================
 main:
 
 	push rbp
 	mov rbp, rsp
-
-; start
-	mov rax, qword [sobNegInt4]
-	push rax
-	call write_sob_if_not_void
-	add rsp, 8
-
-; end
 
 ; start
 	mov rax, qword [sobInt2]
@@ -58,7 +143,12 @@ main:
 ; end
 
 ; start
-	mov rax, qword [sobNegFrac1_2]
+
+	mov rax, qword [sobInt3]
+	push rax
+	call handle_number?
+	add rsp, 8
+
 	push rax
 	call write_sob_if_not_void
 	add rsp, 8
@@ -66,49 +156,25 @@ main:
 ; end
 
 ; start
-	mov rax, qword [sobNegFrac1_2]
-	mov rbx, rax
-	TYPE rbx
-	cmp rbx, T_FRACTION
-	je numberTrue201
-	mov rax, SOB_FALSE
-	jmp numberDone201
-numberTrue201:
-	mov rax, SOB_TRUE
-numberDone201:
-	push rax
-	call write_sob_if_not_void
-	add rsp, 8
 
-; end
-
-; start
-	mov rbx, rax
-	TYPE rbx
-	cmp rbx, T_FRACTION
-	je numberTrue202
-	mov rax, SOB_FALSE
-	jmp numberDone202
-numberTrue202:
-	mov rax, SOB_TRUE
-numberDone202:
-	push rax
-	call write_sob_if_not_void
-	add rsp, 8
-
-; end
-
-; start
 	mov rax, qword [sobNil]
-	mov rbx, rax
-	TYPE rbx
-	cmp rbx, T_PAIR
-	je pairTrue201
-	mov rax, SOB_FALSE
-	jmp pairDone201
-pairTrue201:
-	mov rax, SOB_TRUE
-pairDone201:
+	push rax
+	call handle_number?
+	add rsp, 8
+
+	push rax
+	call write_sob_if_not_void
+	add rsp, 8
+
+; end
+
+; start
+
+	mov rax, qword [sobFrac1_2]
+	push rax
+	call handle_number?
+	add rsp, 8
+
 	push rax
 	call write_sob_if_not_void
 	add rsp, 8
