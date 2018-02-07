@@ -123,7 +123,12 @@
 				(handle_boolean?)
 				(handle_integer?)
 				(handle_null?)
-				(handle_number?) "")))
+				(handle_number?)
+				(handle_char?)
+				(handle_string?)
+				;(handle_symbol?)
+				(handle_vector?)
+				(handle_not) "")))
 
 
 
@@ -137,6 +142,26 @@
 			(cond ((equal? app-exp '(fvar boolean?)) (string-append "\n" (code-gen (car args) const-table global-env) 
 				  														"\tpush rax\n"
 				  														"\tcall handle_boolean?\n"
+				  														"\tadd rsp, 8\n\n"))
+				  ;((equal? app-exp '(fvar symbol?)) (string-append "\n" (code-gen (car args) const-table global-env) 
+				  ;														"\tpush rax\n"
+				  ;														"\tcall handle_symbol?\n"
+				  ;														"\tadd rsp, 8\n\n"))
+				  ((equal? app-exp '(fvar char?)) (string-append "\n" (code-gen (car args) const-table global-env) 
+				  														"\tpush rax\n"
+				  														"\tcall handle_char?\n"
+				  														"\tadd rsp, 8\n\n"))
+				  ((equal? app-exp '(fvar not)) (string-append "\n" (code-gen (car args) const-table global-env) 
+				  														"\tpush rax\n"
+				  														"\tcall handle_not\n"
+				  														"\tadd rsp, 8\n\n"))
+				  ((equal? app-exp '(fvar vector?)) (string-append "\n" (code-gen (car args) const-table global-env) 
+				  														"\tpush rax\n"
+				  														"\tcall handle_vector?\n"
+				  														"\tadd rsp, 8\n\n"))
+				  ((equal? app-exp '(fvar string?)) (string-append "\n" (code-gen (car args) const-table global-env) 
+				  														"\tpush rax\n"
+				  														"\tcall handle_string?\n"
 				  														"\tadd rsp, 8\n\n"))
 				  ((equal? app-exp '(fvar integer?)) (string-append "\n" (code-gen (car args) const-table global-env) 
 				  														"\tpush rax\n"
@@ -160,9 +185,148 @@
 ;=========================================================================================================================================
 
 
+;=========================================================================================================================================
+;======================================================= FUNCTIONS FOR STRING? EXPRESSION ================================================
+;=========================================================================================================================================
+
+;(define handle_symbol? 
+;		(lambda () 
+;			(string-append "\nhandle_symbol?:\n"
+;				"\tpush rbp\n"
+;				"\tmov rbp, rsp\n"
+;				"\tmov rax, qword [rbp + 2*8]\n"
+;				"\tmov rbx, rax\n"
+;				"\tTYPE rbx\n"
+;				"\tcmp rbx, T_SYMBOL\n"
+;				"\tje trueSymbol?\n"
+;				"\tmov rax, SOB_FALSE\n"
+;				"\tjmp doneSymbol?\n\n"
+;				"trueSymbol?:\n"
+;				"\tmov rax, SOB_TRUE\n\n"
+;				"doneSymbol?:\n"
+;				"\tleave\n"
+;				"\tret\n\n")))
 
 ;=========================================================================================================================================
-;======================================================= FUNCTIONS FOR NULL? EXPRESSION =================================================
+;======================================================= END OF FUNCTIONS FOR STRING? EXPRESSION =========================================
+;=========================================================================================================================================
+
+
+;=========================================================================================================================================
+;======================================================= FUNCTIONS FOR NOT EXPRESSION ====================================================
+;=========================================================================================================================================
+
+(define handle_not 
+		(lambda () 
+			(string-append "\nhandle_not:\n"
+				"\tpush rbp\n"
+				"\tmov rbp, rsp\n"
+				"\tmov rax, qword [rbp + 2*8]\n"
+				"\tmov rbx, rax\n"
+				"\tTYPE rbx\n"
+				"\tcmp rbx, T_BOOL\n"
+				"\tjne retFalse\n"
+				"\tmov rbx, rax\n"
+				"\tcmp rbx, SOB_TRUE\n"
+				"\tje retFalse\n"
+				"\tmov rax, SOB_TRUE\n"
+				"\tjmp doneNot\n\n"
+				"retFalse:\n"
+				"\tmov rax, SOB_FALSE\n\n"
+				"doneNot:\n"
+				"\tleave\n"
+				"\tret\n\n")))
+
+;=========================================================================================================================================
+;======================================================= END OF FUNCTIONS FOR NOT EXPRESSION =============================================
+;=========================================================================================================================================
+
+
+
+;=========================================================================================================================================
+;======================================================= FUNCTIONS FOR STRING? EXPRESSION ================================================
+;=========================================================================================================================================
+
+(define handle_vector? 
+		(lambda () 
+			(string-append "\nhandle_vector?:\n"
+				"\tpush rbp\n"
+				"\tmov rbp, rsp\n"
+				"\tmov rax, qword [rbp + 2*8]\n"
+				"\tmov rbx, rax\n"
+				"\tTYPE rbx\n"
+				"\tcmp rbx, T_VECTOR\n"
+				"\tje trueVector?\n"
+				"\tmov rax, SOB_FALSE\n"
+				"\tjmp doneVector?\n\n"
+				"trueVector?:\n"
+				"\tmov rax, SOB_TRUE\n\n"
+				"doneVector?:\n"
+				"\tleave\n"
+				"\tret\n\n")))
+
+;=========================================================================================================================================
+;======================================================= END OF FUNCTIONS FOR STRING? EXPRESSION =========================================
+;=========================================================================================================================================
+
+
+;=========================================================================================================================================
+;======================================================= FUNCTIONS FOR STRING? EXPRESSION ================================================
+;=========================================================================================================================================
+
+(define handle_string? 
+		(lambda () 
+			(string-append "\nhandle_string?:\n"
+				"\tpush rbp\n"
+				"\tmov rbp, rsp\n"
+				"\tmov rax, qword [rbp + 2*8]\n"
+				"\tmov rbx, rax\n"
+				"\tTYPE rbx\n"
+				"\tcmp rbx, T_STRING\n"
+				"\tje trueString?\n"
+				"\tmov rax, SOB_FALSE\n"
+				"\tjmp doneString?\n\n"
+				"trueString?:\n"
+				"\tmov rax, SOB_TRUE\n\n"
+				"doneString?:\n"
+				"\tleave\n"
+				"\tret\n\n")))
+
+;=========================================================================================================================================
+;======================================================= END OF FUNCTIONS FOR STRING? EXPRESSION =========================================
+;=========================================================================================================================================
+
+
+
+;=========================================================================================================================================
+;======================================================= FUNCTIONS FOR CHAR? EXPRESSION ==================================================
+;=========================================================================================================================================
+
+(define handle_char? 
+		(lambda () 
+			(string-append "\nhandle_char?:\n"
+				"\tpush rbp\n"
+				"\tmov rbp, rsp\n"
+				"\tmov rax, qword [rbp + 2*8]\n"
+				"\tmov rbx, rax\n"
+				"\tTYPE rbx\n"
+				"\tcmp rbx, T_CHAR\n"
+				"\tje trueChar?\n"
+				"\tmov rax, SOB_FALSE\n"
+				"\tjmp doneChar?\n\n"
+				"trueChar?:\n"
+				"\tmov rax, SOB_TRUE\n\n"
+				"doneChar?:\n"
+				"\tleave\n"
+				"\tret\n\n")))
+
+;=========================================================================================================================================
+;======================================================= END OF FUNCTIONS FOR CHAR? EXPRESSION ===========================================
+;=========================================================================================================================================
+
+
+;=========================================================================================================================================
+;======================================================= FUNCTIONS FOR NULL? EXPRESSION ==================================================
 ;=========================================================================================================================================
 
 (define handle_pair?
@@ -541,7 +705,7 @@
 			  					  (string-append "sobTrue:" "\n" "\tdq SOB_TRUE\n\n" (create_const_for_assembly (cdr const-table) (cdr table-in-pairs) num))
 			  					  (string-append "sobFalse:" "\n" "\tdq SOB_FALSE\n" (create_const_for_assembly (cdr const-table) (cdr table-in-pairs) num))))
 			  ((char? (car const-table)) 
-			  		(string-append (find-const-in-pairs (car const-table) table-in-pairs) "\n" "\tdq MAKE_LITERAL(T_CHAR, " (string (car const-table)) ")\n\n" (create_const_for_assembly (cdr const-table) table-in-pairs num)))
+			  		(string-append (find-const-in-pairs (car const-table) table-in-pairs) ":\n" "\tdq MAKE_LITERAL(T_CHAR, " (number->string (char->integer (car const-table))) ")\n\n" (create_const_for_assembly (cdr const-table) table-in-pairs num)))
 			  ((symbol? (car const-table)) 
 			  		(string-append (find-const-in-pairs (car const-table) table-in-pairs) ":" "\n" "\tdq MAKE_LITERAL(T_SYMBOL, " (symbol->string (car const-table)) ")\n\n" (create_const_for_assembly (cdr const-table) table-in-pairs num)))
 			  ((string? (car const-table)) 

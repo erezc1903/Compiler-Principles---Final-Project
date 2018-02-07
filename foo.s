@@ -4,23 +4,19 @@ section .bss
 
 section .data
 
-number?:
+not:
 	dq SOB_UNDEFINED
 
-sobInt3:
-	dq MAKE_LITERAL (T_INTEGER, 3)
-
-sobNil:
-	dq SOB_NIL
-
-sobFrac1_2:
-	dq MAKE_LITERAL_FRACTION (sobInt1, sobInt2)
+sobInt2:
+	dq MAKE_LITERAL (T_INTEGER, 2)
 
 sobInt1:
 	dq MAKE_LITERAL (T_INTEGER, 1)
 
-sobInt2:
-	dq MAKE_LITERAL (T_INTEGER, 2)
+sobFalse:
+	dq SOB_FALSE
+sobInt3:
+	dq MAKE_LITERAL (T_INTEGER, 3)
 
 
 
@@ -128,6 +124,85 @@ doneNumber?:
 	leave
 	ret
 
+
+handle_char?:
+	push rbp
+	mov rbp, rsp
+	mov rax, qword [rbp + 2*8]
+	mov rbx, rax
+	TYPE rbx
+	cmp rbx, T_CHAR
+	je trueChar?
+	mov rax, SOB_FALSE
+	jmp doneChar?
+
+trueChar?:
+	mov rax, SOB_TRUE
+
+doneChar?:
+	leave
+	ret
+
+
+handle_string?:
+	push rbp
+	mov rbp, rsp
+	mov rax, qword [rbp + 2*8]
+	mov rbx, rax
+	TYPE rbx
+	cmp rbx, T_STRING
+	je trueString?
+	mov rax, SOB_FALSE
+	jmp doneString?
+
+trueString?:
+	mov rax, SOB_TRUE
+
+doneString?:
+	leave
+	ret
+
+
+handle_vector?:
+	push rbp
+	mov rbp, rsp
+	mov rax, qword [rbp + 2*8]
+	mov rbx, rax
+	TYPE rbx
+	cmp rbx, T_VECTOR
+	je trueVector?
+	mov rax, SOB_FALSE
+	jmp doneVector?
+
+trueVector?:
+	mov rax, SOB_TRUE
+
+doneVector?:
+	leave
+	ret
+
+
+handle_not:
+	push rbp
+	mov rbp, rsp
+	mov rax, qword [rbp + 2*8]
+	mov rbx, rax
+	TYPE rbx
+	cmp rbx, T_BOOL
+	jne retFalse
+	mov rbx, rax
+	cmp rbx, SOB_TRUE
+	je retFalse
+	mov rax, SOB_TRUE
+	jmp doneNot
+
+retFalse:
+	mov rax, SOB_FALSE
+
+doneNot:
+	leave
+	ret
+
 ; =============================== PRIMITIVE FUNCTIONS =========================
 main:
 
@@ -144,9 +219,19 @@ main:
 
 ; start
 
-	mov rax, qword [sobInt3]
+	mov rax, qword [sobInt1]
+	cmp rax, SOB_FALSE
+	je L0
+	mov rax, qword [sobInt2]
+
+	jmp Lend0
+L0:
+		mov rax, qword [sobInt3]
+
+Lend0:
+
 	push rax
-	call handle_number?
+	call handle_not
 	add rsp, 8
 
 	push rax
@@ -157,22 +242,19 @@ main:
 
 ; start
 
-	mov rax, qword [sobNil]
-	push rax
-	call handle_number?
-	add rsp, 8
+	mov rax, qword [sobInt1]
+	cmp rax, SOB_FALSE
+	je L1
+	mov rax, qword [sobFalse]
+
+	jmp Lend1
+L1:
+		mov rax, qword [sobInt3]
+
+Lend1:
 
 	push rax
-	call write_sob_if_not_void
-	add rsp, 8
-
-; end
-
-; start
-
-	mov rax, qword [sobFrac1_2]
-	push rax
-	call handle_number?
+	call handle_not
 	add rsp, 8
 
 	push rax

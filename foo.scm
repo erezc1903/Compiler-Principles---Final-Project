@@ -33,11 +33,21 @@
 
 ;(boolean? 3)
 
-(number? 3)
+;(number? 3)
 
-(number? '())
+;(number? '())
 
-(number? 2/4)
+;(number? 2/4)
+
+;(char? #\a)
+
+;(char? a)
+
+(not (if 1 2 3))
+
+(not (if 1 #f 3))
+
+;(vector? '#(7 8 "f"))
 
 
 ;(begin #t 2 (if x (or #f y #t) 3))
