@@ -4,26 +4,29 @@ section .bss
 
 section .data
 
-x:
+number?:
 	dq SOB_UNDEFINED
 
-sobInt5:
-	dq MAKE_LITERAL(T_INTEGER, 5)
+a:
+	dq SOB_UNDEFINED
 
-sobInt10:
-	dq MAKE_LITERAL(T_INTEGER, 10)
+pair?:
+	dq SOB_UNDEFINED
 
-sobInt333:
-	dq MAKE_LITERAL(T_INTEGER, 333)
+sobNegInt4:
+	dq MAKE_LITERAL (T_INTEGER, -4)
 
-sobInt7:
-	dq MAKE_LITERAL(T_INTEGER, 7)
+sobNegFrac1_2:
+	dq MAKE_LITERAL_FRACTION (sobNegInt1, sobInt2)
 
-sobInt8:
-	dq MAKE_LITERAL(T_INTEGER, 8)
+sobNegInt1:
+	dq MAKE_LITERAL (T_INTEGER, -1)
 
-sobInt9:
-	dq MAKE_LITERAL(T_INTEGER, 9)
+sobInt2:
+	dq MAKE_LITERAL (T_INTEGER, 2)
+
+sobNil:
+	dq SOB_NIL
 
 
 
@@ -39,7 +42,7 @@ main:
 	mov rbp, rsp
 
 ; start
-	mov rax, qword [sobInt5]
+	mov rax, qword [sobNegInt4]
 	push rax
 	call write_sob_if_not_void
 	add rsp, 8
@@ -47,7 +50,7 @@ main:
 ; end
 
 ; start
-	mov rax, qword [sobInt10]
+	mov rax, qword [sobInt2]
 	push rax
 	call write_sob_if_not_void
 	add rsp, 8
@@ -55,7 +58,7 @@ main:
 ; end
 
 ; start
-	mov rax, qword [sobInt8]
+	mov rax, qword [sobNegFrac1_2]
 	push rax
 	call write_sob_if_not_void
 	add rsp, 8
@@ -63,11 +66,16 @@ main:
 ; end
 
 ; start
-	mov rax, qword [sobInt333]
-	mov rbx, x
-	mov qword [rbx], rax
-	mov rax, SOB_VOID
-
+	mov rax, qword [sobNegFrac1_2]
+	mov rbx, rax
+	TYPE rbx
+	cmp rbx, T_FRACTION
+	je numberTrue201
+	mov rax, SOB_FALSE
+	jmp numberDone201
+numberTrue201:
+	mov rax, SOB_TRUE
+numberDone201:
 	push rax
 	call write_sob_if_not_void
 	add rsp, 8
@@ -75,6 +83,15 @@ main:
 ; end
 
 ; start
+	mov rbx, rax
+	TYPE rbx
+	cmp rbx, T_FRACTION
+	je numberTrue202
+	mov rax, SOB_FALSE
+	jmp numberDone202
+numberTrue202:
+	mov rax, SOB_TRUE
+numberDone202:
 	push rax
 	call write_sob_if_not_void
 	add rsp, 8
@@ -82,17 +99,16 @@ main:
 ; end
 
 ; start
-	mov rax, qword [sobInt7]
-	cmp rax, SOB_FALSE
-	je L0
-	mov rax, qword [sobInt8]
-
-	jmp Lend0
-L0:
-		mov rax, qword [sobInt9]
-
-Lend0:
-
+	mov rax, qword [sobNil]
+	mov rbx, rax
+	TYPE rbx
+	cmp rbx, T_PAIR
+	je pairTrue201
+	mov rax, SOB_FALSE
+	jmp pairDone201
+pairTrue201:
+	mov rax, SOB_TRUE
+pairDone201:
 	push rax
 	call write_sob_if_not_void
 	add rsp, 8

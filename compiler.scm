@@ -41,11 +41,10 @@
 			       ((tagged-by? pe 'seq) (handle_seq pe const-table global-env))
 			       ((tagged-by? pe 'or) (handle_or (cadr pe) (make-end-label-for-or) const-table global-env))
 			       ((tagged-by? pe 'def) (handle_define (cdr pe) const-table global-env))
-			       ;((tagged-by? pe 'applic) (handle_applic pe))
+			       ((tagged-by? pe 'applic) (handle_applic (cadr pe) (caddr pe) const-table global-env))
 			       ;((tagged-by? pe 'tc-applic) (handle_tc_applic pe))
 			       ;((tagged-by? pe 'lambda-simple) (handle_lambda_simple pe))
 			       ;((tagged-by? pe 'lambda-opt) (handle_lambda_opt pe))
-			       ;((tagged-by? pe 'lambda-var) (handle_lambda_var pe))
 			       ;((tagged-by? pe 'pvar) (handle_pvar_get pe))
 			       ;((tagged-by? pe 'bvar) (handle_bvar_get pe))
 			       ;((tagged-by? pe 'fvar) (handle_fvar_get pe))
@@ -72,6 +71,9 @@
 			  ;(symbol-table (symbol_table input))
 
 			(display "input: ") (display input) (newline) (newline)
+			(display "const-table-as-list-of-pairs: ") (display const-table-as-list-of-pairs) (newline) (newline)
+
+
 			(fprintf out-port "%include \"scheme.s\"\n\n") 
 			
 			(fprintf out-port "section .bss\n\n") 
@@ -102,6 +104,214 @@
 			(fprintf out-port "\tret\n\n") 
 
 			(close-output-port out-port))))
+
+
+
+
+;=========================================================================================================================================
+;======================================================= FUNCTIONS FOR APP EXPRESSION ====================================================
+;=========================================================================================================================================
+
+(define handle_applic
+		(lambda (app-exp args const-table global-env)
+			(cond ((equal? app-exp '(fvar boolean?)) (handle_boolean? (car args) (make-true-label-for-boolean?) (make-done-label-for-boolean?) const-table global-env))
+				  ((equal? app-exp '(fvar integer?)) (handle_integer? (car args) (make-true-label-for-integer?) (make-done-label-for-integer?) const-table global-env))
+				  ((equal? app-exp '(fvar null?)) (handle_null? (car args) (make-true-label-for-null?) (make-done-label-for-null?) const-table global-env))
+				  ((equal? app-exp '(fvar number?)) (handle_number? (car args) (make-true-label-for-number?) (make-done-label-for-number?) const-table global-env))
+				  ((equal? app-exp '(fvar pair?)) (handle_pair? (car args) (make-true-label-for-pair?) (make-done-label-for-pair?) const-table global-env)))))
+
+;=========================================================================================================================================
+;======================================================= END OF FUNCTIONS FOR APP EXPRESSION =============================================
+;=========================================================================================================================================
+
+
+
+;=========================================================================================================================================
+;======================================================= FUNCTIONS FOR NULL? EXPRESSION =================================================
+;=========================================================================================================================================
+
+(define handle_pair?
+		(lambda (arg true-label done-label const-table global-env)
+			(string-append (code-gen arg const-table global-env)
+							"\tmov rbx, rax\n"
+							"\tTYPE rbx\n"
+							"\tcmp rbx, T_PAIR\n"
+							"\tje " true-label "\n"
+							"\tmov rax, SOB_FALSE\n"
+							"\tjmp " done-label "\n"
+							true-label ":\n"
+							"\tmov rax, SOB_TRUE\n"
+							done-label ":\n")))
+
+(define make-true-label-for-pair?
+	(let ((num 200))
+			(lambda ()
+				(set! num (+ num 1))
+				(string-append "pairTrue" (number->string num)))))
+
+
+(define make-done-label-for-pair?
+	(let ((num 200))
+			(lambda ()
+				(set! num (+ num 1))
+				(string-append "pairDone" (number->string num)))))
+
+;=========================================================================================================================================
+;======================================================= END OF FUNCTIONS FOR NULL? EXPRESSION ===========================================
+;=========================================================================================================================================
+
+
+
+;=========================================================================================================================================
+;======================================================= FUNCTIONS FOR BOOLEAN? EXPRESSION ===============================================
+;=========================================================================================================================================
+
+(define handle_boolean?
+		(lambda (arg true-label done-label const-table global-env)
+			(string-append (code-gen arg const-table global-env)
+							"\tmov rbx, rax\n"
+							"\tTYPE rbx\n"
+							"\tcmp rbx, T_BOOL\n"
+							"\tje " true-label "\n"
+							"\tmov rax, SOB_FALSE\n"
+							"\tjmp " done-label "\n"
+							true-label ":\n"
+							"\tmov rax, SOB_TRUE\n"
+							done-label ":\n")))
+
+(define make-true-label-for-boolean?
+	(let ((num 200))
+			(lambda ()
+				(set! num (+ num 1))
+				(string-append "boolTrue" (number->string num)))))
+
+
+(define make-done-label-for-boolean?
+	(let ((num 200))
+			(lambda ()
+				(set! num (+ num 1))
+				(string-append "boolDone" (number->string num)))))
+
+;=========================================================================================================================================
+;======================================================= END OF FUNCTIONS FOR BOOLEAN? EXPRESSION ========================================
+;=========================================================================================================================================
+
+
+;=========================================================================================================================================
+;======================================================= FUNCTIONS FOR INTEGER? EXPRESSION ===============================================
+;=========================================================================================================================================
+
+(define handle_integer?
+		(lambda (arg true-label done-label const-table global-env)
+			(string-append (code-gen arg const-table global-env)
+							"\tmov rbx, rax\n"
+							"\tTYPE rbx\n"
+							"\tcmp rbx, T_INTEGER\n"
+							"\tje " true-label "\n"
+							"\tmov rax, SOB_FALSE\n"
+							"\tjmp " done-label "\n"
+							true-label ":\n"
+							"\tmov rax, SOB_TRUE\n"
+							done-label ":\n")))
+
+(define make-true-label-for-integer?
+	(let ((num 200))
+			(lambda ()
+				(set! num (+ num 1))
+				(string-append "integerTrue" (number->string num)))))
+
+
+(define make-done-label-for-integer?
+	(let ((num 200))
+			(lambda ()
+				(set! num (+ num 1))
+				(string-append "integerDone" (number->string num)))))
+
+;=========================================================================================================================================
+;======================================================= END OF FUNCTIONS FOR INTEGER? EXPRESSION ========================================
+;=========================================================================================================================================
+
+
+;=========================================================================================================================================
+;======================================================= FUNCTIONS FOR NULL? EXPRESSION =================================================
+;=========================================================================================================================================
+
+(define handle_null?
+		(lambda (arg true-label done-label const-table global-env)
+			(string-append (code-gen arg const-table global-env)
+							"\tmov rbx, rax\n"
+							"\tTYPE rbx\n"
+							"\tcmp rbx, T_NIL\n"
+							"\tje " true-label "\n"
+							"\tmov rax, SOB_FALSE\n"
+							"\tjmp " done-label "\n"
+							true-label ":\n"
+							"\tmov rax, SOB_TRUE\n"
+							done-label ":\n")))
+
+(define make-true-label-for-null?
+	(let ((num 200))
+			(lambda ()
+				(set! num (+ num 1))
+				(string-append "nullTrue" (number->string num)))))
+
+
+(define make-done-label-for-null?
+	(let ((num 200))
+			(lambda ()
+				(set! num (+ num 1))
+				(string-append "nullDone" (number->string num)))))
+
+;=========================================================================================================================================
+;======================================================= END OF FUNCTIONS FOR NULL? EXPRESSION ===========================================
+;=========================================================================================================================================
+
+
+;=========================================================================================================================================
+;======================================================= FUNCTIONS FOR NUMBER? EXPRESSION ================================================
+;=========================================================================================================================================
+
+(define handle_number?
+		(lambda (arg true-label done-label const-table global-env)
+			(if (integer? arg)
+				(string-append (code-gen arg const-table global-env)
+								"\tmov rbx, rax\n"
+								"\tTYPE rbx\n"
+								"\tcmp rbx, T_INTEGER\n"
+								"\tje " true-label "\n"
+								"\tmov rax, SOB_FALSE\n"
+								"\tjmp " done-label "\n"
+								true-label ":\n"
+								"\tmov rax, SOB_TRUE\n"
+								done-label ":\n")
+				(string-append (code-gen arg const-table global-env)
+								"\tmov rbx, rax\n"
+								"\tTYPE rbx\n"
+								"\tcmp rbx, T_FRACTION\n"
+								"\tje " true-label "\n"
+								"\tmov rax, SOB_FALSE\n"
+								"\tjmp " done-label "\n"
+								true-label ":\n"
+								"\tmov rax, SOB_TRUE\n"
+								done-label ":\n"))))
+
+(define make-true-label-for-number?
+	(let ((num 200))
+			(lambda ()
+				(set! num (+ num 1))
+				(string-append "numberTrue" (number->string num)))))
+
+
+(define make-done-label-for-number?
+	(let ((num 200))
+			(lambda ()
+				(set! num (+ num 1))
+				(string-append "numberDone" (number->string num)))))
+
+;=========================================================================================================================================
+;======================================================= END OF FUNCTIONS FOR NUMBER? EXPRESSION =========================================
+;=========================================================================================================================================
+
 
 
 ;=========================================================================================================================================
@@ -152,7 +362,7 @@
 
 
 (define handle_or
-		(lambda (or-exp end-label const-table global-env)
+		(lambda (or-exp end-label const-table global-env)	
 				(if (null? or-exp) 
 					(string-append end-label ":\n\n")
 					(string-append 
@@ -230,13 +440,13 @@
 
 (define expand-const-table
 	(lambda (lst)
-		;(display "expand-const-table") (newline) 
-		;(display "expand-const-table lst: ") (display lst) (newline) (newline)
+		(display "expand-const-table") (newline) 
+		(display "expand-const-table lst: ") (display lst) (newline) (newline)
 		(cond ((and (list? lst) (> (length lst) 0) (vector? (car lst))) 
 					(append (vector->list (car lst)) (expand-vector (vector->list (car lst))) (list (car lst)) (expand-const-table (cdr lst))))		
 			  ((and (list? lst) (> (length lst) 0) (or (list? (car lst)) (pair? (car lst)))) (append (break-list-to-components (car lst)) (list (car lst)) (expand-const-table (cdr lst))))
+			  ((and (list? lst) (> (length lst) 0) (not (list? (car lst))) (number? (car lst)) (not (integer? (car lst)))) (append (list (car lst)) (list (numerator (car lst))) (list (denominator (car lst))) (expand-const-table (cdr lst))))
 			  ((and (list? lst) (> (length lst) 0) (not (list? (car lst)))) (cons (car lst) (expand-const-table (cdr lst))))
-			  ;((vector? lst) (map expand-const-table (vector->list lst)))
 			  (else lst)
 		)))
 
@@ -269,9 +479,9 @@
 		(set! num (+ num 1))
 		(cond ((null? const-table) "")
 			  ((integer? (car const-table)) 
-			  		(string-append (find-const-in-pairs (car const-table) table-in-pairs) ":" "\n" "\tdq MAKE_LITERAL(T_INTEGER, " (number->string (car const-table)) ")\n\n" (create_const_for_assembly (cdr const-table) table-in-pairs num)))
+			  		(string-append (find-const-in-pairs (car const-table) table-in-pairs) ":" "\n" "\tdq MAKE_LITERAL (T_INTEGER, " (number->string (car const-table)) ")\n\n" (create_const_for_assembly (cdr const-table) table-in-pairs num)))
 			  ((number? (car const-table)) 
-			  		(string-append (find-const-in-pairs (car const-table) table-in-pairs) ":" "\n" "\tdq MAKE_LITERAL(T_FRACTION, " (number->string (car const-table)) ")\n\n" (create_const_for_assembly (cdr const-table) table-in-pairs num)))
+			  		(string-append (find-const-in-pairs (car const-table) table-in-pairs) ":" "\n" "\tdq MAKE_LITERAL_FRACTION (" (find-const-in-pairs (numerator (car const-table)) table-in-pairs) ", " (find-const-in-pairs (denominator (car const-table)) table-in-pairs) ")\n\n" (create_const_for_assembly (cdr const-table) table-in-pairs num)))
 			  ((boolean? (car const-table)) (if (equal? (car const-table) #t)
 			  					  (string-append "sobTrue:" "\n" "\tdq SOB_TRUE\n\n" (create_const_for_assembly (cdr const-table) (cdr table-in-pairs) num))
 			  					  (string-append "sobFalse:" "\n" "\tdq SOB_FALSE\n" (create_const_for_assembly (cdr const-table) (cdr table-in-pairs) num))))
@@ -315,8 +525,12 @@
 
 (define pairs_of_name_and_object
 	(lambda (con num)
-		(cond ((integer? con) (list (string-append "sobInt" (number->string con)) con))
-			  ((number? con) (list (string-append "sobFrac" (number->string con)) con))
+		(cond ((integer? con) (if (negative? con)
+								  (list (string-append "sobNegInt" (number->string (abs con))) con)
+								  (list (string-append "sobInt" (number->string con)) con)))
+			  ((number? con) (if (negative? con) 
+			  					 (list (string-append "sobNegFrac" (number->string (abs (numerator con))) "_" (number->string (denominator con))) con)
+			  					 (list (string-append "sobFrac" (number->string (numerator con)) "_" (number->string (denominator con))) con)))
 			  ((boolean? con) (if (equal? con #t)
 			  					  (list "sobTrue" con)
 			  					  (list "sobFalse" con)))
