@@ -130,7 +130,13 @@
 				(handle_vector?)
 				(handle_not)
 				(handle_rational?)
-				(handle_zero?) "")))
+				(handle_zero?)
+				(handle_car)
+				(handle_cdr)
+				;(handle_cons)
+				(handle_numerator)
+				(handle_denominator)
+				 "")))
 
 
 
@@ -188,10 +194,166 @@
 				  ((equal? app-exp '(fvar pair?)) (string-append "\n" (code-gen (car args) const-table global-env) 
 				  														"\tpush rax\n"
 				  														"\tcall pair?\n"
-				  														"\tadd rsp, 8\n\n")))))
+				  														"\tadd rsp, 8\n\n"))
+				  ((equal? app-exp '(fvar car)) (string-append "\n" (code-gen (car args) const-table global-env) 
+				  														"\tpush rax\n"
+				  														"\tcall car\n"
+				  														"\tadd rsp, 8\n\n"))
+				  ((equal? app-exp '(fvar cdr)) (string-append "\n" (code-gen (car args) const-table global-env) 
+				  														"\tpush rax\n"
+				  														"\tcall cdr\n"
+				  														"\tadd rsp, 8\n\n"))
+				  ((equal? app-exp '(fvar cons)) (string-append "\n" (code-gen (car args) const-table global-env) 
+				  														"\tpush rax\n"
+				  													 (code-gen (cadr args) const-table global-env)
+				  													 	"\tpush rax\n"
+				  														"\tcall cons\n"
+				  														"\tadd rsp, 2*8\n\n"))
+				  ((equal? app-exp '(fvar numerator)) (string-append "\n" (code-gen (car args) const-table global-env) 
+				  														"\tpush rax\n"
+				  														"\tcall numerator\n"
+				  														"\tadd rsp, 8\n\n"))
+				  ((equal? app-exp '(fvar denominator)) (string-append "\n" (code-gen (car args) const-table global-env) 
+				  														"\tpush rax\n"
+				  														"\tcall denominator\n"
+				  														"\tadd rsp, 8\n\n"))
+				)))
 
 ;=========================================================================================================================================
 ;======================================================= END OF FUNCTIONS FOR APP EXPRESSION =============================================
+;=========================================================================================================================================
+
+
+;=========================================================================================================================================
+;======================================================= FUNCTIONS FOR NUMERATOR EXPRESSION ==============================================
+;=========================================================================================================================================
+
+(define handle_numerator
+		(lambda () 
+			(string-append "\nnumerator:\n"
+				"\tpush rbp\n"
+				"\tmov rbp, rsp\n"
+				"\tmov rax, qword [rbp + 2*8]\n"
+				"\tmov rbx, rax\n"
+				"\tTYPE rbx\n"
+				"\tcmp rbx, T_FRACTION\n"
+				"\tjne notAFractionForNumerator\n"
+				"\tNUMERATOR rax\n"
+				"\tjmp doneNumerator\n\n"
+				"notAFractionForNumerator:\n"
+				"\tmov rax, SOB_VOID\n"
+				"doneNumerator:\n"
+				"\tleave\n"
+				"\tret\n\n")))
+
+;=========================================================================================================================================
+;======================================================= END OF FUNCTIONS FOR NUMERATOR EXPRESSION =======================================
+;=========================================================================================================================================
+
+
+;=========================================================================================================================================
+;======================================================= FUNCTIONS FOR DENOMINATOR EXPRESSION ============================================
+;=========================================================================================================================================
+
+(define handle_denominator
+		(lambda () 
+			(string-append "\ndenominator:\n"
+				"\tpush rbp\n"
+				"\tmov rbp, rsp\n"
+				"\tmov rax, qword [rbp + 2*8]\n"
+				"\tmov rbx, rax\n"
+				"\tTYPE rbx\n"
+				"\tcmp rbx, T_FRACTION\n"
+				"\tjne notAFractionForDenominator\n"
+				"\tDENOMINATOR rax\n"
+				"\tjmp doneDenominator\n\n"
+				"notAFractionForDenominator:\n"
+				"\tmov rax, SOB_VOID\n"
+				"doneDenominator:\n"
+				"\tleave\n"
+				"\tret\n\n")))
+
+;=========================================================================================================================================
+;======================================================= END OF FUNCTIONS FOR DENOMINATOR EXPRESSION =====================================
+;=========================================================================================================================================
+
+
+
+
+
+
+;=========================================================================================================================================
+;======================================================= FUNCTIONS FOR CONS EXPRESSION ===================================================
+;=========================================================================================================================================
+
+(define handle_cons
+		(lambda () 
+			(string-append "\ncons:\n"
+				"\tpush rbp\n"
+				"\tmov rbp, rsp\n"
+				"\tmov rax, qword [rbp + 2*8]\n"
+				"\tmov rbx, qword [rbp + 3*8]\n"
+				"\tmov rcx, MAKE_LITERAL_PAIR (rax, rbx)\n"
+				"\tmov rax, rcx\n"
+				"\tleave\n"
+				"\tret\n\n")))
+
+;=========================================================================================================================================
+;======================================================= END OF FUNCTIONS FOR CONS EXPRESSION ============================================
+;=========================================================================================================================================
+
+
+;=========================================================================================================================================
+;======================================================= FUNCTIONS FOR CAR EXPRESSION ====================================================
+;=========================================================================================================================================
+
+(define handle_car
+		(lambda () 
+			(string-append "\ncar:\n"
+				"\tpush rbp\n"
+				"\tmov rbp, rsp\n"
+				"\tmov rax, qword [rbp + 2*8]\n"
+				"\tmov rbx, rax\n"
+				"\tTYPE rbx\n"
+				"\tcmp rbx, T_PAIR\n"
+				"\tjne notAPairForCar\n"
+				"\tCAR rax\n"
+				"\tjmp doneCar\n\n"
+				"notAPairForCar:\n"
+				"\tmov rax, SOB_VOID\n"
+				"doneCar:\n"
+				"\tleave\n"
+				"\tret\n\n")))
+
+;=========================================================================================================================================
+;======================================================= END OF FUNCTIONS FOR CAR EXPRESSION =============================================
+;=========================================================================================================================================
+
+
+;=========================================================================================================================================
+;======================================================= FUNCTIONS FOR CDR EXPRESSION ====================================================
+;=========================================================================================================================================
+
+(define handle_cdr
+		(lambda () 
+			(string-append "\ncdr:\n"
+				"\tpush rbp\n"
+				"\tmov rbp, rsp\n"
+				"\tmov rax, qword [rbp + 2*8]\n"
+				"\tmov rbx, rax\n"
+				"\tTYPE rbx\n"
+				"\tcmp rbx, T_PAIR\n"
+				"\tjne notAPairForCdr\n"
+				"\tCDR rax\n"
+				"\tjmp doneCdr\n\n"
+				"notAPairForCdr:\n"
+				"\tmov rax, SOB_VOID\n"
+				"doneCdr:\n"
+				"\tleave\n"
+				"\tret\n\n")))
+
+;=========================================================================================================================================
+;======================================================= END OF FUNCTIONS FOR CDR EXPRESSION =============================================
 ;=========================================================================================================================================
 
 
@@ -661,11 +823,12 @@
 ;=========================================================================================================================================
 (define break-list-to-components
 	(lambda (lst)
-		;(display "break-list-to-components") (newline) 
-		;(display "break-list-to-components lst: ") (display lst) (newline) (newline)
+		(display "break-list-to-components") (newline) 
+		(display "break-list-to-components lst: ") (display lst) (newline) (newline)
 		(cond ((vector? lst) (expand-vector (vector->list lst)))
 			  ((or (not (pair? lst)) (null? lst)) lst)
 			  ((or (list? (car lst)) (pair? (car lst))) (append (expand-const-table (list (car lst))) (list (cdr lst)) (break-list-to-components (cdr lst))))
+			  ((and (pair? lst) (not (pair? (cdr lst)))) (append (list lst) (list (car lst)) (list (cdr lst))))
 			  (else (append (list (car lst)) (list (cdr lst)) (break-list-to-components (cdr lst)))))))
 
 (define expand-const-table
@@ -677,6 +840,7 @@
 			  ((and (list? lst) (> (length lst) 0) (or (list? (car lst)) (pair? (car lst)))) (append (break-list-to-components (car lst)) (list (car lst)) (expand-const-table (cdr lst))))
 			  ((and (list? lst) (> (length lst) 0) (not (list? (car lst))) (number? (car lst)) (not (integer? (car lst)))) (append (list (car lst)) (list (numerator (car lst))) (list (denominator (car lst))) (expand-const-table (cdr lst))))
 			  ((and (list? lst) (> (length lst) 0) (not (list? (car lst)))) (cons (car lst) (expand-const-table (cdr lst))))
+			  
 			  (else lst)
 		)))
 

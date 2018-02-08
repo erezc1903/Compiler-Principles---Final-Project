@@ -13,9 +13,6 @@ sobInt2:
 sobInt3:
 	dq MAKE_LITERAL (T_INTEGER, 3)
 
-sobInt0:
-	dq MAKE_LITERAL (T_INTEGER, 0)
-
 
 
 section .text
@@ -246,6 +243,78 @@ doneZero?:
 	leave
 	ret
 
+
+car:
+	push rbp
+	mov rbp, rsp
+	mov rax, qword [rbp + 2*8]
+	mov rbx, rax
+	TYPE rbx
+	cmp rbx, T_PAIR
+	jne notAPairForCar
+	CAR rax
+	jmp doneCar
+
+notAPairForCar:
+	mov rax, SOB_VOID
+doneCar:
+	leave
+	ret
+
+
+cdr:
+	push rbp
+	mov rbp, rsp
+	mov rax, qword [rbp + 2*8]
+	mov rbx, rax
+	TYPE rbx
+	cmp rbx, T_PAIR
+	jne notAPairForCdr
+	CDR rax
+	jmp doneCdr
+
+notAPairForCdr:
+	mov rax, SOB_VOID
+doneCdr:
+	leave
+	ret
+
+
+numerator:
+	push rbp
+	mov rbp, rsp
+	mov rax, qword [rbp + 2*8]
+	mov rbx, rax
+	TYPE rbx
+	cmp rbx, T_FRACTION
+	jne notAFractionForNumerator
+	NUMERATOR rax
+	jmp doneNumerator
+
+notAFractionForNumerator:
+	mov rax, SOB_VOID
+doneNumerator:
+	leave
+	ret
+
+
+denominator:
+	push rbp
+	mov rbp, rsp
+	mov rax, qword [rbp + 2*8]
+	mov rbx, rax
+	TYPE rbx
+	cmp rbx, T_FRACTION
+	jne notAFractionForDenominator
+	DENOMINATOR rax
+	jmp doneDenominator
+
+notAFractionForDenominator:
+	mov rax, SOB_VOID
+doneDenominator:
+	leave
+	ret
+
 ; =============================== PRIMITIVE FUNCTIONS =========================
 main:
 
@@ -253,18 +322,10 @@ main:
 	mov rbp, rsp
 
 ; start
-	mov rax, qword [sobInt2]
+
+	mov rax, qword [sobFrac2_3]
 	push rax
-	call write_sob_if_not_void
-	add rsp, 8
-
-; end
-
-; start
-
-	mov rax, qword [sobInt2]
-	push rax
-	call zero?
+	call numerator
 	add rsp, 8
 
 	push rax
@@ -277,20 +338,7 @@ main:
 
 	mov rax, qword [sobFrac2_3]
 	push rax
-	call zero?
-	add rsp, 8
-
-	push rax
-	call write_sob_if_not_void
-	add rsp, 8
-
-; end
-
-; start
-
-	mov rax, qword [sobInt0]
-	push rax
-	call zero?
+	call denominator
 	add rsp, 8
 
 	push rax

@@ -62,6 +62,18 @@
 	mov %1, qword [%1]
 %endmacro
 
+%macro NUMERATOR 1
+	DATA_UPPER %1
+	add %1, start_of_data
+	mov %1, qword [%1]
+%endmacro
+
+%macro DENOMINATOR 1
+	DATA_LOWER %1
+	add %1, start_of_data
+	mov %1, qword [%1]
+%endmacro
+
 ;;; MAKE_LITERAL_CLOSURE target, env, code
 %macro MAKE_LITERAL_CLOSURE 3
 	push rax
