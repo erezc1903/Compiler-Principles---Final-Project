@@ -4,14 +4,13 @@ section .bss
 
 section .data
 
-y:
-	dq SOB_UNDEFINED
+sobFalse:
+	dq SOB_FALSE
+sobInt2:
+	dq MAKE_LITERAL (T_INTEGER, 2)
 
 sobInt3:
 	dq MAKE_LITERAL (T_INTEGER, 3)
-
-sobInt2:
-	dq MAKE_LITERAL (T_INTEGER, 2)
 
 
 
@@ -29,36 +28,22 @@ main:
 	mov rbp, rsp
 
 ; start
+; start of applic of lambda-simple code: 
+
 	; codegen for const start
 	mov rax, qword [sobInt3]
 	;code gen for constant end
-	mov rbx, y
-	mov qword [rbx], rax
-	mov rax, SOB_VOID
-
 	push rax
-	call write_sob_if_not_void
-	add rsp, 8
-
-; end
-
-; start
-	mov rax, [y]
-	push rax
-	call write_sob_if_not_void
-	add rsp, 8
-
-; end
-
-; start
-; start of applic of lambda-simple code: 
-
 	; codegen for const start
 	mov rax, qword [sobInt2]
 	;code gen for constant end
 	push rax
+	; codegen for const start
+	mov rax, qword [sobFalse]
+	;code gen for constant end
+	push rax
 
-	push 1
+	push 3
 ; start of creating a closure of lambda-simple 0
 
 	mov rbx, 0
@@ -72,7 +57,17 @@ make_closure101:
 bodyOfLambda101:
 	push rbp
 	mov rbp, rsp
-	mov rax, [y]
+	mov rax, qword [rbp + (4+0)*8]
+	cmp rax, SOB_FALSE
+	je L0
+	mov rax, qword [rbp + (4+1)*8]
+
+	jmp Lend0
+L0:
+		mov rax, qword [rbp + (4+2)*8]
+
+Lend0:
+
 	mov rsp, rbp
 	pop rbp
 	ret
@@ -98,7 +93,7 @@ not_a_closure101:
 	mov rax, SOB_VOID
 done_closure101:
 
-	add rsp, 8*2
+	add rsp, 8*4
 
 ; end of applic of lambda-simple code: 
 

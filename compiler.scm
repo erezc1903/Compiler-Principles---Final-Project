@@ -45,8 +45,8 @@
 			       ((tagged-by? pe 'lambda-simple) (handle_lambda_simple (cadr pe) (caddr pe) depth const-table global-env))
 			       ;((tagged-by? pe 'tc-applic) (handle_tc_applic pe))
 			       ;((tagged-by? pe 'lambda-opt) (handle_lambda_opt pe))
-			       ;((tagged-by? pe 'pvar) (handle_pvar_get pe))
-			       ;((tagged-by? pe 'bvar) (handle_bvar_get pe))
+			       ((tagged-by? pe 'pvar) (handle_pvar pe))
+			       ((tagged-by? pe 'bvar) (handle_bvar pe))
 			       ((tagged-by? pe 'fvar) (handle_fvar (cadr pe) depth const-table global-env))
 			       ;((tagged-by? pe 'set) (cond ((tagged-by? (cadr pe) 'pvar) (handle_pvar_set pe))
 							   ;((tagged-by? (cadr pe) 'bvar) (handle_bvar_set pe))
@@ -417,6 +417,19 @@
 			(string-append  "\tmov rax, [" (find-var-in-global-env var global-env) "]\n")))
 
 
+
+(define handle_pvar
+  (lambda (pe)
+    (let ((min (caddr pe)))
+      (string-append "\tmov rax, qword [rbp + (4+" (number->string min)   ")*8]\n"))))
+
+;(define handle_bvar
+;  (lambda (pe)
+;    (let ((major (caddr pe))
+;	  	  (minor (cadddr pe)))
+;	      (string-append "\tmov rax, qword [rbp + 2*8]\n"
+;	      				 "\tmov rax, qword [rax + "(number->string major) "*8]\n"
+;	      				 "\tmov rax, qword [rax + "(number->string minor) "*8]\n"))))
 ;=========================================================================================================================================
 ;======================================================= FUNCTIONS FOR NUMERATOR EXPRESSION ==============================================
 ;=========================================================================================================================================

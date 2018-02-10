@@ -45,11 +45,13 @@
 
 ;(cdr '(1 2))
 
-(define y 3)
+((lambda (a b c) (if a b c)) #f 2 3)
 
-y
+;(define y 3)
 
-((lambda (x) y) 2)
+;y
+
+;(lambda (x) x)
 
 ;(cdr '(1 . 2))
 
