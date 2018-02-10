@@ -25,29 +25,28 @@
 
 ;(number? a)
 
-(pair? '(1 2))
+;(pair? '(1 2))
 
-(integer? "-6")
+;(integer? "-6")
 
-;;10
+;;;10
 
-(boolean? 3)
+;(boolean? 3)
 
-(number? 3)
+;(number? 3)
 
-(number? '())
+;(number? '())
 
-(number? 2/4)
+;(number? 2/4)
 
-(char? #\a)
+;(char? #\a)
 
-(char? a)
+;(char? a)
 
-(cdr '(1 2))
+;(cdr '(1 2))
 
 
-
-;((lambda (x) 1)3)
+((lambda (x) 1)3)
 
 ;(cdr '(1 . 2))
 

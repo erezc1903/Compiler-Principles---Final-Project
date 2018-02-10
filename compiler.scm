@@ -36,10 +36,10 @@
 	  	;(display "const-table in code-gen: ") (display const-table) (newline)
 	  	;(display "pe in code-gen: ") (display pe) (newline) (newline)
 	      (string-append  
-	      	(cond ((tagged-by? pe 'const) (string-append "\tmov rax, qword [" (find-const-in-pairs (cadr pe) const-table) "]\n"))
+	      	(cond ((tagged-by? pe 'const) (string-append "\t; codegen for const start\n\tmov rax, qword [" (find-const-in-pairs (cadr pe) const-table) "]\n\t;code gen for constant end\n"))
 			       ((tagged-by? pe 'if3) (handle_if pe depth const-table global-env))
 			       ((tagged-by? pe 'seq) (handle_seq pe depth const-table global-env))
-			       ((tagged-by? pe 'or) (handle_or (cadr pe) (make-end-label-for-or) depth const-table global-env))
+			       ((tagged-by? pe 'or) (handle_or (cadr pe) depth (make-end-label-for-or) const-table global-env))
 			       ((tagged-by? pe 'def) (handle_define (cdr pe) depth const-table global-env))
 			       ((tagged-by? pe 'applic) (handle_applic pe depth const-table global-env))
 			       ((tagged-by? pe 'lambda-simple) (handle_lambda_simple (cadr pe) (caddr pe) depth const-table global-env))
@@ -84,7 +84,7 @@
 
 			;(fprintf out-port "globel_env:\n\n")
 
-			(fprintf out-port  (init-primitives primitive-procedures global-env-as-pairs))
+			;(fprintf out-port  (init-primitives primitive-procedures global-env-as-pairs))
 
 			(fprintf out-port (create_global_env_for_assembly global-env-as-pairs))
 
@@ -97,7 +97,7 @@
 			(fprintf out-port "main:\n\n")
 
 			(fprintf out-port "; =============================== PRIMITIVE FUNCTIONS =========================\n")
-			(fprintf out-port (creat-primitive-procedures global-env-as-pairs))
+			;(fprintf out-port (creat-primitive-procedures global-env-as-pairs))
 			(fprintf out-port "; =============================== PRIMITIVE FUNCTIONS =========================\n")
 
 			(fprintf out-port "\tpush rbp\n") 
@@ -174,10 +174,10 @@
 						  														"\tmov rax, SOB_VOID\n"
 						  														done-closure-label ":\n\n"
 						  														"\tadd rsp, 8*" (number->string (+ 1 (length args))) "\n\n"))
-					  ((equal? (car app) 'lambda-simple) (string-append (push-args (reverse args) (length args) (+ depth 1) const-table global-env)
+					  ((equal? (car app) 'lambda-simple) (string-append "; start of applic of lambda-simple code: \n\n"
+					  													(push-args (reverse args) (length args) (+ depth 1) const-table global-env)
 					  													"\tpush " (number->string (length (cadr app))) "\n"
 					  													(code-gen app depth const-table global-env)
-					  								;; need to check that rax really hold a closure
 					  													"\tmov rcx, rax\n"
 					  													"\tTYPE rcx\n"
 					  													"\tcmp rcx, T_CLOSURE\n"
@@ -187,13 +187,17 @@
 						  												"\tpush rbx\n"
 						  												"\tCLOSURE_CODE rax\n"
 						  												"\tcall rax\n"
+						  												"\tadd rsp, 8*1\n"
+						  												"\tjmp " done-closure-label "\n"
 						  												not-a-closure-label ":\n\n"
 						  												"\tmov rax, SOB_VOID\n"
 						  												done-closure-label ":\n\n"
-						  												"\tadd rsp, 8*" (number->string (+ 1 (length args))) "\n\n"))
+						  												"\tadd rsp, 8*" (number->string (+ 1 (length args))) "\n\n"
+						  												"; end of applic of lambda-simple code: \n\n"))
 					  ;((equal? app-exp '(fvar >)) (handle_greater_then (length (cdr args)) (cdr args) depth const-table global-env))
 
 					))))
+
 
 
 ; we assume that the arg list comes reversed
@@ -236,13 +240,15 @@
 				  (copy-args-label (make-copy-args-label-for-lambda-simple))
 				  (copy-env-label (make-copy-env-label-for-lambda-simple))
 				  (no-args-label (make-no-args-label-for-lambda-simple))
+				  (done-copy-args (make-done-copying-args-label-for-lambda-simple))
 				  (make-closure-label (make-make-closure-label-for-lambda-simple))
 				  (end-label (make-end-label-for-lambda-simple))
 				  (extended-env
-				  	 (string-append "\txor rax, rax\n"
+				  	 (string-append 
+				  	 			"\txor rax, rax\n"
 				 				"\tmov rdi, " (number->string (* 8 (length params))) "\n"
 				 				"\tcall malloc\n"
-				 				"\tmov rdx, rax" "; rdx hold a pointer to store the args\n"
+				 				"\tmov rdx, rax" "; rdx hold a pointer to store the params\n"
 				 				"after1:\n"
 				 				"\tpush rdx\n"
 				 				"\txor rax, rax\n"
@@ -265,8 +271,8 @@
 				 				"\tje " no-args-label "\n"
 				 				copy-args-label":\n"
 
-				 				"\tcmp rcx, [rbp + 3*8] " "; check if there are arguments in the lambda\n"
-				 				"\tje " no-args-label "\n"
+				 				"\tcmp rcx, [rbp + 3*8] " "; check if we are done copying the args in the lambda\n"
+				 				"\tje " done-copy-args "\n"
 				 				"\tmov r9, qword [rbp + 8*(4 + rcx)]\n"
 				 				"\tmov [rdx + rcx*8], r9\n"
 				 				"\tinc rcx\n"
@@ -274,23 +280,27 @@
 
 				 				no-args-label":\n"
 				 				"\tmov [rdx], 0\n"
+
+								done-copy-args":\n"
 				 				"\tmov [rbx], rdx\n"
 				 				"\tmov r10, 0\n"
 				 				"\tmov r15, 1\n\n"
 
 				 				copy-env-label":\n"
-				 				"\tcmp r9, " (number->string depth) "\n"
+				 				"\tcmp r10, " (number->string depth) "\n"
 				 				"\tje " make-closure-label "\n" 
 				 				"\tmov r12, [rbp + 8*2]\n"
-				 				"\tmov r12, [r12 + 8*r9]\n"
+				 				"\tmov r12, [r12 + 8*r10]\n"
 				 				"\tmov [rbx + 8*r15], r12\n"
 				 				"\tinc r10\n"
 				 				"\tinc r15\n"
 				 				"\tjmp " copy-env-label "\n\n"))
-				  (new-env (if (= depth 0) "\tmov qword [rbx], 0\n\n" extended-env)))
+				  (new-env (if (= depth 0) (string-append "\tmov qword rbx, 0\n"
+				  										  "\tmov rdi, 16\n"
+				 										  "\tcall malloc" "; rax now hold a pointer to the target closure\n") extended-env)))
 
 				  		(string-append 
-
+				  				"; start of creating a closure of lambda-simple \n\n" 
 				  				new-env
 
 				 				make-closure-label":\n\n"
@@ -307,7 +317,9 @@
 								"\tret\n\n"
 
 							end-label":\n"
-							"\tmov rax, [rax]\n\n"))))
+							"\tmov rax, [rax]\n\n"
+
+						"; end of creating a closure of lambda-simple \n\n"))))
 
 
 (define make-body-label-for-lambda-simple
@@ -346,6 +358,12 @@
 			(lambda ()
 				(set! num (+ num 1))
 				(string-append "endLabel" (number->string num)))))
+
+(define make-done-copying-args-label-for-lambda-simple
+	(let ((num 100))
+			(lambda ()
+				(set! num (+ num 1))
+				(string-append "done_copy_args" (number->string num)))))
 ;=========================================================================================================================================
 ;======================================================= END OF FUNCTIONS FOR LAMBDA SIMPLE EXPRESSION ===================================
 ;=========================================================================================================================================
@@ -1029,7 +1047,7 @@
 ;=========================================================================================================================================
 
 (define handle_seq
-  (lambda (seq-exp const-table global-env)
+  (lambda (seq-exp depth const-table global-env)
     (fold-left (lambda (res exp) (string-append res (code-gen exp depth const-table global-env))) "" (cadr seq-exp))
     ))
 
@@ -1046,14 +1064,14 @@
 
 
 (define handle_or
-		(lambda (or-exp end-label const-table global-env)	
+		(lambda (or-exp depth end-label const-table global-env)	
 				(if (null? or-exp) 
 					(string-append end-label ":\n\n")
 					(string-append 
 						(code-gen (car or-exp) depth const-table global-env)
 						"\tcmp rax, SOB_FALSE\n" 
 						"\tjne " end-label "\n"
-						(handle_or (cdr or-exp) end-label const-table global-env)))))
+						(handle_or (cdr or-exp) depth end-label const-table global-env)))))
 
 (define make-end-label-for-or
 	(let ((num 100))
@@ -1072,7 +1090,7 @@
 ;=========================================================================================================================================
 
 (define handle_if
-		(lambda (if-exp const-table global-env)
+		(lambda (if-exp depth const-table global-env)
 			;(display "if-exp in handle_if: ") (display if-exp) (newline) 
 			;(display "cadr if-exp in handle_if: ") (display (code-gen (cadr if-exp) const-table)) (newline)
 			;(display "caddr if-exp in handle_if: ") (display (code-gen (caddr if-exp) const-table)) (newline)
