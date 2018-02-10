@@ -34,7 +34,7 @@
 (define code-gen
 	  (lambda (pe depth const-table global-env)
 	  	;(display "const-table in code-gen: ") (display const-table) (newline)
-	  	;(display "pe in code-gen: ") (display pe) (newline) (newline)
+	  	(display "pe in code-gen: ") (display pe) (newline) (newline)
 	      (string-append  
 	      	(cond ((tagged-by? pe 'const) (string-append "\t; codegen for const start\n\tmov rax, qword [" (find-const-in-pairs (cadr pe) const-table) "]\n\t;code gen for constant end\n"))
 			       ((tagged-by? pe 'if3) (handle_if pe depth const-table global-env))
@@ -47,7 +47,7 @@
 			       ;((tagged-by? pe 'lambda-opt) (handle_lambda_opt pe))
 			       ;((tagged-by? pe 'pvar) (handle_pvar_get pe))
 			       ;((tagged-by? pe 'bvar) (handle_bvar_get pe))
-			       ;((tagged-by? pe 'fvar) (handle_fvar_get pe))
+			       ((tagged-by? pe 'fvar) (handle_fvar (cadr pe) depth const-table global-env))
 			       ;((tagged-by? pe 'set) (cond ((tagged-by? (cadr pe) 'pvar) (handle_pvar_set pe))
 							   ;((tagged-by? (cadr pe) 'bvar) (handle_bvar_set pe))
 							   ;((tagged-by? (cadr pe) 'fvar) (handle_fvar_set pe))))
@@ -71,8 +71,8 @@
 			  (global-env-as-pairs (map pairs_of_label_and_name global-env)))
 			  ;(symbol-table (symbol_table input))
 
-			;(display "global-env-as-pairs: ") (display global-env-as-pairs) (newline) (newline)
-			;(display "input: ") (display input) (newline) (newline)
+			(display "global-env-as-pairs: ") (display global-env-as-pairs) (newline) (newline)
+			(display "input: ") (display input) (newline) (newline)
 			;(display "const-table-as-list-of-pairs: ") (display const-table-as-list-of-pairs) (newline) (newline)
 
 
@@ -175,7 +175,7 @@
 						  														done-closure-label ":\n\n"
 						  														"\tadd rsp, 8*" (number->string (+ 1 (length args))) "\n\n"))
 					  ((equal? (car app) 'lambda-simple) (string-append "; start of applic of lambda-simple code: \n\n"
-					  													(push-args (reverse args) (length args) (+ depth 1) const-table global-env)
+					  													(push-args (reverse args) (length args) depth const-table global-env)
 					  													"\tpush " (number->string (length (cadr app))) "\n"
 					  													(code-gen app depth const-table global-env)
 					  													"\tmov rcx, rax\n"
@@ -279,7 +279,7 @@
 				 				"\tjmp " copy-args-label "\n\n"
 
 				 				no-args-label":\n"
-				 				"\tmov [rdx], 0\n"
+				 				"\tmov qword [rdx], 0\n"
 
 								done-copy-args":\n"
 				 				"\tmov [rbx], rdx\n"
@@ -295,12 +295,12 @@
 				 				"\tinc r10\n"
 				 				"\tinc r15\n"
 				 				"\tjmp " copy-env-label "\n\n"))
-				  (new-env (if (= depth 0) (string-append "\tmov qword rbx, 0\n"
+				  (new-env (if (= depth 0) (string-append "\tmov rbx, 0\n"
 				  										  "\tmov rdi, 16\n"
 				 										  "\tcall malloc" "; rax now hold a pointer to the target closure\n") extended-env)))
 
 				  		(string-append 
-				  				"; start of creating a closure of lambda-simple \n\n" 
+				  				"; start of creating a closure of lambda-simple " (number->string depth) "\n\n" 
 				  				new-env
 
 				 				make-closure-label":\n\n"
@@ -319,7 +319,7 @@
 							end-label":\n"
 							"\tmov rax, [rax]\n\n"
 
-						"; end of creating a closure of lambda-simple \n\n"))))
+						"; end of creating a closure of lambda-simple " (number->string depth) "\n\n"))))
 
 
 (define make-body-label-for-lambda-simple
@@ -412,7 +412,9 @@
 ;======================================================= END OF FUNCTIONS FOR GREATER-THEN EXPRESSION ====================================
 ;=========================================================================================================================================
 
-
+(define handle_fvar
+		(lambda (var depth const-table global-env)
+			(string-append  "\tmov rax, [" (find-var-in-global-env var global-env) "]\n")))
 
 
 ;=========================================================================================================================================
@@ -1028,7 +1030,10 @@
 
 (define handle_define
 	(lambda (def-exp depth const-table global-env)
+		(display "def-exp handle_define: ") (display def-exp) (newline)
+		;(display "global-env handle_define: ") (display global-env) (newline) 
 		(let ((free-var (find-var-in-global-env (cadar def-exp) global-env)))
+			(display "free-var handle_define: ") (display free-var) (newline)
 				(string-append 
 					(code-gen (cadr def-exp) depth const-table global-env)
 					"\tmov rbx, " free-var "\n" 
@@ -1290,12 +1295,16 @@
 
 (define create_global_env_for_assembly
 		(lambda (global-env-table-as-pairs)
-			(if (or (null? global-env-table-as-pairs) (in-primitive-procedures? (cadar global-env-table-as-pairs)))
-				""
-				(string-append (caar global-env-table-as-pairs) ":\n" "\tdq SOB_UNDEFINED\n\n" (create_global_env_for_assembly (cdr global-env-table-as-pairs))))))
+			;(display "create_global_env_for_assembly: ") (display (cadar global-env-table-as-pairs)) (newline) (newline)
+			(cond  ((null? global-env-table-as-pairs) "") 
+				   ((in-primitive-procedures? (cadar global-env-table-as-pairs)) (create_global_env_for_assembly (cdr global-env-table-as-pairs)))
+				   (else (string-append (caar global-env-table-as-pairs) ":\n" "\tdq SOB_UNDEFINED\n\n" (create_global_env_for_assembly (cdr global-env-table-as-pairs)))))))
 
 (define find-var-in-global-env
 	(lambda (var global-env)
+		;(display "var find-var-in-global-env: ") (display var) (newline)
+		;(display "global-env find-var-in-global-env: ") (display global-env) (newline) 
+		;(display "cadar global-env find-var-in-global-env: ") (display (string? (cadar global-env))) (newline)(newline)
 		(if (equal? var (cadar global-env))
 			(caar global-env)
 			(find-var-in-global-env var (cdr global-env)))))

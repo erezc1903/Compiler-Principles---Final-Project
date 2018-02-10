@@ -21,7 +21,7 @@
 
 ;-3/6
 
-;(number? -1/2)
+;(+ x (((lambda (y) (lambda (z) 5))3)10))
 
 ;(number? a)
 
@@ -45,8 +45,11 @@
 
 ;(cdr '(1 2))
 
+(define y 3)
 
-((lambda (x) 1)3)
+y
+
+((lambda (x) y) 2)
 
 ;(cdr '(1 . 2))
 
