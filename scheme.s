@@ -49,6 +49,22 @@
 
 %define MAKE_LITERAL_FRACTION(num, den) (((((num - start_of_data) << ((WORD_SIZE - TYPE_BITS) >> 1)) | (den - start_of_data)) << TYPE_BITS) | T_FRACTION)
 
+;;; MAKE_MALLOC_LITERAL_PAIR target-address, car-address, cdr-address
+%macro MAKE_MALLOC_LITERAL_PAIR 3
+	push rax 
+	push rbx 
+	mov rax, %1 
+	mov qword [rax], %2
+	sub qword [rax], start_of_data
+	shl qword [rax], ((WORD_SIZE - TYPE_BITS) >> 1) 
+	mov rbx, %3 
+	sub rbx, start_of_data
+	or qword [rax], rbx 
+	shl qword [rax], TYPE_BITS 
+	or qword [rax], T_PAIR 
+	pop rbx 
+	pop rax 
+%endmacro
 
 %macro CAR 1
 	DATA_UPPER %1
