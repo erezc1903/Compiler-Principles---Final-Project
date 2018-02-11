@@ -79,7 +79,7 @@
 
 ;(define x 33)
 
-(integer->char -10)
+(char->integer #\3)
 
 ;(char? x)
 

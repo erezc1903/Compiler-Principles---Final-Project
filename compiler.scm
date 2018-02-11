@@ -142,6 +142,7 @@
 				(handle_numerator global-env-as-pairs)
 				(handle_denominator global-env-as-pairs)
 				(handle_integer->char global-env-as-pairs)
+				(handle_char->integer global-env-as-pairs)
 				 "")))
 
 
@@ -447,7 +448,50 @@
 
 
 ;=========================================================================================================================================
-;======================================================= FUNCTIONS FOR NUMERATOR EXPRESSION ==============================================
+;======================================================= FUNCTIONS FOR CHAR->INTEGER EXPRESSION ==========================================
+;=========================================================================================================================================
+
+(define handle_char->integer
+		(lambda (global-env) 
+
+			(string-append (applic-prolog "char_to_integer_code" "end_char_to_integer_code")
+
+				"char_to_integer_code:\n"
+				"\tpush rbp\n"
+				"\tmov rbp, rsp\n"
+				"\tmov rax, qword [rbp + 8*3]\n"
+				"\tcmp rax, 1\n"
+				"\tjne badArgCountForCharToInteger\n"
+				"\tmov rax, qword [rbp + 8*4]\n"
+				"\tmov rbx, rax\n"
+				"\tTYPE rbx\n"
+				"\tcmp rbx, T_CHAR\n"
+				"\tjne badInputForCharToInteger\n ; not of type char - can't convert\n"
+				"\txor rax, (T_INTEGER ^ T_CHAR)\n"
+				"\tjmp doneCharToInteger\n\n"
+				"badInputForCharToInteger:\n\n"
+				"\tmov rax, SOB_VOID\n"
+				"\tjmp doneCharToInteger\n"
+				"badArgCountForCharToInteger:\n\n"
+				"\tmov rax, SOB_VOID\n"
+				"doneCharToInteger:\n"
+				"\tmov rsp, rbp\n" 
+				"\tpop rbp\n"
+				"\tret\n\n"
+
+				"end_char_to_integer_code:\n"
+				"\tmov rax, [rax]\n"
+				"\tmov qword [charToInteger], rax\n\n")))
+
+;=========================================================================================================================================
+;======================================================= END OF FUNCTIONS FOR CHAR->INTEGER EXPRESSION ===================================
+;=========================================================================================================================================
+
+
+
+
+;=========================================================================================================================================
+;======================================================= FUNCTIONS FOR INTEGER->CHAR EXPRESSION ==========================================
 ;=========================================================================================================================================
 
 (define handle_integer->char
@@ -460,26 +504,26 @@
 				"\tmov rbp, rsp\n"
 				"\tmov rax, qword [rbp + 8*3]\n"
 				"\tcmp rax, 1\n"
-				"\tjne badArgCount\n"
+				"\tjne badArgCountForIntegerToChar\n"
 				"\tmov rax, qword [rbp + 8*4]\n"
 				"\tmov rbx, rax\n"
 				"\tTYPE rbx\n"
 				"\tcmp rbx, T_INTEGER\n"
-				"\tjne badInput\n ; not of type integer - can't convert\n"
+				"\tjne badInputForIntegerToChar\n ; not of type integer - can't convert\n"
 				"\tmov rbx, rax\n"
 				"\tDATA rbx\n"
 				"\tcmp rbx, 0\n"
-				"\tjl badInput\n ; negative integer - can't convert to char because it doesn't have an ascii representation of type integer - can't convert\n"
+				"\tjl badInputForIntegerToChar\n ; negative integer - can't convert to char because it doesn't have an ascii representation of type integer - can't convert\n"
 				"\tmov rbx, rax\n"
 				"\tDATA rbx\n"
 				"\tcmp rbx, 256\n"
-				"\tjge badInput\n ; integer to large - can't convert to char because it doesn't have an ascii representation of type integer - can't convert\n"
+				"\tjge badInputForIntegerToChar\n ; integer to large - can't convert to char because it doesn't have an ascii representation of type integer - can't convert\n"
 				"\txor rax, (T_CHAR ^ T_INTEGER)\n"
 				"\tjmp doneIntegerToChar\n\n"
-				"badInput:\n\n"
+				"badInputForIntegerToChar:\n\n"
 				"\tmov rax, SOB_VOID\n"
 				"\tjmp doneIntegerToChar\n"
-				"badArgCount:\n\n"
+				"badArgCountForIntegerToChar:\n\n"
 				"\tmov rax, SOB_VOID\n"
 				"doneIntegerToChar:\n"
 				"\tmov rsp, rbp\n" 
@@ -491,7 +535,7 @@
 				"\tmov qword [integerToChar], rax\n\n")))
 
 ;=========================================================================================================================================
-;======================================================= END OF FUNCTIONS FOR NUMERATOR EXPRESSION =======================================
+;======================================================= END OF FUNCTIONS FOR INTEGER->CHAR EXPRESSION ===================================
 ;=========================================================================================================================================
 
 

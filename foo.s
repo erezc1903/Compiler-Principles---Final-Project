@@ -142,8 +142,11 @@ vector?:
 zero?:
 	dq SOB_UNDEFINED
 
-sobNegInt10:
-	dq MAKE_LITERAL (T_INTEGER, -10)
+sobChar0:
+	dq MAKE_LITERAL(T_CHAR, 51)
+
+sobInt3:
+	dq MAKE_LITERAL (T_INTEGER, 3)
 
 
 
@@ -640,31 +643,31 @@ integer_to_char_code:
 	mov rbp, rsp
 	mov rax, qword [rbp + 8*3]
 	cmp rax, 1
-	jne badArgCount
+	jne badArgCountForIntegerToChar
 	mov rax, qword [rbp + 8*4]
 	mov rbx, rax
 	TYPE rbx
 	cmp rbx, T_INTEGER
-	jne badInput
+	jne badInputForIntegerToChar
  ; not of type integer - can't convert
 	mov rbx, rax
 	DATA rbx
 	cmp rbx, 0
-	jl badInput
+	jl badInputForIntegerToChar
  ; negative integer - can't convert to char because it doesn't have an ascii representation of type integer - can't convert
 	mov rbx, rax
 	DATA rbx
 	cmp rbx, 256
-	jge badInput
+	jge badInputForIntegerToChar
  ; integer to large - can't convert to char because it doesn't have an ascii representation of type integer - can't convert
 	xor rax, (T_CHAR ^ T_INTEGER)
 	jmp doneIntegerToChar
 
-badInput:
+badInputForIntegerToChar:
 
 	mov rax, SOB_VOID
 	jmp doneIntegerToChar
-badArgCount:
+badArgCountForIntegerToChar:
 
 	mov rax, SOB_VOID
 doneIntegerToChar:
@@ -675,6 +678,44 @@ doneIntegerToChar:
 end_integer_to_char_code:
 	mov rax, [rax]
 	mov qword [integerToChar], rax
+
+	mov rbp, rsp
+	mov rdi, 16
+	call malloc
+	mov rbx, 1
+	MAKE_LITERAL_CLOSURE rax, rbx, char_to_integer_code
+	jmp end_char_to_integer_code
+
+char_to_integer_code:
+	push rbp
+	mov rbp, rsp
+	mov rax, qword [rbp + 8*3]
+	cmp rax, 1
+	jne badArgCountForCharToInteger
+	mov rax, qword [rbp + 8*4]
+	mov rbx, rax
+	TYPE rbx
+	cmp rbx, T_CHAR
+	jne badInputForCharToInteger
+ ; not of type char - can't convert
+	xor rax, (T_INTEGER ^ T_CHAR)
+	jmp doneCharToInteger
+
+badInputForCharToInteger:
+
+	mov rax, SOB_VOID
+	jmp doneCharToInteger
+badArgCountForCharToInteger:
+
+	mov rax, SOB_VOID
+doneCharToInteger:
+	mov rsp, rbp
+	pop rbp
+	ret
+
+end_char_to_integer_code:
+	mov rax, [rax]
+	mov qword [charToInteger], rax
 
 ; =============================== PRIMITIVE FUNCTIONS =========================
 
@@ -687,12 +728,16 @@ start_of_instructions:
 ; start of applic of lambda-simple code: 
 
 	; codegen for const start
-	mov rax, qword [sobNegInt10]
+	mov rax, qword [sobInt3]
+	;code gen for constant end
+	push rax
+	; codegen for const start
+	mov rax, qword [sobChar0]
 	;code gen for constant end
 	push rax
 
-	push 1
-	mov rax, [integerToChar]
+	push 2
+	mov rax, [charToInteger]
 	mov rcx, rax
 	TYPE rcx
 	cmp rcx, T_CLOSURE
@@ -709,7 +754,7 @@ not_a_closure101:
 	mov rax, SOB_VOID
 done_closure101:
 
-	add rsp, 8*2
+	add rsp, 8*3
 
 ; end of applic of lambda-simple code: 
 
