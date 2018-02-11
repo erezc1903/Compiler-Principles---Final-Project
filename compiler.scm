@@ -84,7 +84,7 @@
 
 			;(fprintf out-port "globel_env:\n\n")
 
-			;(fprintf out-port  (init-primitives primitive-procedures global-env-as-pairs))
+			(fprintf out-port  (init-primitives primitive-procedures global-env-as-pairs))
 
 			(fprintf out-port (create_global_env_for_assembly global-env-as-pairs))
 
@@ -97,9 +97,10 @@
 			(fprintf out-port "main:\n\n")
 
 			(fprintf out-port "; =============================== PRIMITIVE FUNCTIONS =========================\n")
-			;(fprintf out-port (creat-primitive-procedures global-env-as-pairs))
+			(fprintf out-port (creat-primitive-procedures global-env-as-pairs))
 			(fprintf out-port "; =============================== PRIMITIVE FUNCTIONS =========================\n")
 
+			(fprintf out-port "\nstart_of_instructions:\n\n")
 			(fprintf out-port "\tpush rbp\n") 
 			(fprintf out-port "\tmov rbp, rsp\n")
 			;(fprintf out-port "\tpush 0\n")
@@ -140,6 +141,7 @@
 				;(handle_cons)
 				(handle_numerator global-env-as-pairs)
 				(handle_denominator global-env-as-pairs)
+				(handle_integer->char global-env-as-pairs)
 				 "")))
 
 
@@ -414,16 +416,21 @@
 ;======================================================= END OF FUNCTIONS FOR GREATER-THEN EXPRESSION ====================================
 ;=========================================================================================================================================
 
+
+;=========================================================================================================================================
+;======================================================= FUNCTIONS FOR FVAR+PVAR+BVAR EXPRESSION =========================================
+;=========================================================================================================================================
+
 (define handle_fvar
 		(lambda (var depth const-table global-env)
 			(string-append  "\tmov rax, [" (find-var-in-global-env var global-env) "]\n")))
-
 
 
 (define handle_pvar
   (lambda (pe)
     (let ((min (caddr pe)))
       (string-append "\tmov rax, qword [rbp + (4+" (number->string min)   ")*8]\n"))))
+
 
 (define handle_bvar
   (lambda (pe)
@@ -432,6 +439,64 @@
 	      (string-append "\tmov rax, qword [rbp + 2*8]\n"
 	      				 "\tmov rax, qword [rax + "(number->string major) "*8]\n"
 	      				 "\tmov rax, qword [rax + "(number->string minor) "*8]\n"))))
+
+
+;=========================================================================================================================================
+;======================================================= END OF FUNCTIONS FOR FVAR+PVAR+BVAR EXPRESSION ==================================
+;=========================================================================================================================================
+
+
+;=========================================================================================================================================
+;======================================================= FUNCTIONS FOR NUMERATOR EXPRESSION ==============================================
+;=========================================================================================================================================
+
+(define handle_integer->char
+		(lambda (global-env) 
+
+			(string-append (applic-prolog "integer_to_char_code" "end_integer_to_char_code")
+
+				"integer_to_char_code:\n"
+				"\tpush rbp\n"
+				"\tmov rbp, rsp\n"
+				"\tmov rax, qword [rbp + 8*3]\n"
+				"\tcmp rax, 1\n"
+				"\tjne badArgCount\n"
+				"\tmov rax, qword [rbp + 8*4]\n"
+				"\tmov rbx, rax\n"
+				"\tTYPE rbx\n"
+				"\tcmp rbx, T_INTEGER\n"
+				"\tjne badInput\n ; not of type integer - can't convert\n"
+				"\tmov rbx, rax\n"
+				"\tDATA rbx\n"
+				"\tcmp rbx, 0\n"
+				"\tjl badInput\n ; negative integer - can't convert to char because it doesn't have an ascii representation of type integer - can't convert\n"
+				"\tmov rbx, rax\n"
+				"\tDATA rbx\n"
+				"\tcmp rbx, 256\n"
+				"\tjge badInput\n ; integer to large - can't convert to char because it doesn't have an ascii representation of type integer - can't convert\n"
+				"\txor rax, (T_CHAR ^ T_INTEGER)\n"
+				"\tjmp doneIntegerToChar\n\n"
+				"badInput:\n\n"
+				"\tmov rax, SOB_VOID\n"
+				"\tjmp doneIntegerToChar\n"
+				"badArgCount:\n\n"
+				"\tmov rax, SOB_VOID\n"
+				"doneIntegerToChar:\n"
+				"\tmov rsp, rbp\n" 
+				"\tpop rbp\n"
+				"\tret\n\n"
+
+				"end_integer_to_char_code:\n"
+				"\tmov rax, [rax]\n"
+				"\tmov qword [integerToChar], rax\n\n")))
+
+;=========================================================================================================================================
+;======================================================= END OF FUNCTIONS FOR NUMERATOR EXPRESSION =======================================
+;=========================================================================================================================================
+
+
+
+
 ;=========================================================================================================================================
 ;======================================================= FUNCTIONS FOR NUMERATOR EXPRESSION ==============================================
 ;=========================================================================================================================================

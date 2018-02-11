@@ -47,7 +47,7 @@
 
 ;(cdr '(1 2))
 
-(((((lambda (x) (lambda (y) (lambda (z) (lambda (w) (or w x y z))))) 1)  2) 3) #t)
+;(((((lambda (x) (lambda (y) (lambda (z) (lambda (w) (or w x y z))))) 1)  2) 3) #t)
 
 ;(((lambda (x) (lambda (y) (or y x))) 3) 4)
 ;(define y 3)
@@ -77,9 +77,11 @@
 
 ;(or #f #f 2 #f)
 
-;(define x 333)
+;(define x 33)
 
-;x
+(integer->char -10)
+
+;(char? x)
 
 ;(if 7 8 9)
 
