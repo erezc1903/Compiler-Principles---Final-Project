@@ -1,4 +1,19 @@
 
+
+;(> 1)
+
+;(< 2)
+
+;(< 3 2 1 4)
+
+;(= 1 2)
+
+;(= 8)
+
+;(= 1 1 1 1)
+
+;(= 2 2 2 3)
+
 ;23
 
 ;"mayer"
@@ -25,29 +40,29 @@
 
 ;(+ x (((lambda (y) (lambda (z) 5))3)10))
 
-(number? a 1)
+;(number? a 1)
 
-(pair? '(1 2) 1)
+;(pair? '(1 2) 1)
 
-(integer? "-6" 1)
+;(integer? "-6" 1)
 
-10
+;10
 
-(boolean? 3 1)
+;(boolean? 3 1)
 
-(number? 3 1)
+;(number? 3 1)
 
-(number? '() 1)
+;(number? '() 1)
 
-(number? 2/4 1)
+;(number? 2/4 1)
 
-(char? #\a 1)
+;(char? #\a 1)
 
-(char? a 1)
+;(char? a 1)
 
-(cdr '(1 2) 1)
+;(cdr '(1 2) 1)
 
-(cons 1 2 1)
+;(cons 1 2 1)
 
 ;(((((lambda (x) (lambda (y) (lambda (z) (lambda (w) (or w x y z))))) 1)  2) 3) #t)
 
@@ -62,7 +77,7 @@
 
 ;(define p '(3 4))
 
-(cons (cons (cons (cons 1 2) 3) 4) 5)
+;(cons (cons (cons (cons 1 2) 3) 4) 5)
 
 ;(cdr '(1 . 2))
 

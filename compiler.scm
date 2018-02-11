@@ -143,6 +143,10 @@
 				(handle_denominator global-env-as-pairs)
 				(handle_integer->char global-env-as-pairs)
 				(handle_char->integer global-env-as-pairs)
+				;(handle_plus global-env-as-pairs)
+				(handle_greater_than global-env-as-pairs)
+				(handle_less_than global-env-as-pairs)
+				(handle_equal global-env-as-pairs)
 				 "")))
 
 
@@ -383,38 +387,233 @@
 						   "\tMAKE_LITERAL_CLOSURE rax, rbx, " app-label "\n"
 						   "\tjmp " end-app-label "\n\n")))
 
-;=========================================================================================================================================
-;======================================================= FUNCTIONS FOR GREATER-THEN EXPRESSION ===========================================
-;=========================================================================================================================================
-
-;(define handle_greater_then
-;		(lambda (n args const-table global-env) 
-;			(string-append "\ngreater_then:\n"
-;				"\tmov rcx, " (number->string n) "\n" "; n- the number of arguments"
-;				(expand-args n args const-table global-env)
-;				"\tmov rbx, rax\n"
-;				"\tTYPE rbx\n"
-;				"\tcmp rbx, T_FRACTION\n"
-;				"\tjne notAFractionForNumerator\n"
-;				"\tNUMERATOR rax\n"
-;				"\tjmp doneNumerator\n\n"
-;				"notAFractionForNumerator:\n"
-;				"\tmov rax, SOB_VOID\n"
-;				"doneNumerator:\n"
-;				"\tmov rsp, rbp\n" "\tpop rbp\n"
-;				"\tret\n\n")))
-
-;(define expand-args
-;		(lambda (n args const-table global-env)
-;			(string-append
-;				(cond ((= n 0) (string-append "\tmov rax, SOB_TRUE\n"
-;											  "doneGreaterThen:\n"
-;										      "\tmov rsp, rbp\n" "\tpop rbp\n"
-;											  "\tret\n\n"))
-;					  ((> n 0) (string-append (code-gen ()))))
 
 ;=========================================================================================================================================
-;======================================================= END OF FUNCTIONS FOR GREATER-THEN EXPRESSION ====================================
+;======================================================= FUNCTIONS FOR EQUAL EXPRESSION ==================================================
+;=========================================================================================================================================
+
+(define handle_equal
+		(lambda (global-env) 
+
+			(string-append (applic-prolog "equal_code" "end_equal_code")
+
+				"equal_code:\n"
+				"\tpush rbp\n"
+				"\tmov rbp, rsp\n"
+				
+				"\tmov rcx, 0 ; rcx is a counter for the number of arguments\n"
+				".checkIfArgsAreNumbers:\n\n"
+				"\tcmp rcx, qword [rbp + 8*3]\n"
+				"\tje .check_equal\n"
+				"\tmov rbx, qword [rbp + 8*(4 + rcx)]\n"
+				"\tTYPE rbx\n"
+				"\tcmp rbx, T_INTEGER\n"
+				"\tje .incCounter\n"
+				"\tcmp rbx, T_FRACTION\n"
+				"\tje .incCounter\n"
+				"\tjmp .badArgs\n"
+				".incCounter:\n\n"
+				"\tinc rcx\n"
+				"\tjmp .checkIfArgsAreNumbers\n"
+
+
+				".check_number_of_args:\n\n"
+				"\tmov rcx, qword [rbp + 8*3]\n"
+				"\tcmp rcx, 1\n"
+				"\tje .doneCheckEQ\n"
+
+				".check_equal:\n\n"
+				"\tmov rcx, 0 ; rcx is a counter for the number of arguments\n"
+				"\tmov r9, qword [rbp + 8*3]\n"
+				"\tdec r9\n"
+
+				".check_equal_loop:\n\n"
+				"\tcmp rcx,r9\n"
+				"\tje .doneCheckEQ\n\n"
+				"\tmov rbx, qword [rbp + 8*(4 + rcx)]\n"
+				"\tDATA rbx\n"
+				"\tmov rdx, qword [rbp + 8*(5 + rcx)]\n"
+				"\tDATA rdx\n"
+				"\tcmp rbx, rdx\n"
+				"\tjne .retFalse\n"
+				"\tinc rcx\n"
+				"\tjmp .check_equal_loop\n"
+
+				".retFalse:\n\n"
+				"\tmov rax, SOB_FALSE\n"
+				"\tjmp .done\n"
+
+				".doneCheckEQ:\n\n"
+				"\tmov rax, SOB_TRUE\n"
+				"\tjmp .done\n"
+
+				".badArgs:\n\n"
+				"\tmov rax, SOB_VOID\n"
+				".done:\n"
+				"\tmov rsp, rbp\n" 
+				"\tpop rbp\n"
+				"\tret\n\n"
+
+				"end_equal_code:\n"
+				"\tmov rax, [rax]\n"
+				"\tmov qword [equal], rax\n\n")))
+
+
+;=========================================================================================================================================
+;======================================================= END OF FUNCTIONS FOR EQUAL EXPRESSION ===========================================
+;=========================================================================================================================================
+
+
+
+
+;=========================================================================================================================================
+;======================================================= FUNCTIONS FOR GREATER-THAN EXPRESSION ===========================================
+;=========================================================================================================================================
+
+(define handle_greater_than
+		(lambda (global-env) 
+
+			(string-append (applic-prolog "greater_than_code" "end_greater_than_code")
+
+				"greater_than_code:\n"
+				"\tpush rbp\n"
+				"\tmov rbp, rsp\n"
+				
+				"\tmov rcx, 0 ; rcx is a counter for the number of arguments\n"
+				".checkIfArgsAreNumbers:\n\n"
+				"\tcmp rcx, qword [rbp + 8*3]\n"
+				"\tje .check_greater_than\n"
+				"\tmov rbx, qword [rbp + 8*(4 + rcx)]\n"
+				"\tTYPE rbx\n"
+				"\tcmp rbx, T_INTEGER\n"
+				"\tje .incCounter\n"
+				"\tcmp rbx, T_FRACTION\n"
+				"\tje .incCounter\n"
+				"\tjmp .badArgs\n"
+				".incCounter:\n\n"
+				"\tinc rcx\n"
+				"\tjmp .checkIfArgsAreNumbers\n"
+
+
+				".check_number_of_args:\n\n"
+				"\tmov rcx, qword [rbp + 8*3]\n"
+				"\tcmp rcx, 1\n"
+				"\tje .doneCheckGT\n"
+
+				".check_greater_than:\n\n"
+				"\tmov rcx, 0 ; rcx is a counter for the number of arguments\n"
+				"\tmov r9, qword [rbp + 8*3]\n"
+				"\tdec r9\n"
+
+				".check_greater_than_loop:\n\n"
+				"\tcmp rcx,r9\n"
+				"\tje .doneCheckGT\n\n"
+				"\tmov rbx, qword [rbp + 8*(4 + rcx)]\n"
+				"\tDATA rbx\n"
+				"\tmov rdx, qword [rbp + 8*(5 + rcx)]\n"
+				"\tDATA rdx\n"
+				"\tcmp rbx, rdx\n"
+				"\tjle .retFalse\n"
+				"\tinc rcx\n"
+				"\tjmp .check_greater_than_loop\n"
+
+				".retFalse:\n\n"
+				"\tmov rax, SOB_FALSE\n"
+				"\tjmp .done\n"
+
+				".doneCheckGT:\n\n"
+				"\tmov rax, SOB_TRUE\n"
+				"\tjmp .done\n"
+
+				".badArgs:\n\n"
+				"\tmov rax, SOB_VOID\n"
+				".done:\n"
+				"\tmov rsp, rbp\n" 
+				"\tpop rbp\n"
+				"\tret\n\n"
+
+				"end_greater_than_code:\n"
+				"\tmov rax, [rax]\n"
+				"\tmov qword [greaterThan], rax\n\n")))
+
+
+;=========================================================================================================================================
+;======================================================= END OF FUNCTIONS FOR GREATER-THAN EXPRESSION ====================================
+;=========================================================================================================================================
+
+;=========================================================================================================================================
+;======================================================= FUNCTIONS FOR LESS-THAN EXPRESSION ==============================================
+;=========================================================================================================================================
+
+(define handle_less_than
+		(lambda (global-env) 
+
+			(string-append (applic-prolog "less_than_code" "end_less_than_code")
+
+				"less_than_code:\n"
+				"\tpush rbp\n"
+				"\tmov rbp, rsp\n"
+				
+				"\tmov rcx, 0 ; rcx is a counter for the number of arguments\n"
+				".checkIfArgsAreNumbers:\n\n"
+				"\tcmp rcx, qword [rbp + 8*3]\n"
+				"\tje .check_less_than\n"
+				"\tmov rbx, qword [rbp + 8*(4 + rcx)]\n"
+				"\tTYPE rbx\n"
+				"\tcmp rbx, T_INTEGER\n"
+				"\tje .incCounter\n"
+				"\tcmp rbx, T_FRACTION\n"
+				"\tje .incCounter\n"
+				"\tjmp .badArgs\n"
+				".incCounter:\n\n"
+				"\tinc rcx\n"
+				"\tjmp .checkIfArgsAreNumbers\n"
+
+
+				".check_number_of_args:\n\n"
+				"\tmov rcx, qword [rbp + 8*3]\n"
+				"\tcmp rcx, 1\n"
+				"\tje .doneCheckLT\n"
+
+				".check_less_than:\n\n"
+				"\tmov rcx, 0 ; rcx is a counter for the number of arguments\n"
+				"\tmov r9, qword [rbp + 8*3]\n"
+				"\tdec r9\n"
+
+				".check_less_than_loop:\n\n"
+				"\tcmp rcx,r9\n"
+				"\tje .doneCheckLT\n\n"
+				"\tmov rbx, qword [rbp + 8*(4 + rcx)]\n"
+				"\tDATA rbx\n"
+				"\tmov rdx, qword [rbp + 8*(5 + rcx)]\n"
+				"\tDATA rdx\n"
+				"\tcmp rbx, rdx\n"
+				"\tjge .retFalse\n"
+				"\tinc rcx\n"
+				"\tjmp .check_less_than_loop\n"
+
+				".retFalse:\n\n"
+				"\tmov rax, SOB_FALSE\n"
+				"\tjmp .done\n"
+
+				".doneCheckLT:\n\n"
+				"\tmov rax, SOB_TRUE\n"
+				"\tjmp .done\n"
+
+				".badArgs:\n\n"
+				"\tmov rax, SOB_VOID\n"
+				".done:\n"
+				"\tmov rsp, rbp\n" 
+				"\tpop rbp\n"
+				"\tret\n\n"
+
+				"end_less_than_code:\n"
+				"\tmov rax, [rax]\n"
+				"\tmov qword [lessThan], rax\n\n")))
+
+
+;=========================================================================================================================================
+;======================================================= END OF FUNCTIONS FOR LESS-THAN EXPRESSION =======================================
 ;=========================================================================================================================================
 
 
@@ -445,6 +644,72 @@
 ;=========================================================================================================================================
 ;======================================================= END OF FUNCTIONS FOR FVAR+PVAR+BVAR EXPRESSION ==================================
 ;=========================================================================================================================================
+
+
+;=========================================================================================================================================
+;======================================================= FUNCTIONS FOR PLUS EXPRESSION ===================================================
+;=========================================================================================================================================
+
+(define handle_plus
+		(lambda (global-env) 
+
+			(string-append (applic-prolog "plus_code" "end_plus_code")
+
+				"plus_code:\n"
+				"\tpush rbp\n"
+				"\tmov rbp, rsp\n"
+				
+				"\tmov rcx, 0 ; rcx is a counter for the number of arguments\n"
+				".checkIfArgsAreNumbers:\n\n"
+				"\tcmp rcx, qword [rbp + 8*3]\n"
+				"\tje .make_addition\n"
+				"\tmov rbx, qword [rbp + 8*(4 + rcx)]\n"
+				"\tTYPE rbx\n"
+				"\tcmp rbx, T_INTEGER\n"
+				"\tje .incCounter\n"
+				"\tcmp rbx, T_FRACTION\n"
+				"\tje .incCounter\n"
+				"\tjmp .badArgs\n"
+				".incCounter:\n\n"
+				"\tinc rcx\n"
+				"\tjmp .checkIfArgsAreNumbers\n"
+
+
+				".make_addition:\n\n"
+				"\tmov rcx, 0 ; rcx is a counter for the number of arguments\n"
+				"\tmov rdx, 0 ; rdx is the accumulator \n"
+
+				".addition_loop:\n\n"
+				"\tcmp rcx, qword [rbp + 8*3]\n"
+				"\tje .doneAddition\n\n"
+				"\tmov rbx, qword [rbp + 8*(4 + rcx)]\n"
+				"\tDATA rbx\n"
+				"\tadd rdx, rbx\n"
+				"\tinc rcx\n"
+				"\tjmp .addition_loop\n"
+
+				".doneAddition:\n\n"
+				"\tmov rax, MAKE_LITERAL(T_INTEGER, rdx)\n"
+				"\tjmp .done\n"
+
+				".badArgs:\n\n"
+				"\tmov rax, SOB_VOID\n"
+				".done:\n"
+				"\tmov rsp, rbp\n" 
+				"\tpop rbp\n"
+				"\tret\n\n"
+
+				"end_plus_code:\n"
+				"\tmov rax, [rax]\n"
+				"\tmov qword [plus], rax\n\n")))
+
+
+
+;=========================================================================================================================================
+;======================================================= END OF FUNCTIONS FOR PLUS EXPRESSION ============================================
+;=========================================================================================================================================
+
+
 
 
 ;=========================================================================================================================================
@@ -1538,8 +1803,8 @@
 (define pairs_of_label_and_name
 	(lambda (fvar)
 		(let ((name (symbol->string fvar)))
-			(cond ((equal? "<" name) (list "greaterThen" fvar))
-				  ((equal? ">" name) (list "lessThen" fvar))
+			(cond ((equal? ">" name) (list "greaterThan" fvar))
+				  ((equal? "<" name) (list "lessThan" fvar))
 				  ((equal? "=" name) (list "equal" fvar))
 				  ((equal? "+" name) (list "plus" fvar))
 				  ((equal? "/" name) (list "divide" fvar))

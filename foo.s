@@ -10,13 +10,13 @@ append:
 apply:
 	dq SOB_UNDEFINED
 
-greaterThen:
+lessThan:
 	dq SOB_UNDEFINED
 
 equal:
 	dq SOB_UNDEFINED
 
-lessThen:
+greaterThan:
 	dq SOB_UNDEFINED
 
 plus:
@@ -142,29 +142,14 @@ vector?:
 zero?:
 	dq SOB_UNDEFINED
 
-a:
-	dq SOB_UNDEFINED
+sobInt8:
+	dq MAKE_LITERAL (T_INTEGER, 8)
 
-sobString10:
-	MAKE_LITERAL_STRING "-6"
+sobInt3:
+	dq MAKE_LITERAL (T_INTEGER, 3)
 
 sobInt10:
 	dq MAKE_LITERAL (T_INTEGER, 10)
-
-sobFrac1_2:
-	dq MAKE_LITERAL_FRACTION (sobInt1, sobInt2)
-
-sobChar9:
-	dq MAKE_LITERAL(T_CHAR, 97)
-
-sobPair6:
-	dq MAKE_LITERAL_PAIR (sobInt2, sobNil)
-
-sobNil:
-	dq SOB_NIL
-
-sobPair4:
-	dq MAKE_LITERAL_PAIR (sobInt1, sobPair6)
 
 sobInt1:
 	dq MAKE_LITERAL (T_INTEGER, 1)
@@ -172,14 +157,8 @@ sobInt1:
 sobInt2:
 	dq MAKE_LITERAL (T_INTEGER, 2)
 
-sobInt3:
-	dq MAKE_LITERAL (T_INTEGER, 3)
-
-sobInt4:
-	dq MAKE_LITERAL (T_INTEGER, 4)
-
-sobInt5:
-	dq MAKE_LITERAL (T_INTEGER, 5)
+sobPair1:
+	dq MAKE_LITERAL_PAIR (sobInt1, sobInt2)
 
 
 
@@ -882,6 +861,213 @@ end_char_to_integer_code:
 	mov rax, [rax]
 	mov qword [charToInteger], rax
 
+	mov rbp, rsp
+	mov rdi, 16
+	call malloc
+	mov rbx, 1
+	MAKE_LITERAL_CLOSURE rax, rbx, greater_than_code
+	jmp end_greater_than_code
+
+greater_than_code:
+	push rbp
+	mov rbp, rsp
+	mov rcx, 0 ; rcx is a counter for the number of arguments
+.checkIfArgsAreNumbers:
+
+	cmp rcx, qword [rbp + 8*3]
+	je .check_greater_than
+	mov rbx, qword [rbp + 8*(4 + rcx)]
+	TYPE rbx
+	cmp rbx, T_INTEGER
+	je .incCounter
+	cmp rbx, T_FRACTION
+	je .incCounter
+	jmp .badArgs
+.incCounter:
+
+	inc rcx
+	jmp .checkIfArgsAreNumbers
+.check_number_of_args:
+
+	mov rcx, qword [rbp + 8*3]
+	cmp rcx, 1
+	je .doneCheckGT
+.check_greater_than:
+
+	mov rcx, 0 ; rcx is a counter for the number of arguments
+	mov r9, qword [rbp + 8*3]
+	dec r9
+.check_greater_than_loop:
+
+	cmp rcx,r9
+	je .doneCheckGT
+
+	mov rbx, qword [rbp + 8*(4 + rcx)]
+	DATA rbx
+	mov rdx, qword [rbp + 8*(5 + rcx)]
+	DATA rdx
+	cmp rbx, rdx
+	jle .retFalse
+	inc rcx
+	jmp .check_greater_than_loop
+.retFalse:
+
+	mov rax, SOB_FALSE
+	jmp .done
+.doneCheckGT:
+
+	mov rax, SOB_TRUE
+	jmp .done
+.badArgs:
+
+	mov rax, SOB_VOID
+.done:
+	mov rsp, rbp
+	pop rbp
+	ret
+
+end_greater_than_code:
+	mov rax, [rax]
+	mov qword [greaterThan], rax
+
+	mov rbp, rsp
+	mov rdi, 16
+	call malloc
+	mov rbx, 1
+	MAKE_LITERAL_CLOSURE rax, rbx, less_than_code
+	jmp end_less_than_code
+
+less_than_code:
+	push rbp
+	mov rbp, rsp
+	mov rcx, 0 ; rcx is a counter for the number of arguments
+.checkIfArgsAreNumbers:
+
+	cmp rcx, qword [rbp + 8*3]
+	je .check_less_than
+	mov rbx, qword [rbp + 8*(4 + rcx)]
+	TYPE rbx
+	cmp rbx, T_INTEGER
+	je .incCounter
+	cmp rbx, T_FRACTION
+	je .incCounter
+	jmp .badArgs
+.incCounter:
+
+	inc rcx
+	jmp .checkIfArgsAreNumbers
+.check_number_of_args:
+
+	mov rcx, qword [rbp + 8*3]
+	cmp rcx, 1
+	je .doneCheckLT
+.check_less_than:
+
+	mov rcx, 0 ; rcx is a counter for the number of arguments
+	mov r9, qword [rbp + 8*3]
+	dec r9
+.check_less_than_loop:
+
+	cmp rcx,r9
+	je .doneCheckLT
+
+	mov rbx, qword [rbp + 8*(4 + rcx)]
+	DATA rbx
+	mov rdx, qword [rbp + 8*(5 + rcx)]
+	DATA rdx
+	cmp rbx, rdx
+	jge .retFalse
+	inc rcx
+	jmp .check_less_than_loop
+.retFalse:
+
+	mov rax, SOB_FALSE
+	jmp .done
+.doneCheckLT:
+
+	mov rax, SOB_TRUE
+	jmp .done
+.badArgs:
+
+	mov rax, SOB_VOID
+.done:
+	mov rsp, rbp
+	pop rbp
+	ret
+
+end_less_than_code:
+	mov rax, [rax]
+	mov qword [lessThan], rax
+
+	mov rbp, rsp
+	mov rdi, 16
+	call malloc
+	mov rbx, 1
+	MAKE_LITERAL_CLOSURE rax, rbx, equal_code
+	jmp end_equal_code
+
+equal_code:
+	push rbp
+	mov rbp, rsp
+	mov rcx, 0 ; rcx is a counter for the number of arguments
+.checkIfArgsAreNumbers:
+
+	cmp rcx, qword [rbp + 8*3]
+	je .check_equal
+	mov rbx, qword [rbp + 8*(4 + rcx)]
+	TYPE rbx
+	cmp rbx, T_INTEGER
+	je .incCounter
+	cmp rbx, T_FRACTION
+	je .incCounter
+	jmp .badArgs
+.incCounter:
+
+	inc rcx
+	jmp .checkIfArgsAreNumbers
+.check_number_of_args:
+
+	mov rcx, qword [rbp + 8*3]
+	cmp rcx, 1
+	je .doneCheckEQ
+.check_equal:
+
+	mov rcx, 0 ; rcx is a counter for the number of arguments
+	mov r9, qword [rbp + 8*3]
+	dec r9
+.check_equal_loop:
+
+	cmp rcx,r9
+	je .doneCheckEQ
+
+	mov rbx, qword [rbp + 8*(4 + rcx)]
+	DATA rbx
+	mov rdx, qword [rbp + 8*(5 + rcx)]
+	DATA rdx
+	cmp rbx, rdx
+	jne .retFalse
+	inc rcx
+	jmp .check_equal_loop
+.retFalse:
+
+	mov rax, SOB_FALSE
+	jmp .done
+.doneCheckEQ:
+
+	mov rax, SOB_TRUE
+	jmp .done
+.badArgs:
+
+	mov rax, SOB_VOID
+.done:
+	mov rsp, rbp
+	pop rbp
+	ret
+
+end_equal_code:
+	mov rax, [rax]
+	mov qword [equal], rax
+
 ; =============================== PRIMITIVE FUNCTIONS =========================
 
 start_of_instructions:
@@ -893,14 +1079,16 @@ start_of_instructions:
 ; start of applic of lambda-simple code: 
 
 	; codegen for const start
+	mov rax, qword [sobInt2]
+	;code gen for constant end
+	push rax
+	; codegen for const start
 	mov rax, qword [sobInt1]
 	;code gen for constant end
 	push rax
-	mov rax, [a]
-	push rax
 
 	push 2
-	mov rax, [number?]
+	mov rax, [equal]
 	mov rcx, rax
 	TYPE rcx
 	cmp rcx, T_CLOSURE
@@ -931,16 +1119,12 @@ done_closure101:
 ; start of applic of lambda-simple code: 
 
 	; codegen for const start
-	mov rax, qword [sobInt1]
-	;code gen for constant end
-	push rax
-	; codegen for const start
-	mov rax, qword [sobPair4]
+	mov rax, qword [sobInt8]
 	;code gen for constant end
 	push rax
 
-	push 2
-	mov rax, [pair?]
+	push 1
+	mov rax, [equal]
 	mov rcx, rax
 	TYPE rcx
 	cmp rcx, T_CLOSURE
@@ -957,7 +1141,7 @@ not_a_closure102:
 	mov rax, SOB_VOID
 done_closure102:
 
-	add rsp, 8*3
+	add rsp, 8*2
 
 ; end of applic of lambda-simple code: 
 
@@ -975,12 +1159,20 @@ done_closure102:
 	;code gen for constant end
 	push rax
 	; codegen for const start
-	mov rax, qword [sobString10]
+	mov rax, qword [sobInt1]
+	;code gen for constant end
+	push rax
+	; codegen for const start
+	mov rax, qword [sobInt1]
+	;code gen for constant end
+	push rax
+	; codegen for const start
+	mov rax, qword [sobInt1]
 	;code gen for constant end
 	push rax
 
-	push 2
-	mov rax, [integer?]
+	push 4
+	mov rax, [equal]
 	mov rcx, rax
 	TYPE rcx
 	cmp rcx, T_CLOSURE
@@ -997,7 +1189,55 @@ not_a_closure103:
 	mov rax, SOB_VOID
 done_closure103:
 
-	add rsp, 8*3
+	add rsp, 8*5
+
+; end of applic of lambda-simple code: 
+
+	push rax
+	call write_sob_if_not_void
+	add rsp, 8
+
+; end
+
+; start
+; start of applic of lambda-simple code: 
+
+	; codegen for const start
+	mov rax, qword [sobInt3]
+	;code gen for constant end
+	push rax
+	; codegen for const start
+	mov rax, qword [sobInt2]
+	;code gen for constant end
+	push rax
+	; codegen for const start
+	mov rax, qword [sobInt2]
+	;code gen for constant end
+	push rax
+	; codegen for const start
+	mov rax, qword [sobInt2]
+	;code gen for constant end
+	push rax
+
+	push 4
+	mov rax, [equal]
+	mov rcx, rax
+	TYPE rcx
+	cmp rcx, T_CLOSURE
+	jne not_a_closure104
+	mov rbx, rax
+	CLOSURE_ENV rbx
+	push rbx
+	CLOSURE_CODE rax
+	call rax
+	add rsp, 8*1
+	jmp done_closure104
+not_a_closure104:
+
+	mov rax, SOB_VOID
+done_closure104:
+
+	add rsp, 8*5
 
 ; end of applic of lambda-simple code: 
 
@@ -1021,56 +1261,12 @@ done_closure103:
 ; start of applic of lambda-simple code: 
 
 	; codegen for const start
-	mov rax, qword [sobInt1]
-	;code gen for constant end
-	push rax
-	; codegen for const start
-	mov rax, qword [sobInt3]
+	mov rax, qword [sobPair1]
 	;code gen for constant end
 	push rax
 
-	push 2
-	mov rax, [boolean?]
-	mov rcx, rax
-	TYPE rcx
-	cmp rcx, T_CLOSURE
-	jne not_a_closure104
-	mov rbx, rax
-	CLOSURE_ENV rbx
-	push rbx
-	CLOSURE_CODE rax
-	call rax
-	add rsp, 8*1
-	jmp done_closure104
-not_a_closure104:
-
-	mov rax, SOB_VOID
-done_closure104:
-
-	add rsp, 8*3
-
-; end of applic of lambda-simple code: 
-
-	push rax
-	call write_sob_if_not_void
-	add rsp, 8
-
-; end
-
-; start
-; start of applic of lambda-simple code: 
-
-	; codegen for const start
-	mov rax, qword [sobInt1]
-	;code gen for constant end
-	push rax
-	; codegen for const start
-	mov rax, qword [sobInt3]
-	;code gen for constant end
-	push rax
-
-	push 2
-	mov rax, [number?]
+	push 1
+	mov rax, [cdr]
 	mov rcx, rax
 	TYPE rcx
 	cmp rcx, T_CLOSURE
@@ -1087,379 +1283,7 @@ not_a_closure105:
 	mov rax, SOB_VOID
 done_closure105:
 
-	add rsp, 8*3
-
-; end of applic of lambda-simple code: 
-
-	push rax
-	call write_sob_if_not_void
-	add rsp, 8
-
-; end
-
-; start
-; start of applic of lambda-simple code: 
-
-	; codegen for const start
-	mov rax, qword [sobInt1]
-	;code gen for constant end
-	push rax
-	; codegen for const start
-	mov rax, qword [sobNil]
-	;code gen for constant end
-	push rax
-
-	push 2
-	mov rax, [number?]
-	mov rcx, rax
-	TYPE rcx
-	cmp rcx, T_CLOSURE
-	jne not_a_closure106
-	mov rbx, rax
-	CLOSURE_ENV rbx
-	push rbx
-	CLOSURE_CODE rax
-	call rax
-	add rsp, 8*1
-	jmp done_closure106
-not_a_closure106:
-
-	mov rax, SOB_VOID
-done_closure106:
-
-	add rsp, 8*3
-
-; end of applic of lambda-simple code: 
-
-	push rax
-	call write_sob_if_not_void
-	add rsp, 8
-
-; end
-
-; start
-; start of applic of lambda-simple code: 
-
-	; codegen for const start
-	mov rax, qword [sobInt1]
-	;code gen for constant end
-	push rax
-	; codegen for const start
-	mov rax, qword [sobFrac1_2]
-	;code gen for constant end
-	push rax
-
-	push 2
-	mov rax, [number?]
-	mov rcx, rax
-	TYPE rcx
-	cmp rcx, T_CLOSURE
-	jne not_a_closure107
-	mov rbx, rax
-	CLOSURE_ENV rbx
-	push rbx
-	CLOSURE_CODE rax
-	call rax
-	add rsp, 8*1
-	jmp done_closure107
-not_a_closure107:
-
-	mov rax, SOB_VOID
-done_closure107:
-
-	add rsp, 8*3
-
-; end of applic of lambda-simple code: 
-
-	push rax
-	call write_sob_if_not_void
-	add rsp, 8
-
-; end
-
-; start
-; start of applic of lambda-simple code: 
-
-	; codegen for const start
-	mov rax, qword [sobInt1]
-	;code gen for constant end
-	push rax
-	; codegen for const start
-	mov rax, qword [sobChar9]
-	;code gen for constant end
-	push rax
-
-	push 2
-	mov rax, [char?]
-	mov rcx, rax
-	TYPE rcx
-	cmp rcx, T_CLOSURE
-	jne not_a_closure108
-	mov rbx, rax
-	CLOSURE_ENV rbx
-	push rbx
-	CLOSURE_CODE rax
-	call rax
-	add rsp, 8*1
-	jmp done_closure108
-not_a_closure108:
-
-	mov rax, SOB_VOID
-done_closure108:
-
-	add rsp, 8*3
-
-; end of applic of lambda-simple code: 
-
-	push rax
-	call write_sob_if_not_void
-	add rsp, 8
-
-; end
-
-; start
-; start of applic of lambda-simple code: 
-
-	; codegen for const start
-	mov rax, qword [sobInt1]
-	;code gen for constant end
-	push rax
-	mov rax, [a]
-	push rax
-
-	push 2
-	mov rax, [char?]
-	mov rcx, rax
-	TYPE rcx
-	cmp rcx, T_CLOSURE
-	jne not_a_closure109
-	mov rbx, rax
-	CLOSURE_ENV rbx
-	push rbx
-	CLOSURE_CODE rax
-	call rax
-	add rsp, 8*1
-	jmp done_closure109
-not_a_closure109:
-
-	mov rax, SOB_VOID
-done_closure109:
-
-	add rsp, 8*3
-
-; end of applic of lambda-simple code: 
-
-	push rax
-	call write_sob_if_not_void
-	add rsp, 8
-
-; end
-
-; start
-; start of applic of lambda-simple code: 
-
-	; codegen for const start
-	mov rax, qword [sobInt1]
-	;code gen for constant end
-	push rax
-	; codegen for const start
-	mov rax, qword [sobPair4]
-	;code gen for constant end
-	push rax
-
-	push 2
-	mov rax, [cdr]
-	mov rcx, rax
-	TYPE rcx
-	cmp rcx, T_CLOSURE
-	jne not_a_closure110
-	mov rbx, rax
-	CLOSURE_ENV rbx
-	push rbx
-	CLOSURE_CODE rax
-	call rax
-	add rsp, 8*1
-	jmp done_closure110
-not_a_closure110:
-
-	mov rax, SOB_VOID
-done_closure110:
-
-	add rsp, 8*3
-
-; end of applic of lambda-simple code: 
-
-	push rax
-	call write_sob_if_not_void
-	add rsp, 8
-
-; end
-
-; start
-; start of applic of lambda-simple code: 
-
-	; codegen for const start
-	mov rax, qword [sobInt1]
-	;code gen for constant end
-	push rax
-	; codegen for const start
-	mov rax, qword [sobInt2]
-	;code gen for constant end
-	push rax
-	; codegen for const start
-	mov rax, qword [sobInt1]
-	;code gen for constant end
-	push rax
-
-	push 3
-	mov rax, [cons]
-	mov rcx, rax
-	TYPE rcx
-	cmp rcx, T_CLOSURE
-	jne not_a_closure111
-	mov rbx, rax
-	CLOSURE_ENV rbx
-	push rbx
-	CLOSURE_CODE rax
-	call rax
-	add rsp, 8*1
-	jmp done_closure111
-not_a_closure111:
-
-	mov rax, SOB_VOID
-done_closure111:
-
-	add rsp, 8*4
-
-; end of applic of lambda-simple code: 
-
-	push rax
-	call write_sob_if_not_void
-	add rsp, 8
-
-; end
-
-; start
-; start of applic of lambda-simple code: 
-
-	; codegen for const start
-	mov rax, qword [sobInt5]
-	;code gen for constant end
-	push rax
-; start of applic of lambda-simple code: 
-
-	; codegen for const start
-	mov rax, qword [sobInt4]
-	;code gen for constant end
-	push rax
-; start of applic of lambda-simple code: 
-
-	; codegen for const start
-	mov rax, qword [sobInt3]
-	;code gen for constant end
-	push rax
-; start of applic of lambda-simple code: 
-
-	; codegen for const start
-	mov rax, qword [sobInt2]
-	;code gen for constant end
-	push rax
-	; codegen for const start
-	mov rax, qword [sobInt1]
-	;code gen for constant end
-	push rax
-
-	push 2
-	mov rax, [cons]
-	mov rcx, rax
-	TYPE rcx
-	cmp rcx, T_CLOSURE
-	jne not_a_closure115
-	mov rbx, rax
-	CLOSURE_ENV rbx
-	push rbx
-	CLOSURE_CODE rax
-	call rax
-	add rsp, 8*1
-	jmp done_closure115
-not_a_closure115:
-
-	mov rax, SOB_VOID
-done_closure115:
-
-	add rsp, 8*3
-
-; end of applic of lambda-simple code: 
-
-	push rax
-
-	push 2
-	mov rax, [cons]
-	mov rcx, rax
-	TYPE rcx
-	cmp rcx, T_CLOSURE
-	jne not_a_closure114
-	mov rbx, rax
-	CLOSURE_ENV rbx
-	push rbx
-	CLOSURE_CODE rax
-	call rax
-	add rsp, 8*1
-	jmp done_closure114
-not_a_closure114:
-
-	mov rax, SOB_VOID
-done_closure114:
-
-	add rsp, 8*3
-
-; end of applic of lambda-simple code: 
-
-	push rax
-
-	push 2
-	mov rax, [cons]
-	mov rcx, rax
-	TYPE rcx
-	cmp rcx, T_CLOSURE
-	jne not_a_closure113
-	mov rbx, rax
-	CLOSURE_ENV rbx
-	push rbx
-	CLOSURE_CODE rax
-	call rax
-	add rsp, 8*1
-	jmp done_closure113
-not_a_closure113:
-
-	mov rax, SOB_VOID
-done_closure113:
-
-	add rsp, 8*3
-
-; end of applic of lambda-simple code: 
-
-	push rax
-
-	push 2
-	mov rax, [cons]
-	mov rcx, rax
-	TYPE rcx
-	cmp rcx, T_CLOSURE
-	jne not_a_closure112
-	mov rbx, rax
-	CLOSURE_ENV rbx
-	push rbx
-	CLOSURE_CODE rax
-	call rax
-	add rsp, 8*1
-	jmp done_closure112
-not_a_closure112:
-
-	mov rax, SOB_VOID
-done_closure112:
-
-	add rsp, 8*3
+	add rsp, 8*2
 
 ; end of applic of lambda-simple code: 
 
