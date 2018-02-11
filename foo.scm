@@ -1,6 +1,8 @@
 
 ;23
 
+;"mayer"
+
 ;(define x 6)
 
 ;(integer? 15)
@@ -45,8 +47,9 @@
 
 ;(cdr '(1 2))
 
-((lambda (a b c) (if a b c)) #f 2 3)
+(((((lambda (x) (lambda (y) (lambda (z) (lambda (w) (or w x y z))))) 1)  2) 3) #t)
 
+;(((lambda (x) (lambda (y) (or y x))) 3) 4)
 ;(define y 3)
 
 ;y
