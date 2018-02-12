@@ -72,7 +72,7 @@
 			  ;(symbol-table (symbol_table input))
 
 			;(display "global-env-as-pairs: ") (display global-env-as-pairs) (newline) (newline)
-			;(display "input: ") (display input) (newline) (newline)
+			(display "input: ") (display input) (newline) (newline)
 			;(display "const-table-as-list-of-pairs: ") (display const-table-as-list-of-pairs) (newline) (newline)
 
 
@@ -143,10 +143,13 @@
 				(handle_denominator global-env-as-pairs)
 				(handle_integer->char global-env-as-pairs)
 				(handle_char->integer global-env-as-pairs)
-				;(handle_plus global-env-as-pairs)
+				(handle_plus global-env-as-pairs)
 				(handle_greater_than global-env-as-pairs)
 				(handle_less_than global-env-as-pairs)
 				(handle_equal global-env-as-pairs)
+				(handle_remainder global-env-as-pairs)
+				(handle_string_length global-env-as-pairs)
+				(handle_string_ref global-env-as-pairs)
 				 "")))
 
 
@@ -242,9 +245,9 @@
 
 (define handle_lambda_simple
 		(lambda (params body depth const-table global-env)
-			;(display "handle_lambda_simple params: ") (display params) (newline)
-			;(display "handle_lambda_simple body: ") (display body) (newline)
-			;(display "handle_lambda_simple depth: ") (display depth) (newline)
+			(display "handle_lambda_simple params: ") (display params) (newline)
+			(display "handle_lambda_simple body: ") (display body) (newline)
+			(display "handle_lambda_simple depth: ") (display depth) (newline)
 			(let* ((body-label (make-body-label-for-lambda-simple))
 				  (copy-args-label (make-copy-args-label-for-lambda-simple))
 				  (copy-env-label (make-copy-env-label-for-lambda-simple))
@@ -397,6 +400,96 @@
 						   "\tMAKE_LITERAL_CLOSURE rax, rbx, " app-label "\n"
 						   "\tjmp " end-app-label "\n\n")))
 
+
+;=========================================================================================================================================
+;======================================================= FUNCTIONS FOR STRING-REF EXPRESSION =============================================
+;=========================================================================================================================================
+
+(define handle_string_ref
+		(lambda (global-env) 
+
+			(string-append (applic-prolog "string_ref_code" "end_string_ref_code")
+
+				"\nstring_ref_code:\n"
+				"\tpush rbp\n"
+				"\tmov rbp, rsp\n"
+				"\tmov rax, qword [rbp + 8*3]\n"
+				"\tcmp rax, 2\n"
+				"\tjne .badArgs\n"
+				"\tmov rax, qword [rbp + 8*4]\n"
+				"\tmov rbx, rax\n"
+				"\tTYPE rbx\n"
+				"\tcmp rbx, T_STRING\n"
+				"\tjne .badArgs\n"
+				"\tmov rcx, qword [rbp + 8*5]\n"
+				"\tTYPE rcx\n"
+				"\tcmp rcx, T_INTEGER\n"
+				"\tjne .badArgs\n"
+				"\tmov rbx, qword [rbp + 8*4]\n"
+				"\tmov r9, qword [rbp + 8*5]\n"
+				"\tDATA r9\n"
+				"\tSTRING_ELEMENTS rbx\n"
+				"\tadd rbx, r9\n"
+				"\tmov rax, 0\n"
+				"\tmov rax, qword [rbx]\n"
+				"\tshl rax, 4\n"
+				"\tor rax, T_CHAR\n"
+				"\tjmp .done\n\n"
+				".badArgs:\n"
+				"\tmov rax, SOB_VOID\n"
+				".done:\n"
+				"\tmov rsp, rbp\n" 
+				"\tpop rbp\n"
+				"\tret\n\n"
+
+				"end_string_ref_code:\n"
+				"\tmov rax, [rax]\n"
+				"\tmov qword [stringRef], rax\n\n")))
+
+;=========================================================================================================================================
+;======================================================= END OF FUNCTIONS FOR STRING-REF EXPRESSION ======================================
+;=========================================================================================================================================
+
+
+;=========================================================================================================================================
+;======================================================= FUNCTIONS FOR STRING-LENGTH EXPRESSION ==========================================
+;=========================================================================================================================================
+
+(define handle_string_length
+		(lambda (global-env) 
+
+			(string-append (applic-prolog "string_length_code" "end_string_length_code")
+
+				"\nstring_length_code:\n"
+				"\tpush rbp\n"
+				"\tmov rbp, rsp\n"
+				"\tmov rax, qword [rbp + 8*3]\n"
+				"\tcmp rax, 1\n"
+				"\tjne .notAString\n"
+				"\tmov rax, qword [rbp + 8*4]\n"
+				"\tmov rbx, rax\n"
+				"\tTYPE rbx\n"
+				"\tcmp rbx, T_STRING\n"
+				"\tjne .notAString\n"
+				"\tmov rax, qword [rbp + 8*4]\n"
+				"\tSTRING_LENGTH rax\n"
+				"\tshl rax, 4\n"
+				"\tor rax, T_INTEGER\n"
+				"\tjmp .done\n\n"
+				".notAString:\n"
+				"\tmov rax, SOB_VOID\n"
+				".done:\n"
+				"\tmov rsp, rbp\n" 
+				"\tpop rbp\n"
+				"\tret\n\n"
+
+				"end_string_length_code:\n"
+				"\tmov rax, [rax]\n"
+				"\tmov qword [stringLength], rax\n\n")))
+
+;=========================================================================================================================================
+;======================================================= END OF FUNCTIONS FOR STRING-LENGTH EXPRESSION ===================================
+;=========================================================================================================================================
 
 ;=========================================================================================================================================
 ;======================================================= FUNCTIONS FOR EQUAL EXPRESSION ==================================================
@@ -702,7 +795,9 @@
 				"\tjmp .addition_loop\n"
 
 				".doneAddition:\n\n"
-				"\tmov rax, MAKE_LITERAL(T_INTEGER, rdx)\n"
+				"\tmov rax, rdx\n"
+				"\tshl rax, 4\n"
+				"\tor rax, T_INTEGER\n"
 				"\tjmp .done\n"
 
 				".badArgs:\n\n"
@@ -817,6 +912,59 @@
 ;=========================================================================================================================================
 
 
+;=========================================================================================================================================
+;======================================================= FUNCTIONS FOR REMAINDER EXPRESSION ==============================================
+;=========================================================================================================================================
+
+(define handle_remainder
+		(lambda (global-env) 
+
+			(string-append (applic-prolog "remainder_code" "end_remainder_code")
+
+				"remainder_code:\n"
+				"\tpush rbp\n"
+				"\tmov rbp, rsp\n"
+				"\tmov rax, qword [rbp + 8*3]\n"
+				"\tcmp rax, 2\n"
+				"\tjne .badArgCount\n"
+				"\tmov rax, qword [rbp + 8*4]\n"
+				"\tmov rbx, rax\n"
+				"\tTYPE rbx\n"
+				"\tcmp rbx, T_INTEGER\n"
+				"\tjne .badArgs\n"
+				"\tmov rax, qword [rbp + 8*5]\n"
+				"\tmov rcx, rax\n"
+				"\tTYPE rcx\n"
+				"\tcmp rcx, T_INTEGER\n"
+				"\tjne .badArgs\n"
+				"\tmov rax, qword [rbp + 8*4]\n"
+				"\tDATA rax\n"
+				"\tmov rcx, qword [rbp + 8*5]\n"
+				"\tDATA rcx\n"
+				"\tmov rdx, 0\n"
+				"\tidiv rcx\n"
+				"\tmov rax, rdx\n"
+				"\tshl rax, 4\n"
+				"\tor rax, T_INTEGER\n"
+				"\tjmp .done\n"
+				".badArgCount:\n"
+				"\tmov rax, SOB_VOID\n"
+				"\tjmp .done\n\n"
+				".badArgs:\n"
+				"\tmov rax, SOB_VOID\n"
+				".done:\n"
+				"\tmov rsp, rbp\n" 
+				"\tpop rbp\n"
+				"\tret\n\n"
+
+				"end_remainder_code:\n"
+				"\tmov rax, [rax]\n"
+				"\tmov qword [remainder], rax\n\n")))
+
+;=========================================================================================================================================
+;======================================================= END OF FUNCTIONS FOR REMAINDER EXPRESSION =======================================
+;=========================================================================================================================================
+
 
 
 ;=========================================================================================================================================
@@ -837,6 +985,8 @@
 				"\tmov rax, qword [rbp + 8*4]\n"
 				"\tmov rbx, rax\n"
 				"\tTYPE rbx\n"
+				"\tcmp rbx, T_INTEGER\n"
+				"\tje .done\n"
 				"\tcmp rbx, T_FRACTION\n"
 				"\tjne .notAFraction\n"
 				"\tNUMERATOR rax\n"
@@ -875,12 +1025,17 @@
 				"\tmov rax, qword [rbp + 8*4]\n"
 				"\tmov rbx, rax\n"
 				"\tTYPE rbx\n"
+				"\tcmp rbx, T_INTEGER\n"
+				"\tje .returnOne\n"
 				"\tcmp rbx, T_FRACTION\n"
 				"\tjne .notAFraction\n"
 				"\tDENOMINATOR rax\n"
 				"\tjmp .done\n\n"
 				".notAFraction:\n"
 				"\tmov rax, SOB_VOID\n"
+				"\tjmp .done\n\n"
+				".returnOne:\n\n"
+				"\tmov rax, MAKE_LITERAL(T_INTEGER, 1)\n"
 				".done:\n"
 				"\tmov rsp, rbp\n" 
 				"\tpop rbp\n"

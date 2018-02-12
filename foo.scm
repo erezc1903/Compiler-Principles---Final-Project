@@ -64,9 +64,13 @@
 
 ;(cons 1 2 1)
 
-(((((lambda (x) (lambda (y) (lambda (z) (lambda (w) (if x y z))))) 1) 2) 3) #f)
+;(((((lambda (x) (lambda (y) (lambda (z) (lambda (w) (if x y z))))) 1) 2) 3) #f)
 
+;(denominator 100/50)
 
+;((lambda (x y) (or (cons x y) 1 2)) 5 6)
+
+;((lambda (x y) (cons x)) 4 5)
 
 ;(((lambda (x) (lambda (y) (or y x))) 3) 4)
 ;(define y 3)
@@ -97,6 +101,9 @@
 
 ;(vector? '#(7 8 "f"))
 
+;(+ 7 -5)
+
+(string-ref "erez carmel" 7)
 
 ;(begin #t 2 (if x (or #f y #t) 3))
 

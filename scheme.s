@@ -28,6 +28,7 @@
 
 %define MAKE_LITERAL(type, lit) ((lit << TYPE_BITS) | type)
 
+
 %macro TYPE 1
 	and %1, ((1 << TYPE_BITS) - 1) 
 %endmacro
@@ -143,10 +144,10 @@
 ;;; dest cannot be RAX! (fix this!)
 %macro STRING_REF 3
 	push rax
-	mov rax, %2
-	STRING_ELEMENTS rax
-	add rax, %3
-	mov %1, byte [rax]
+	mov rdx, %2
+	STRING_ELEMENTS rdx
+	add rdx, %3
+	mov %1, byte [rdx]
 	pop rax
 %endmacro
 
