@@ -34,7 +34,7 @@
 (define code-gen
 	  (lambda (pe depth const-table global-env)
 	  	;(display "const-table in code-gen: ") (display const-table) (newline)
-	  	(display "pe in code-gen: ") (display pe) (newline) (newline)
+	  	;(display "pe in code-gen: ") (display pe) (newline) (newline)
 	      (string-append  
 	      	(cond ((tagged-by? pe 'const) (string-append "\t; codegen for const start\n\tmov rax, qword [" (find-const-in-pairs (cadr pe) const-table) "]\n\t;code gen for constant end\n"))
 			       ((tagged-by? pe 'if3) (handle_if pe depth const-table global-env))
@@ -72,7 +72,7 @@
 			  ;(symbol-table (symbol_table input))
 
 			;(display "global-env-as-pairs: ") (display global-env-as-pairs) (newline) (newline)
-			(display "input: ") (display input) (newline) (newline)
+			;(display "input: ") (display input) (newline) (newline)
 			;(display "const-table-as-list-of-pairs: ") (display const-table-as-list-of-pairs) (newline) (newline)
 
 
@@ -158,8 +158,8 @@
 
 (define handle_applic
 		(lambda (app-exp depth const-table global-env)
-			(display "handle_applic app: ") (display app-exp) (newline)
-			(display "handle_applic depth: ") (display depth) (newline) (newline)
+			;(display "handle_applic app: ") (display app-exp) (newline)
+			;(display "handle_applic depth: ") (display depth) (newline) (newline)
 			(let ((app (cadr app-exp))
 				  (args (caddr app-exp))
 				  (not-a-closure-label (make-not-a-closure-label))
@@ -242,9 +242,9 @@
 
 (define handle_lambda_simple
 		(lambda (params body depth const-table global-env)
-			(display "handle_lambda_simple params: ") (display params) (newline)
-			(display "handle_lambda_simple body: ") (display body) (newline)
-			(display "handle_lambda_simple depth: ") (display depth) (newline)
+			;(display "handle_lambda_simple params: ") (display params) (newline)
+			;(display "handle_lambda_simple body: ") (display body) (newline)
+			;(display "handle_lambda_simple depth: ") (display depth) (newline)
 			(let* ((body-label (make-body-label-for-lambda-simple))
 				  (copy-args-label (make-copy-args-label-for-lambda-simple))
 				  (copy-env-label (make-copy-env-label-for-lambda-simple))
@@ -252,10 +252,11 @@
 				  (done-copy-args (make-done-copying-args-label-for-lambda-simple))
 				  (make-closure-label (make-make-closure-label-for-lambda-simple))
 				  (end-label (make-end-label-for-lambda-simple))
+				  (done-copy-env (make-done-copying-env-label-for-lambda-simple))
 				  (extended-env
 				  	 (string-append 
 				  	 			"\txor rax, rax\n"
-				 				"\tmov rdi, " (number->string (* 8 (length params))) "\n"
+				 				"\tmov rdi, qword [rbp + 3*8]\n"
 				 				"\tcall malloc\n"
 				 				"\tmov rdx, rax" "; rdx hold a pointer to store the params\n"
 				 				;"after1:\n"
@@ -296,14 +297,16 @@
 				 				"\tmov r15, 1\n\n"
 
 				 				copy-env-label":\n"
-				 				"\tcmp r10, " (number->string depth) "\n"
-				 				"\tje " make-closure-label "\n" 
-				 				"\tlea r12, [rbp + 8*2]\n"
+				 				"\tcmp r10, " (number->string (- depth 1)) "\n"
+				 				"\tje " done-copy-env "\n" 
+				 				"\tmov r12, [rbp + 8*2]\n"
 				 				"\tmov r12, [r12 + 8*r10]\n"
 				 				"\tmov [rbx + 8*r15], r12\n"
 				 				"\tinc r10\n"
 				 				"\tinc r15\n"
-				 				"\tjmp " copy-env-label "\n\n"))
+				 				"\tjmp " copy-env-label "\n"
+				 				done-copy-env":\n\n"
+				 				"\tmov qword [rbx + 8*r15], 0\n"))
 				  (new-env (if (= depth 0) (string-append "\tmov rbx, 0\n"
 				  										  "\tmov rdi, 16\n"
 				 										  "\tcall malloc" "; rax now hold a pointer to the target closure\n") extended-env)))
@@ -373,6 +376,13 @@
 			(lambda ()
 				(set! num (+ num 1))
 				(string-append "done_copy_args" (number->string num)))))
+
+(define make-done-copying-env-label-for-lambda-simple
+	(let ((num 100))
+			(lambda ()
+				(set! num (+ num 1))
+				(string-append "done_copy_env" (number->string num)))))
+;==========================================================================
 ;=========================================================================================================================================
 ;======================================================= END OF FUNCTIONS FOR LAMBDA SIMPLE EXPRESSION ===================================
 ;=========================================================================================================================================
@@ -645,6 +655,9 @@
 ;======================================================= END OF FUNCTIONS FOR FVAR+PVAR+BVAR EXPRESSION ==================================
 ;=========================================================================================================================================
 
+;set disassembly-flavor intel
+;layout split
+;layout regs
 
 ;=========================================================================================================================================
 ;======================================================= FUNCTIONS FOR PLUS EXPRESSION ===================================================
@@ -1565,7 +1578,9 @@
 					(string-append end-label ":\n\n")
 					(string-append 
 						(code-gen (car or-exp) depth const-table global-env)
-						"\tcmp rax, SOB_FALSE\n" 
+						"\tmov rbx, rax\n"
+						"\tTYPE rbx\n"
+						"\tcmp rbx, SOB_FALSE\n" 
 						"\tjne " end-label "\n"
 						(handle_or (cdr or-exp) depth end-label const-table global-env)))))
 
