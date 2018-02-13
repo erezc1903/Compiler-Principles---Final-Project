@@ -124,32 +124,34 @@
 (define creat-primitive-procedures
 		(lambda (global-env-as-pairs)
 			(string-append
-				(handle_pair? global-env-as-pairs)
-				(handle_boolean? global-env-as-pairs)
-				(handle_integer? global-env-as-pairs)
-				(handle_null? global-env-as-pairs)
-				(handle_number? global-env-as-pairs)
-				(handle_char? global-env-as-pairs)
-				(handle_string? global-env-as-pairs)
+				(handle_pair?)
+				(handle_boolean?)
+				(handle_integer?)
+				(handle_null?)
+				(handle_number?)
+				(handle_char?)
+				(handle_string?)
 				;(handle_symbol?)
-				(handle_vector? global-env-as-pairs)
-				(handle_not global-env-as-pairs)
-				(handle_rational? global-env-as-pairs)
-				(handle_zero? global-env-as-pairs)
-				(handle_car global-env-as-pairs)
-				(handle_cdr global-env-as-pairs)
-				(handle_cons global-env-as-pairs)
-				(handle_numerator global-env-as-pairs)
-				(handle_denominator global-env-as-pairs)
-				(handle_integer->char global-env-as-pairs)
-				(handle_char->integer global-env-as-pairs)
-				(handle_plus global-env-as-pairs)
-				(handle_greater_than global-env-as-pairs)
-				(handle_less_than global-env-as-pairs)
-				(handle_equal global-env-as-pairs)
-				(handle_remainder global-env-as-pairs)
-				(handle_string_length global-env-as-pairs)
-				(handle_string_ref global-env-as-pairs)
+				(handle_vector?)
+				(handle_not)
+				(handle_rational?)
+				(handle_zero?)
+				(handle_car)
+				(handle_cdr)
+				(handle_cons)
+				(handle_numerator)
+				(handle_denominator)
+				(handle_integer->char)
+				(handle_char->integer)
+				(handle_plus)
+				(handle_greater_than)
+				(handle_less_than)
+				(handle_equal)
+				(handle_remainder)
+				(handle_string_length)
+				(handle_string_ref)
+				(handle_multiply)
+				(handle_subtract)
 				 "")))
 
 
@@ -235,6 +237,34 @@
 
 ;=========================================================================================================================================
 ;======================================================= END OF FUNCTIONS FOR APP EXPRESSION =============================================
+;=========================================================================================================================================
+
+;=========================================================================================================================================
+;======================================================= FUNCTIONS FOR FVAR+PVAR+BVAR EXPRESSION =========================================
+;=========================================================================================================================================
+
+(define handle_fvar
+		(lambda (var depth const-table global-env)
+			(string-append  "\tmov rax, [" (find-var-in-global-env var global-env) "]\n")))
+
+
+(define handle_pvar
+  (lambda (pe)
+    (let ((min (caddr pe)))
+      (string-append "\tmov rax, qword [rbp + (4+" (number->string min)   ")*8]\n"))))
+
+
+(define handle_bvar
+  (lambda (pe)
+    (let ((major (caddr pe))
+	  	  (minor (cadddr pe)))
+	      (string-append "\tmov rax, qword [rbp + 2*8]\n"
+	      				 "\tmov rax, qword [rax + "(number->string major) "*8]\n"
+	      				 "\tmov rax, qword [rax + "(number->string minor) "*8]\n"))))
+
+
+;=========================================================================================================================================
+;======================================================= END OF FUNCTIONS FOR FVAR+PVAR+BVAR EXPRESSION ==================================
 ;=========================================================================================================================================
 
 
@@ -406,7 +436,7 @@
 ;=========================================================================================================================================
 
 (define handle_string_ref
-		(lambda (global-env) 
+		(lambda () 
 
 			(string-append (applic-prolog "string_ref_code" "end_string_ref_code")
 
@@ -456,7 +486,7 @@
 ;=========================================================================================================================================
 
 (define handle_string_length
-		(lambda (global-env) 
+		(lambda () 
 
 			(string-append (applic-prolog "string_length_code" "end_string_length_code")
 
@@ -496,7 +526,7 @@
 ;=========================================================================================================================================
 
 (define handle_equal
-		(lambda (global-env) 
+		(lambda () 
 
 			(string-append (applic-prolog "equal_code" "end_equal_code")
 
@@ -574,7 +604,7 @@
 ;=========================================================================================================================================
 
 (define handle_greater_than
-		(lambda (global-env) 
+		(lambda () 
 
 			(string-append (applic-prolog "greater_than_code" "end_greater_than_code")
 
@@ -649,7 +679,7 @@
 ;=========================================================================================================================================
 
 (define handle_less_than
-		(lambda (global-env) 
+		(lambda () 
 
 			(string-append (applic-prolog "less_than_code" "end_less_than_code")
 
@@ -720,44 +750,82 @@
 ;=========================================================================================================================================
 
 
-;=========================================================================================================================================
-;======================================================= FUNCTIONS FOR FVAR+PVAR+BVAR EXPRESSION =========================================
-;=========================================================================================================================================
-
-(define handle_fvar
-		(lambda (var depth const-table global-env)
-			(string-append  "\tmov rax, [" (find-var-in-global-env var global-env) "]\n")))
-
-
-(define handle_pvar
-  (lambda (pe)
-    (let ((min (caddr pe)))
-      (string-append "\tmov rax, qword [rbp + (4+" (number->string min)   ")*8]\n"))))
-
-
-(define handle_bvar
-  (lambda (pe)
-    (let ((major (caddr pe))
-	  	  (minor (cadddr pe)))
-	      (string-append "\tmov rax, qword [rbp + 2*8]\n"
-	      				 "\tmov rax, qword [rax + "(number->string major) "*8]\n"
-	      				 "\tmov rax, qword [rax + "(number->string minor) "*8]\n"))))
-
-
-;=========================================================================================================================================
-;======================================================= END OF FUNCTIONS FOR FVAR+PVAR+BVAR EXPRESSION ==================================
-;=========================================================================================================================================
-
 ;set disassembly-flavor intel
 ;layout split
 ;layout regs
+
+
+;=========================================================================================================================================
+;======================================================= FUNCTIONS FOR MULTIPLY EXPRESSION ===============================================
+;=========================================================================================================================================
+
+(define handle_multiply
+		(lambda () 
+
+			(string-append (applic-prolog "multiply_code" "end_multiply_code")
+
+				"multiply_code:\n"
+				"\tpush rbp\n"
+				"\tmov rbp, rsp\n"
+				
+				"\tmov rcx, 0 ; rcx is a counter for the number of arguments\n"
+				".checkIfArgsAreNumbers:\n\n"
+				"\tcmp rcx, qword [rbp + 8*3]\n"
+				"\tje .make_mul\n"
+				"\tmov rbx, qword [rbp + 8*(4 + rcx)]\n"
+				"\tTYPE rbx\n"
+				"\tcmp rbx, T_INTEGER\n"
+				"\tje .incCounter\n"
+				"\tcmp rbx, T_FRACTION\n"
+				"\tje .incCounter\n"
+				"\tjmp .badArgs\n"
+				".incCounter:\n\n"
+				"\tinc rcx\n"
+				"\tjmp .checkIfArgsAreNumbers\n"
+
+
+				".make_mul:\n\n"
+				"\tmov rcx, 0 ; rcx is a counter for the number of arguments\n"
+				"\tmov rax, 1 ; rax is the accumulator \n"
+
+				".mul_loop:\n\n"
+				"\tcmp rcx, qword [rbp + 8*3]\n"
+				"\tje .doneMul\n\n"
+				"\tmov rbx, qword [rbp + 8*(4 + rcx)]\n"
+				"\tDATA rbx\n"
+				"\tmul rbx\n"
+				"\tinc rcx\n"
+				"\tjmp .mul_loop\n"
+
+				".doneMul:\n\n"
+				"\tshl rax, 4\n"
+				"\tor rax, T_INTEGER\n"
+				"\tjmp .done\n"
+
+				".badArgs:\n\n"
+				"\tmov rax, SOB_VOID\n"
+				".done:\n"
+				"\tmov rsp, rbp\n" 
+				"\tpop rbp\n"
+				"\tret\n\n"
+
+				"end_multiply_code:\n"
+				"\tmov rax, [rax]\n"
+				"\tmov qword [multiply], rax\n\n")))
+
+
+
+;=========================================================================================================================================
+;======================================================= END OF FUNCTIONS FOR MULTIPLY EXPRESSION ========================================
+;=========================================================================================================================================
+
 
 ;=========================================================================================================================================
 ;======================================================= FUNCTIONS FOR PLUS EXPRESSION ===================================================
 ;=========================================================================================================================================
 
 (define handle_plus
-		(lambda (global-env) 
+		(lambda () 
 
 			(string-append (applic-prolog "plus_code" "end_plus_code")
 
@@ -818,6 +886,82 @@
 ;=========================================================================================================================================
 
 
+;=========================================================================================================================================
+;======================================================= FUNCTIONS FOR SUBTRACT EXPRESSION ==============================================
+;=========================================================================================================================================
+
+(define handle_subtract
+		(lambda () 
+
+			(string-append (applic-prolog "subtract_code" "end_subtract_code")
+
+				"subtract_code:\n"
+				"\tpush rbp\n"
+				"\tmov rbp, rsp\n"
+				
+				"\tmov rcx, 0 ; rcx is a counter for the number of arguments\n"
+				".checkIfArgsAreNumbers:\n\n"
+				"\tcmp rcx, qword [rbp + 8*3]\n"
+				"\tje .make_subtraction\n"
+				"\tmov rbx, qword [rbp + 8*(4 + rcx)]\n"
+				"\tTYPE rbx\n"
+				"\tcmp rbx, T_INTEGER\n"
+				"\tje .incCounter\n"
+				"\tcmp rbx, T_FRACTION\n"
+				"\tje .incCounter\n"
+				"\tjmp .badArgs\n"
+				".incCounter:\n\n"
+				"\tinc rcx\n"
+				"\tjmp .checkIfArgsAreNumbers\n"
+
+
+				".make_subtraction:\n\n"
+				"\tmov rcx, 1 ; rcx is a counter for the number of arguments\n"
+				"\tmov rdx, qword [rbp + 8*4]\n" ; rdx is the accumulator \n"
+				"\tDATA rdx\n"
+
+				".subtraction_loop:\n\n"
+				"\tcmp rcx, qword [rbp + 8*3]\n"
+				"\tje .doneSubtraction\n\n"
+				"\tmov rbx, qword [rbp + 8*(4 + rcx)]\n"
+				"\tDATA rbx\n"
+				"\tcmp rbx, 0\n"
+				"\tjl .numberIsNeg\n"
+				"\tsub rdx, rbx\n"
+				"\tinc rcx\n"
+				"\tjmp .subtraction_loop\n"
+
+				".numberIsNeg:\n\n"
+				"\tNOT rbx\n"
+				"\tadd rbx, 1\n"
+				"\tadd rdx, rbx\n"
+				"\tinc rcx\n"
+				"\tjmp .subtraction_loop\n"
+
+				".doneSubtraction:\n\n"
+				"\tmov rax, rdx\n"
+				"\tshl rax, 4\n"
+				"\tor rax, T_INTEGER\n"
+				"\tjmp .done\n"
+
+				".badArgs:\n\n"
+				"\tmov rax, SOB_VOID\n"
+				".done:\n"
+				"\tmov rsp, rbp\n" 
+				"\tpop rbp\n"
+				"\tret\n\n"
+
+				"end_subtract_code:\n"
+				"\tmov rax, [rax]\n"
+				"\tmov qword [subtract], rax\n\n")))
+
+
+
+;=========================================================================================================================================
+;======================================================= END OF FUNCTIONS FOR SUBTRACT EXPRESSION =======================================
+;=========================================================================================================================================
+
+
 
 
 ;=========================================================================================================================================
@@ -825,7 +969,7 @@
 ;=========================================================================================================================================
 
 (define handle_char->integer
-		(lambda (global-env) 
+		(lambda () 
 
 			(string-append (applic-prolog "char_to_integer_code" "end_char_to_integer_code")
 
@@ -868,7 +1012,7 @@
 ;=========================================================================================================================================
 
 (define handle_integer->char
-		(lambda (global-env) 
+		(lambda () 
 
 			(string-append (applic-prolog "integer_to_char_code" "end_integer_to_char_code")
 
@@ -917,7 +1061,7 @@
 ;=========================================================================================================================================
 
 (define handle_remainder
-		(lambda (global-env) 
+		(lambda () 
 
 			(string-append (applic-prolog "remainder_code" "end_remainder_code")
 
@@ -1005,7 +1149,7 @@
 ;=========================================================================================================================================
 
 (define handle_numerator
-		(lambda (global-env) 
+		(lambda () 
 
 			(string-append (applic-prolog "numerator_code" "end_numerator_code")
 
@@ -1045,7 +1189,7 @@
 ;=========================================================================================================================================
 
 (define handle_denominator
-		(lambda (global-env) 
+		(lambda () 
 
 			(string-append (applic-prolog "denominator_code" "end_denominator_code")
 
@@ -1092,7 +1236,7 @@
 ;=========================================================================================================================================
 
 (define handle_cons
-		(lambda (global-env) 
+		(lambda () 
 
 			(string-append (applic-prolog "cons_code" "end_cons_code")
 
@@ -1142,7 +1286,7 @@
 ;=========================================================================================================================================
 
 (define handle_car
-		(lambda (global-env) 
+		(lambda () 
 
 			(string-append (applic-prolog "car_code" "end_car_code")
 
@@ -1180,7 +1324,7 @@
 ;=========================================================================================================================================
 
 (define handle_cdr
-		(lambda (global-env) 
+		(lambda () 
 
 			(string-append (applic-prolog "cdr_code" "end_cdr_code")
 
@@ -1245,7 +1389,7 @@
 ;=========================================================================================================================================
 
 (define handle_zero? 
-		(lambda (global-env) 
+		(lambda () 
 
 			(string-append (applic-prolog "zero?_code" "end_zero?_code")
 
@@ -1293,7 +1437,7 @@
 ;=========================================================================================================================================
 
 (define handle_not 
-		(lambda (global-env) 
+		(lambda () 
 
 			(string-append (applic-prolog "not_code" "end_not_code")
 
@@ -1338,7 +1482,7 @@
 ;=========================================================================================================================================
 
 (define handle_vector? 
-		(lambda (global-env) 
+		(lambda () 
 
 			(string-append (applic-prolog "vector?_code" "end_vector?_code")
 
@@ -1379,7 +1523,7 @@
 ;=========================================================================================================================================
 
 (define handle_string? 
-		(lambda (global-env) 
+		(lambda () 
 
 			(string-append (applic-prolog "string?_code" "end_string?_code")
 
@@ -1421,7 +1565,7 @@
 ;=========================================================================================================================================
 
 (define handle_char? 
-		(lambda (global-env) 
+		(lambda () 
 
 			(string-append (applic-prolog "char?_code" "end_char?_code")
 
@@ -1462,7 +1606,7 @@
 ;=========================================================================================================================================
 
 (define handle_pair?
-		(lambda (global-env)
+		(lambda ()
 
 			(string-append (applic-prolog "pair?_code" "end_pair?_code")
 
@@ -1506,7 +1650,7 @@
 
 
 (define handle_boolean?
-		(lambda (global-env)
+		(lambda ()
 
 			(string-append (applic-prolog "boolean?_code" "end_boolean?_code")
 
@@ -1548,7 +1692,7 @@
 ;=========================================================================================================================================
 
 (define handle_rational?
-		(lambda (global-env)
+		(lambda ()
 
 			(string-append (applic-prolog "rational?_code" "end_rational?_code")
 			
@@ -1592,7 +1736,7 @@
 ;=========================================================================================================================================
 
 (define handle_integer?
-		(lambda (global-env)
+		(lambda ()
 
 			(string-append (applic-prolog "integer?_code" "end_integer?_code")
 
@@ -1634,7 +1778,7 @@
 ;=========================================================================================================================================
 
 (define handle_null?
-		(lambda (global-env)
+		(lambda ()
 
 			(string-append (applic-prolog "null?_code" "end_null?_code")
 
@@ -1676,7 +1820,7 @@
 ;=========================================================================================================================================
 
 (define handle_number?
-		(lambda (global-env)
+		(lambda ()
 
 			(string-append (applic-prolog "number?_code" "end_number?_code")
 
@@ -2012,7 +2156,7 @@
 				  ((equal? "+" name) (list "plus" fvar))
 				  ((equal? "/" name) (list "divide" fvar))
 				  ((equal? "*" name) (list "multiply" fvar))
-				  ((equal? "-" name) (list "substract" fvar))
+				  ((equal? "-" name) (list "subtract" fvar))
 
 
 				  ((equal? "char->integer" name) (list "charToInteger" fvar))

@@ -28,7 +28,7 @@ divide:
 multiply:
 	dq SOB_UNDEFINED
 
-substract:
+subtract:
 	dq SOB_UNDEFINED
 
 boolean?:
@@ -142,17 +142,26 @@ vector?:
 zero?:
 	dq SOB_UNDEFINED
 
-sobNegInt3:
-	dq MAKE_LITERAL (T_INTEGER, -3)
+sobInt10:
+	dq MAKE_LITERAL (T_INTEGER, 10)
 
-sobNegInt5:
-	dq MAKE_LITERAL (T_INTEGER, -5)
+sobInt4:
+	dq MAKE_LITERAL (T_INTEGER, 4)
+
+sobInt30:
+	dq MAKE_LITERAL (T_INTEGER, 30)
+
+sobInt22:
+	dq MAKE_LITERAL (T_INTEGER, 22)
+
+sobNegInt12:
+	dq MAKE_LITERAL (T_INTEGER, -12)
 
 sobInt3:
 	dq MAKE_LITERAL (T_INTEGER, 3)
 
-sobInt5:
-	dq MAKE_LITERAL (T_INTEGER, 5)
+sobNegInt56:
+	dq MAKE_LITERAL (T_INTEGER, -56)
 
 
 
@@ -1290,6 +1299,131 @@ end_string_ref_code:
 	mov rax, [rax]
 	mov qword [stringRef], rax
 
+	mov rbp, rsp
+	mov rdi, 16
+	call malloc
+	mov rbx, 1
+	MAKE_LITERAL_CLOSURE rax, rbx, multiply_code
+	jmp end_multiply_code
+
+multiply_code:
+	push rbp
+	mov rbp, rsp
+	mov rcx, 0 ; rcx is a counter for the number of arguments
+.checkIfArgsAreNumbers:
+
+	cmp rcx, qword [rbp + 8*3]
+	je .make_mul
+	mov rbx, qword [rbp + 8*(4 + rcx)]
+	TYPE rbx
+	cmp rbx, T_INTEGER
+	je .incCounter
+	cmp rbx, T_FRACTION
+	je .incCounter
+	jmp .badArgs
+.incCounter:
+
+	inc rcx
+	jmp .checkIfArgsAreNumbers
+.make_mul:
+
+	mov rcx, 0 ; rcx is a counter for the number of arguments
+	mov rax, 1 ; rax is the accumulator 
+.mul_loop:
+
+	cmp rcx, qword [rbp + 8*3]
+	je .doneMul
+
+	mov rbx, qword [rbp + 8*(4 + rcx)]
+	DATA rbx
+	mul rbx
+	inc rcx
+	jmp .mul_loop
+.doneMul:
+
+	shl rax, 4
+	or rax, T_INTEGER
+	jmp .done
+.badArgs:
+
+	mov rax, SOB_VOID
+.done:
+	mov rsp, rbp
+	pop rbp
+	ret
+
+end_multiply_code:
+	mov rax, [rax]
+	mov qword [multiply], rax
+
+	mov rbp, rsp
+	mov rdi, 16
+	call malloc
+	mov rbx, 1
+	MAKE_LITERAL_CLOSURE rax, rbx, subtract_code
+	jmp end_subtract_code
+
+subtract_code:
+	push rbp
+	mov rbp, rsp
+	mov rcx, 0 ; rcx is a counter for the number of arguments
+.checkIfArgsAreNumbers:
+
+	cmp rcx, qword [rbp + 8*3]
+	je .make_subtraction
+	mov rbx, qword [rbp + 8*(4 + rcx)]
+	TYPE rbx
+	cmp rbx, T_INTEGER
+	je .incCounter
+	cmp rbx, T_FRACTION
+	je .incCounter
+	jmp .badArgs
+.incCounter:
+
+	inc rcx
+	jmp .checkIfArgsAreNumbers
+.make_subtraction:
+
+	mov rcx, 1 ; rcx is a counter for the number of arguments
+	mov rdx, qword [rbp + 8*4]
+	DATA rdx
+.subtraction_loop:
+
+	cmp rcx, qword [rbp + 8*3]
+	je .doneSubtraction
+
+	mov rbx, qword [rbp + 8*(4 + rcx)]
+	DATA rbx
+	cmp rbx, 0
+	jl .numberIsNeg
+	sub rdx, rbx
+	inc rcx
+	jmp .subtraction_loop
+.numberIsNeg:
+
+	NOT rbx
+	add rbx, 1
+	add rdx, rbx
+	inc rcx
+	jmp .subtraction_loop
+.doneSubtraction:
+
+	mov rax, rdx
+	shl rax, 4
+	or rax, T_INTEGER
+	jmp .done
+.badArgs:
+
+	mov rax, SOB_VOID
+.done:
+	mov rsp, rbp
+	pop rbp
+	ret
+
+end_subtract_code:
+	mov rax, [rax]
+	mov qword [subtract], rax
+
 ; =============================== PRIMITIVE FUNCTIONS =========================
 
 start_of_instructions:
@@ -1301,16 +1435,36 @@ start_of_instructions:
 ; start of applic of lambda-simple code: 
 
 	; codegen for const start
-	mov rax, qword [sobInt5]
+	mov rax, qword [sobNegInt56]
 	;code gen for constant end
 	push rax
 	; codegen for const start
 	mov rax, qword [sobInt3]
 	;code gen for constant end
 	push rax
+	; codegen for const start
+	mov rax, qword [sobNegInt12]
+	;code gen for constant end
+	push rax
+	; codegen for const start
+	mov rax, qword [sobInt22]
+	;code gen for constant end
+	push rax
+	; codegen for const start
+	mov rax, qword [sobInt30]
+	;code gen for constant end
+	push rax
+	; codegen for const start
+	mov rax, qword [sobInt4]
+	;code gen for constant end
+	push rax
+	; codegen for const start
+	mov rax, qword [sobInt10]
+	;code gen for constant end
+	push rax
 
-	push 2
-	mov rax, [remainder]
+	push 7
+	mov rax, [subtract]
 	mov rcx, rax
 	TYPE rcx
 	cmp rcx, T_CLOSURE
@@ -1327,127 +1481,7 @@ not_a_closure101:
 	mov rax, SOB_VOID
 done_closure101:
 
-	add rsp, 8*3
-
-; end of applic of lambda-simple code: 
-
-	push rax
-	call write_sob_if_not_void
-	add rsp, 8
-
-; end
-
-; start
-; start of applic of lambda-simple code: 
-
-	; codegen for const start
-	mov rax, qword [sobInt5]
-	;code gen for constant end
-	push rax
-	; codegen for const start
-	mov rax, qword [sobNegInt3]
-	;code gen for constant end
-	push rax
-
-	push 2
-	mov rax, [remainder]
-	mov rcx, rax
-	TYPE rcx
-	cmp rcx, T_CLOSURE
-	jne not_a_closure102
-	mov rbx, rax
-	CLOSURE_ENV rbx
-	push rbx
-	CLOSURE_CODE rax
-	call rax
-	add rsp, 8*1
-	jmp done_closure102
-not_a_closure102:
-
-	mov rax, SOB_VOID
-done_closure102:
-
-	add rsp, 8*3
-
-; end of applic of lambda-simple code: 
-
-	push rax
-	call write_sob_if_not_void
-	add rsp, 8
-
-; end
-
-; start
-; start of applic of lambda-simple code: 
-
-	; codegen for const start
-	mov rax, qword [sobNegInt5]
-	;code gen for constant end
-	push rax
-	; codegen for const start
-	mov rax, qword [sobNegInt3]
-	;code gen for constant end
-	push rax
-
-	push 2
-	mov rax, [remainder]
-	mov rcx, rax
-	TYPE rcx
-	cmp rcx, T_CLOSURE
-	jne not_a_closure103
-	mov rbx, rax
-	CLOSURE_ENV rbx
-	push rbx
-	CLOSURE_CODE rax
-	call rax
-	add rsp, 8*1
-	jmp done_closure103
-not_a_closure103:
-
-	mov rax, SOB_VOID
-done_closure103:
-
-	add rsp, 8*3
-
-; end of applic of lambda-simple code: 
-
-	push rax
-	call write_sob_if_not_void
-	add rsp, 8
-
-; end
-
-; start
-; start of applic of lambda-simple code: 
-
-	; codegen for const start
-	mov rax, qword [sobInt5]
-	;code gen for constant end
-	push rax
-	; codegen for const start
-	mov rax, qword [sobInt3]
-	;code gen for constant end
-	push rax
-
-	push 2
-	mov rax, [remainder]
-	mov rcx, rax
-	TYPE rcx
-	cmp rcx, T_CLOSURE
-	jne not_a_closure104
-	mov rbx, rax
-	CLOSURE_ENV rbx
-	push rbx
-	CLOSURE_CODE rax
-	call rax
-	add rsp, 8*1
-	jmp done_closure104
-not_a_closure104:
-
-	mov rax, SOB_VOID
-done_closure104:
-
-	add rsp, 8*3
+	add rsp, 8*8
 
 ; end of applic of lambda-simple code: 
 
