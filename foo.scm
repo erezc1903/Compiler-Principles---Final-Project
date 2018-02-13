@@ -101,9 +101,12 @@
 
 ;(vector? '#(7 8 "f"))
 
-;(+ 7 -5)
+;(remainder 3 5)
+;(remainder -3 5)
+;(remainder -3 -5)
+;(remainder 3 5)
 
-(string-ref "erez carmel" 7)
+;(string-ref "erez carmel" 7)
 
 ;(begin #t 2 (if x (or #f y #t) 3))
 
