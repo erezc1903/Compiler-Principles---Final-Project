@@ -48,7 +48,7 @@
 ;(boolean? 1/3) ; #f
 ;(boolean? '(1 . 8)) ; #f
 ;(boolean? ((lambda () #t))) ; #t
-;((lambda (v w x y z) (boolean? v w)) #t #f 1/3 '(1 . 8) ((lambda () #t))) ; exception incorrect arg count
+;;((lambda (v w x y z) (boolean? v w)) #t #f 1/3 '(1 . 8) ((lambda () #t))) ; exception incorrect arg count
 ;((lambda (v w x y z) (boolean? w)) #t #f 1/3 '(1 . 8) ((lambda () #t))) ; #t
 ;((lambda (v w x y z) (boolean? x)) #t #f 1/3 '(1 . 8) ((lambda () #t))) ; #f
 ;((lambda (v w x y z) (boolean? y)) #t #f 1/3 '(1 . 8) ((lambda () #t))) ; #f
@@ -72,6 +72,7 @@
 
 ;cdr
 ;(cdr '(111 2 3)) ; (2 3)
+;(cdr '(111 2 3)) ; (2 3)
 ;(cdr '(111 2 3) 6) ; exception incorrect arg count
 ;(cdr 6) ; exception argument is not a pair
 ;(cdr "king") ; exception argument is not a pair
@@ -93,11 +94,11 @@
 ;(char->integer '#\y) ; #f
 ;(char->integer '#\z) ; #f
 ;(char->integer '#\w) ; #f
-;(char->integer '#\x 105) ; #f
+;(char->integer '#\r 105) ; #f
 ;((lambda (x y z) (char->integer (cdr z))) 10 1/3 '(1 . #\s)) ; #t
 ;((lambda (x y z) (char->integer (cdr z))) 7 1/3 '(#\s . 8)) ; #f
 ;((lambda (x y z w) (char->integer w)) 7 1/3 '(1 . 8) #\s) ; #f
-;;(char->integer '#\newline) ; to test
+;(char->integer '#\newline) ; to test
 
 ;char?
 ;(char? #\d #\f) ; exception incorrect arg count
@@ -249,7 +250,6 @@
 ;(remainder 13 -4) ; 1
 ;(remainder 13 "a") ; exception not an integer
 ;(remainder "b" 4) ; exception not an integer
-;(remainder 13 0) ; exception undefined for 0
 ;((lambda (x y z) (remainder x y z)) 13 4 5) ; exception incorrect arg count
 ;((lambda (x y z) (remainder x y)) 13 4 5) ; 1
 ;((lambda (x y z) (remainder x y)) -13 4 5) ; -1
@@ -257,7 +257,6 @@
 ;((lambda (x y z) (remainder x y)) 13 -4 5) ; 1
 ;((lambda (x y z) (remainder x y)) 13 "a" 5) ; exception not an integer
 ;((lambda (x y z) (remainder x y)) "b" 4 5) ; exception not an integer
-;((lambda (x y z) (remainder x y)) 13 0 5)  ; exception undefined for 0
 
 ;set-car!
 ;(define x1 '(1 . 2))
@@ -337,15 +336,15 @@
 ;((lambda (x y z) (vector? z)) '#(1 2 3) '(1 2 3) "seagulls") ; #f
 
 ;zero?
-;(zero? 0 7) ; exception incorrect arg count
+;;(zero? 0 7) ; exception incorrect arg count
 ;(zero? 0) ; #t
 ;(zero? 7) ; #f
-;(zero? "seagulls") ; exception not a number
+;;(zero? "seagulls") ; exception not a number
 ;((lambda (x y z) (zero? x y)) 0 7 "seagulls") ; exception incorrect arg count
 ;((lambda (x y z) (zero? x)) 0 7 "seagulls") ; #t
 ;((lambda (x y z) (zero? y)) 0 7 "seagulls") ; #f
-;((lambda (x y z) (zero? z)) 0 7 "seagulls") ; exception not a number
-;;; primitives tests
+;;((lambda (x y z) (zero? z)) 0 7 "seagulls") ; exception not a number
+;; primitives tests
 
 
 ;;; if, or, sequence
@@ -398,17 +397,17 @@
 
 
 ; lambda-opt
-(lambda (a b . c) (or a b)) ; procedure
-((lambda (a b . c) (or a b)) 49 2 3 4) ; 49
-((lambda (a b . c) (or a b)) 34) ; exception incorrect arg count
-((lambda (a b . c) a) 49 2 3 4) ; 49
-((lambda (a b . c) b) 49 2 3 4) ; 2
-((lambda (a b . c) c) 49 2 3 4) ; (3 4)
-((lambda (a b . c) c) 49 2) ; ()
-((lambda (a b . c) c) 49) ; exception invalid arg count
-((lambda c c) 1 2 3 4) ; (1 2 3 4)
-((lambda (a b . c) ((car c) (car (cdr c)))) 70 71 integer? 69) ; t
-((lambda (a b . c) ((car c) (car (cdr c)))) 70 71 (lambda (x) (+ 10 x)) 39) ; 49
+;(lambda (a b . c) (or a b)) ; procedure
+;((lambda (a b . c) (or a b)) 49 2 3 4) ; 49
+;((lambda (a b . c) (or a b)) 34) ; exception incorrect arg count
+;((lambda (a b . c) a) 49 2 3 4) ; 49
+;((lambda (a b . c) b) 49 2 3 4) ; 2
+;((lambda (a b . c) c) 49 2 3 4) ; (3 4)
+;((lambda (a b . c) c) 49 2) ; ()
+;((lambda (a b . c) c) 49) ; exception invalid arg count
+;((lambda c c) 1 2 3 4) ; (1 2 3 4)
+;((lambda (a b . c) ((car c) (car (cdr c)))) 70 71 integer? 69) ; t
+;((lambda (a b . c) ((car c) (car (cdr c)))) 70 71 (lambda (x) (+ 10 x)) 39) ; 49
 ; lambda-opt
 
 ;;; tc-applic

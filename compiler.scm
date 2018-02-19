@@ -36,14 +36,14 @@
 	  	;(display "const-table in code-gen: ") (display const-table) (newline)
 	  	;(display "pe in code-gen: ") (display pe) (newline) (newline)
 	      (string-append  
-	      	(cond ((tagged-by? pe 'const) (string-append "\t; codegen for const start\n\tmov rax, qword " (find-const-in-pairs (cadr pe) const-table) "\n\t;code gen for constant end\n"))
+	      	(cond ((tagged-by? pe 'const) (string-append "\t; codegen for const start\n\tmov rax, " (find-const-in-pairs (cadr pe) const-table) "\n\t;code gen for constant end\n"))
 			       ((tagged-by? pe 'if3) (handle_if pe depth const-table global-env))
 			       ((tagged-by? pe 'seq) (handle_seq pe depth const-table global-env))
 			       ((tagged-by? pe 'or) (handle_or (cadr pe) depth (make-end-label-for-or) const-table global-env))
 			       ((tagged-by? pe 'def) (handle_define (cdr pe) depth const-table global-env))
 			       ((tagged-by? pe 'applic) (handle_applic pe depth const-table global-env))
 			       ((tagged-by? pe 'lambda-simple) (handle_lambda_simple (cadr pe) (caddr pe) depth const-table global-env))
-			       ;((tagged-by? pe 'tc-applic) (handle_tc_applic pe))
+			       ((tagged-by? pe 'tc-applic) (handle_applic pe depth const-table global-env))
 			       ((tagged-by? pe 'lambda-opt) (handle_lambda_opt (cadr pe) (cadddr pe) depth const-table global-env))
 			       ((tagged-by? pe 'pvar) (handle_pvar pe))
 			       ((tagged-by? pe 'bvar) (handle_bvar pe))
@@ -72,7 +72,7 @@
 			  ;(symbol-table (symbol_table input))
 
 			;(display "global-env-as-pairs: ") (display global-env-as-pairs) (newline) (newline)
-			;(display "input: ") (display input) (newline) (newline)
+			(display "input: ") (display input) (newline) (newline)
 			;(display "const-table-as-list-of-pairs: ") (display const-table-as-list-of-pairs) (newline) (newline)
 
 
@@ -125,25 +125,25 @@
 (define creat-primitive-procedures
 		(lambda (global-env-as-pairs)
 			(string-append
-				(handle_pair?)
-				(handle_boolean?)
-				(handle_integer?)
-				(handle_null?)
-				(handle_number?)
-				(handle_char?)
-				(handle_string?)
+				(handle_pair?) ;V
+				(handle_boolean?) ;V
+				(handle_integer?) ;V
+				(handle_null?) ;V
+				(handle_number?) ;V
+				(handle_char?) ;V
+				(handle_string?) ;V
 				;(handle_symbol?)
-				(handle_vector?)
-				(handle_not)
-				(handle_rational?)
-				(handle_zero?)
-				(handle_car)
-				(handle_cdr)
-				(handle_cons)
-				(handle_numerator)
-				(handle_denominator)
-				(handle_integer->char)
-				(handle_char->integer)
+				(handle_vector?) ;V
+				(handle_not) ;V
+				(handle_rational?) ;V
+				(handle_zero?) ;V
+				(handle_car) ;V
+				(handle_cdr) ;V
+				(handle_cons) ;V
+				(handle_numerator) ;V
+				(handle_denominator) ;V
+				(handle_integer->char) ;V
+				(handle_char->integer) ;V
 				(handle_plus)
 				(handle_greater_than)
 				(handle_less_than)
@@ -153,6 +153,8 @@
 				(handle_string_ref)
 				(handle_multiply)
 				(handle_subtract)
+				;(handle_make_vector)
+				(handle_procedure?) ;V
 				 "")))
 
 
@@ -200,6 +202,8 @@
 ; we assume that the arg list comes reversed
 (define push-args 
 		(lambda (args numberOfArgs depth const-table global-env)
+			(display "push-args args: ") (display args) (newline)
+			(display "push-args numberOfArgs: ") (display numberOfArgs) (newline) (newline)
 			(if (= numberOfArgs 0)
 				"\n"
 				(string-append (code-gen (car args) depth const-table global-env)
@@ -576,6 +580,231 @@
 						   "\tmov rbx, 1\n"
 						   "\tMAKE_LITERAL_CLOSURE rax, rbx, " app-label "\n"
 						   "\tjmp " end-app-label "\n\n")))
+
+
+
+;=========================================================================================================================================
+;======================================================= FUNCTIONS FOR MAKE-VECTOR EXPRESSION ============================================
+;=========================================================================================================================================
+
+(define handle_make_vector
+		(lambda ()
+			(let* ((body-label (make-body-label-for-make-vector))
+				  (no-args-label (make-no-args-label-for-make-vector))
+				  (end-label (make-end-label-for-lambda-simple))
+				  (one-arg-label (make-one-arg-for-make-vector))
+				  (two-arg-label (make-two-arg-for-make-vector))				  
+				  (bad-input-label (make-bad-input-for-make-vector))
+				  (one-arg-loop-label (make-one-arg-loop-input-for-make-vector))
+				  (one-arg-loop-end-label (make-one-arg-loop-input-end-for-make-vector))
+				  (two-arg-loop-label (make-two-arg-loop-input-for-make-vector))
+				  (two-arg-loop-end-label (make-two-arg-loop-input-end-for-make-vector)))
+
+				  
+
+				  (string-append (applic-prolog "make_vector_code" "end_make_vector_code")
+
+				  		"\tmake_vector_code:\n\n"
+						"\tpush rbp\n"
+						"\tmov rbp, rsp\n"
+
+
+						"\tcmp qword [rbp + 3*8], 1\n"
+						"\tje " one-arg-label "\n"
+
+						"\tcmp qword [rbp + 3*8], 2\n"
+						"\tje " two-arg-label "\n"
+						"\tjmp " bad-input-label "\n"
+
+
+						two-arg-label":\n\n"
+
+
+						; actual body
+						"\tmov rcx, qword [rbp + 4*8]\n"
+						"\tmov r10, [rcx]\n"
+						"\tTYPE r10\n"
+						"\tcmp r10, T_INTEGER\n"
+						"\tjne "bad-input-label "\n"
+						"\tmov r11, [rcx]\n"
+						"\tDATA r11\n"
+						"\tcmp r11, 0\n"
+						"\tjl " bad-input-label "\n"
+
+
+						; Put code for #(4 4 4 4 4) here
+						; Setting r12 to the second argument
+						"\tmov r12, qword [rbp + 5*8]\n"
+
+
+						; Initializing the first qword of the vector
+						"\tmov r11, [rcx]\n"
+						"\tDATA r13\n"
+						"\tinc r11\n"
+						"\tshl r11, 3\n"
+						"\tmov rdi, r11\n"
+						"\tcall malloc\n"
+						"\tmov r11, [rbx]\n"
+						"\tDATA r13\n"
+						"\tmov qword [rax], r11\n"
+						"\tshl qword [rax], 30\n"
+						"\tlea r11, [rax + 1*8]\n"
+						"\tsub r11, start_of_data\n"
+						"\tor qword [rax], r11\n"
+						"\tshl qword [rax], TYPE_BITS\n"
+						"\tor qword [rax], T_VECTOR\n"
+
+
+						; Loop over the vector length and put in its elements the address of the second argument.
+						"\tmov r15, [rbx]\n"
+						"\tDATA r15\n"
+						"\tmov r14, 0\n"
+
+
+						two-arg-loop-label":\n\n"
+						"\tcmp r14, r15\n"
+						"\tje " two-arg-loop-end-label "\n"
+
+						"\tmov qword [rax + 1*8 + r14*8], r12\n"
+						"\tinc r14\n"
+						"\tjmp " two-arg-loop-label "\n"
+
+						two-arg-loop-end-label ":\n\n"
+						"\tjmp " end-label "\n"
+
+
+						one-arg-label ":\n"
+						; Put code for #(0 0 0 0 0) here
+						; Initializing the runtime constant zero and putting its address into r12
+						"\tmov rdi, 8\n"
+						"\tcall malloc\n"
+						"\tmov qword [rax], 0\n"
+						"\tshl qword [rax], TYPE_BITS\n"
+						"\tor qword [rax], T_INTEGER\n"
+						"\tmov r12, rax ; r12 now holds a pointer to a runtime constant zero\n"
+
+
+						; Initializing the first qword of the vector
+						"\tmov r13, [rbx]\n"
+						"\tDATA r13\n"
+						"\tinc r13\n"
+						"\tshl r13, 3\n"
+						"\tmov rdi, r13\n"
+						"\tcall malloc\n"
+						"\tmov r13, [rbx]\n"
+						"\tDATA r13 \n"
+						"\tmov qword [rax], r13\n"
+						"\tshl qword [rax], 30\n"
+						"\tlea r13, [rax + 1*8]\n"
+						"\tsub r13, start_of_data\n"
+						"\tor qword [rax], r13\n"
+						"\tshl qword [rax], TYPE_BITS\n"
+						"\tor qword [rax], T_VECTOR\n"
+
+
+						; Loop over the vector length and initialize its elements to zero.
+						"\tmov r15, [rbx]\n"
+						"\tDATA r15\n"
+						"\tmov r14, 0\n"
+
+
+						one-arg-loop-label ":\n\n"
+						"\tcmp r14, r15\n"
+						"\tje " one-arg-loop-end-label "\n"
+
+						"\tmov qword [rax + 1*8 + r14*8], r12\n"
+						"\tinc r14\n"
+						"\tjmp " one-arg-loop-label "\n"
+
+						one-arg-loop-end-label ":\n\n"
+						"\tjmp " end-label "\n"
+
+						bad-input-label":\n\n"
+						"\tmov rax, sobVoid\n"
+						end-label ":\n\n"
+						"\tmov rsp, rbp\n"
+						"\tpop rbp\n"
+						"\tret\n"
+
+
+
+						"end_make_vector_code:\n"
+						"\tmov rax, [rax]\n"
+						"\tmov qword [makeVector], rax\n\n"))))
+
+
+(define make-body-label-for-make-vector
+	(let ((num 200))
+			(lambda ()
+				(set! num (+ num 1))
+				(string-append "bodyOfMakeVector" (number->string num)))))
+
+(define make-no-args-label-for-make-vector
+	(let ((num 200))
+			(lambda ()
+				(set! num (+ num 1))
+				(string-append "no_args" (number->string num)))))
+
+
+(define make-end-label-for-make-vector
+	(let ((num 200))
+			(lambda ()
+				(set! num (+ num 1))
+				(string-append "endLabel" (number->string num)))))
+
+
+(define make-bad-arg-count-label-for-make-vector
+	(let ((num 200))
+			(lambda ()
+				(set! num (+ num 1))
+				(string-append "bad_arg_count" (number->string num)))))
+
+(define make-one-arg-for-make-vector
+	(let ((num 200))
+			(lambda ()
+				(set! num (+ num 1))
+				(string-append "oneArgForVector" (number->string num)))))
+
+(define make-two-arg-for-make-vector
+	(let ((num 200))
+			(lambda ()
+				(set! num (+ num 1))
+				(string-append "twoArgForVector" (number->string num)))))
+
+(define make-bad-input-for-make-vector
+	(let ((num 200))
+			(lambda ()
+				(set! num (+ num 1))
+				(string-append "badInputForVector" (number->string num)))))
+
+(define make-two-arg-loop-input-for-make-vector
+	(let ((num 200))
+			(lambda ()
+				(set! num (+ num 1))
+				(string-append "twoArgLoopForVector" (number->string num)))))
+
+(define make-two-arg-loop-input-end-for-make-vector
+	(let ((num 200))
+			(lambda ()
+				(set! num (+ num 1))
+				(string-append "twoArgLoopEndForVector" (number->string num)))))
+
+(define make-one-arg-loop-input-for-make-vector
+	(let ((num 200))
+			(lambda ()
+				(set! num (+ num 1))
+				(string-append "oneArgLoopForVector" (number->string num)))))
+
+(define make-one-arg-loop-input-end-for-make-vector
+	(let ((num 200))
+			(lambda ()
+				(set! num (+ num 1))
+				(string-append "oneArgLoopEndForVector" (number->string num)))))
+
+;=========================================================================================================================================
+;======================================================= END OF FUNCTIONS FOR MAKE-VECTOR EXPRESSION =====================================
+;=========================================================================================================================================
+
 
 
 ;=========================================================================================================================================
@@ -1127,17 +1356,21 @@
 				"\tcmp rax, 1\n"
 				"\tjne .badArgCount\n"
 				"\tmov rax, qword [rbp + 8*4]\n"
-				"\tmov rbx, rax\n"
+				"\tmov r10, [rax]\n"
+				"\tmov rbx, r10\n"
 				"\tTYPE rbx\n"
 				"\tcmp rbx, T_CHAR\n"
 				"\tjne .badInput ; not of type char - can't convert\n"
-				"\txor rax, (T_INTEGER ^ T_CHAR)\n"
+				"\txor r10, (T_INTEGER ^ T_CHAR)\n"
+				"\tmov rdi, 8\n"
+				"\tcall malloc\n"
+				"\tmov [rax], r10\n"
 				"\tjmp .done\n\n"
 				".badInput:\n\n"
-				"\tmov rax, SOB_VOID\n"
+				"\tmov rax, sobVoid\n"
 				"\tjmp .done\n"
 				".badArgCount:\n\n"
-				"\tmov rax, SOB_VOID\n"
+				"\tmov rax, sobVoid\n"
 				".done:\n"
 				"\tmov rsp, rbp\n" 
 				"\tpop rbp\n"
@@ -1170,25 +1403,29 @@
 				"\tcmp rax, 1\n"
 				"\tjne .badArgCount\n"
 				"\tmov rax, qword [rbp + 8*4]\n"
-				"\tmov rbx, rax\n"
+				"\tmov r10, [rax]\n"
+				"\tmov rbx, r10\n"
 				"\tTYPE rbx\n"
 				"\tcmp rbx, T_INTEGER\n"
 				"\tjne .badInput ; not of type integer - can't convert\n"
-				"\tmov rbx, rax\n"
+				"\tmov rbx, r10\n"
 				"\tDATA rbx\n"
 				"\tcmp rbx, 0\n"
 				"\tjl .badInput ; negative integer - can't convert to char because it doesn't have an ascii representation of type integer - can't convert\n"
-				"\tmov rbx, rax\n"
+				"\tmov rbx, r10\n"
 				"\tDATA rbx\n"
 				"\tcmp rbx, 256\n"
 				"\tjge .badInput ; integer to large - can't convert to char because it doesn't have an ascii representation of type integer - can't convert\n"
-				"\txor rax, (T_CHAR ^ T_INTEGER)\n"
+				"\txor r10, (T_CHAR ^ T_INTEGER)\n"
+				"\tmov rdi, 8\n"
+				"\tcall malloc\n"
+				"\tmov [rax], r10\n"
 				"\tjmp .done\n\n"
 				".badInput:\n\n"
-				"\tmov rax, SOB_VOID\n"
+				"\tmov rax, sobVoid\n"
 				"\tjmp .done\n"
 				".badArgCount:\n\n"
-				"\tmov rax, SOB_VOID\n"
+				"\tmov rax, sobVoid\n"
 				".done:\n"
 				"\tmov rsp, rbp\n" 
 				"\tpop rbp\n"
@@ -1219,63 +1456,83 @@
 				"\tcmp rax, 2\n"
 				"\tjne .badArgCount\n"
 				"\tmov rax, qword [rbp + 8*4]\n"
+				"\tmov rax, [rax]\n"
 				"\tmov rbx, rax\n"
 				"\tTYPE rbx\n"
 				"\tcmp rbx, T_INTEGER\n"
 				"\tjne .badArgs\n"
-				"\tmov rax, qword [rbp + 8*5]\n"
-				"\tmov rcx, rax\n"
-				"\tTYPE rcx\n"
-				"\tcmp rcx, T_INTEGER\n"
+				"\tmov rdx, qword [rbp + 8*5]\n"
+				"\tmov r10, [rdx]\n"
+				"\tmov rdx, r10\n"
+				"\tTYPE rdx\n"
+				"\tcmp rdx, T_INTEGER\n"
 				"\tjne .badArgs\n"
 				"\tmov rax, qword [rbp + 8*4]\n"
+				"\tmov rax, [rax]\n"
 				"\tDATA rax\n"
 				"\tmov rcx, qword [rbp + 8*5]\n"
-				"\tDATA rcx\n"
+				"\tmov r10, [rcx]\n"
+				"\tDATA r10\n"
 				"\tcmp rax, 0\n"
 				"\tjl .firstArgsIsNeg\n"
-				"\tcmp rcx, 0\n"
+				"\tcmp r10, 0\n"
 				"\tjl .secondArgIsNeg\n"
-				"\tcmp rax, 0\n"
+				;"\tcmp rax, 0\n"
 				"\tmov rdx, 0\n"
-				"\tidiv rcx\n"
-				"\tmov rax, rdx\n"
-				"\tshl rax, 4\n"
-				"\tor rax, T_INTEGER\n"
+				"\tdiv r10\n"
+				"\tmov r15, rdx\n"
+				;"\tneg r15\n";;;;;;;;;;;;;;;
+				"\tshl r15, 4\n"
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+				"\tor r15, T_INTEGER\n"
+				"\tmov rdi, 8\n"
+				"\tcall malloc\n"
+				"\tmov qword [rax], r15\n"
 				"\tjmp .done\n"
 
 				".firstArgsIsNeg:\n\n"
 				"\tmov r9, 1\n"
 				"\tneg rax\n"
-				"\tcmp rcx, 0\n"
+				"\tcmp r10, 0\n"
 				"\tjl .secondArgIsNeg\n"
 				"\tjmp .devidendIsNeg\n"
 
 				".secondArgIsNeg:\n\n"
-				"\tneg rcx\n"
+				"\tneg r10\n"
 				"\tcmp r9, 1\n"
 				"\tje .devidendIsNeg\n"
 				"\tmov rdx, 0\n"
-				"\tidiv rcx\n"
-				"\tmov rax, rdx\n"
-				"\tshl rax, 4\n"
-				"\tor rax, T_INTEGER\n"
+				"\tdiv r10\n"
+				"\tmov r15, rdx\n"
+				;"\tneg r15\n";;;;;;;;;;;;;;;;;;
+				"\tshl r15, 4\n"
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+				"\tor r15, T_INTEGER\n"
+				"\tmov rdi, 8\n"
+				"\tcall malloc\n"
+				"\tmov qword [rax], r15\n"
 				"\tjmp .done\n"
+
 
 				".devidendIsNeg:\n\n"
 				"\tmov rdx, 0\n"
-				"\tdiv rcx\n"
-				"\tmov rax, rdx\n"
-				"\tneg rax\n"
-				"\tshl rax, 4\n"
-				"\tor rax, T_INTEGER\n"
+				"\tdiv r10\n"
+				"\tmov r15, rdx\n"
+				"\tneg r15\n";;;;;;;;;;;;;;;;;;
+				"\tshl r15, 4\n"
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+				"\tor r15, T_INTEGER\n"
+				"\tmov rdi, 8\n"
+				"\tcall malloc\n"
+				"\tmov qword [rax], r15\n"
 				"\tjmp .done\n"
 
+
 				".badArgCount:\n"
-				"\tmov rax, SOB_VOID\n"
+				"\tmov rax, sobVoid\n"
 				"\tjmp .done\n\n"
 				".badArgs:\n"
-				"\tmov rax, SOB_VOID\n"
+				"\tmov rax, sobVoid\n"
 				".done:\n"
 				"\tmov rsp, rbp\n" 
 				"\tpop rbp\n"
@@ -1307,16 +1564,18 @@
 				"\tcmp rax, 1\n"
 				"\tjne .notAFraction\n"
 				"\tmov rax, qword [rbp + 8*4]\n"
-				"\tmov rbx, rax\n"
+				"\tmov r10, [rax]\n"
+				"\tmov rbx, r10\n"
 				"\tTYPE rbx\n"
 				"\tcmp rbx, T_INTEGER\n"
 				"\tje .done\n"
 				"\tcmp rbx, T_FRACTION\n"
 				"\tjne .notAFraction\n"
-				"\tNUMERATOR rax\n"
+				"\tRUNTIME_NUMERATOR r10\n"
+				"\tmov rax, r10\n"
 				"\tjmp .done\n\n"
 				".notAFraction:\n"
-				"\tmov rax, SOB_VOID\n"
+				"\tmov rax, sobVoid\n"
 				".done:\n"
 				"\tmov rsp, rbp\n" 
 				"\tpop rbp\n"
@@ -1347,19 +1606,22 @@
 				"\tcmp rax, 1\n"
 				"\tjne .notAFraction\n"
 				"\tmov rax, qword [rbp + 8*4]\n"
-				"\tmov rbx, rax\n"
+				"\tmov r10, [rax]\n"
+				"\tmov rbx, r10\n"
 				"\tTYPE rbx\n"
 				"\tcmp rbx, T_INTEGER\n"
 				"\tje .returnOne\n"
 				"\tcmp rbx, T_FRACTION\n"
 				"\tjne .notAFraction\n"
-				"\tDENOMINATOR rax\n"
+				"\tRUNTIME_DENOMINATOR r10\n"
+				"\tmov rax, r10\n"
 				"\tjmp .done\n\n"
 				".notAFraction:\n"
-				"\tmov rax, SOB_VOID\n"
+				"\tmov rax, sobVoid\n"
 				"\tjmp .done\n\n"
 				".returnOne:\n\n"
-				"\tmov rax, MAKE_LITERAL(T_INTEGER, 1)\n"
+				"\tmov rdi, 8\n"
+				"\tmov qword [rax], MAKE_LITERAL(T_INTEGER, 1)\n"
 				".done:\n"
 				"\tmov rsp, rbp\n" 
 				"\tpop rbp\n"
@@ -1397,23 +1659,24 @@
 				"\tcall malloc\n"
 				"\tmov rbx, rax ; will hold the car address \n"
 				"\tmov rcx, qword [rbp + 4*8]\n"
-				"\tmov qword [rbx], rcx\n"
+				"\tmov r10, [rcx]\n"
+				"\tmov qword [rbx], r10\n"
 				"\tpush rbx\n"
 				"\tmov rdi, 8\n"
 				"\tcall malloc\n"
 				"\tmov rdx, rax ; will hold the cdr address \n"
 				"\tmov rcx, qword [rbp + 5*8]\n"
-				"\tmov qword [rdx], rcx\n"
+				"\tmov r11, [rcx]\n"
+				"\tmov qword [rdx], r11\n"
 				"\tpush rdx\n"
 				"\tmov rdi, 8\n"
 				"\tcall malloc ; rax will hold the address of the new pair\n"
 				"\tpop rdx\n"
 				"\tpop rbx\n"
 				"\tMAKE_MALLOC_LITERAL_PAIR rax, rbx, rdx\n"
-				"\tmov rax, [rax]\n"
 				"\tjmp .done\n\n"
 				".badArgCount:\n\n"
-				"\tmov rax, SOB_VOID\n"
+				"\tmov rax, sobVoid\n"
 				".done:\n"
 				"\tmov rsp, rbp\n" 
 				"\tpop rbp\n"
@@ -1444,14 +1707,18 @@
 				"\tcmp rax, 1\n"
 				"\tjne .notAPair\n"
 				"\tmov rax, qword [rbp + 8*4]\n"
-				"\tmov rbx, rax\n"
+				"\tmov r10, [rax]\n"
+				"\tmov rbx, r10\n"
 				"\tTYPE rbx\n"
 				"\tcmp rbx, T_PAIR\n"
 				"\tjne .notAPair\n"
-				"\tCAR rax\n"
+				;"\tCAR r10\n"
+				"\tDATA_UPPER r10\n"
+				"\tadd r10, start_of_data\n"
+				"\tmov rax, r10\n"
 				"\tjmp .done\n\n"
 				".notAPair:\n"
-				"\tmov rax, SOB_VOID\n"
+				"\tmov rax, sobVoid\n"
 				".done:\n"
 				"\tmov rsp, rbp\n" 
 				"\tpop rbp\n"
@@ -1482,14 +1749,18 @@
 				"\tcmp rax, 1\n"
 				"\tjne .notAPair\n"
 				"\tmov rax, qword [rbp + 8*4]\n"
-				"\tmov rbx, rax\n"
+				"\tmov r10, [rax]\n"
+				"\tmov rbx, r10\n"
 				"\tTYPE rbx\n"
 				"\tcmp rbx, T_PAIR\n"
 				"\tjne .notAPair\n"
-				"\tCDR rax\n"
+				;"\tCDR rax\n"
+				"\tDATA_LOWER r10\n"
+				"\tadd r10, start_of_data\n"
+				"\tmov rax, r10\n"
 				"\tjmp .done\n\n"
 				".notAPair:\n"
-				"\tmov rax, SOB_VOID\n"
+				"\tmov rax, sobVoid\n"
 				".done:\n"
 				"\tmov rsp, rbp\n" 
 				"\tpop rbp\n"
@@ -1548,22 +1819,23 @@
 				"\tcmp rax, 1\n"
 				"\tjne .notANumber\n"
 				"\tmov rax, qword [rbp + 8*4]\n"
-				"\tmov rbx, rax\n"
+				"\tmov r10, [rax]\n"
+				"\tmov rbx, r10\n"
 				"\tTYPE rbx\n"
 				"\tcmp rbx, T_INTEGER\n"
 				"\tje .chechIfZero\n"
-				"\tmov rax, SOB_FALSE\n"
+				"\tmov rax, sobFalse\n"
 				"\tjmp .done\n\n"
 				".chechIfZero:\n"
-				"\tcmp rax, MAKE_LITERAL(T_INTEGER, 0)\n"
+				"\tcmp r10, MAKE_LITERAL(T_INTEGER, 0)\n"
 				"\tje .isZero\n"
-				"\tmov rax, SOB_FALSE\n"
+				"\tmov rax, sobFalse\n"
 				"\tjmp .done\n\n"
 				".isZero:\n"
-				"\tmov rax, SOB_TRUE\n"
+				"\tmov rax, sobTrue\n"
 				"\tjmp .done\n"
 				".notANumber:\n\n"
-				"\tmov rax, SOB_VOID\n"
+				"\tmov rax, sobVoid\n"
 				".done:\n"
 				"\tmov rsp, rbp\n" 
 				"\tpop rbp\n"
@@ -1595,20 +1867,21 @@
 				"\tcmp rax, 1\n"
 				"\tjne .badArgCount\n"
 				"\tmov rax, qword [rbp + 8*4]\n"
-				"\tmov rbx, rax\n"
+				"\tmov r10, [rax]\n"
+				"\tmov rbx, r10\n"
 				"\tTYPE rbx\n"
 				"\tcmp rbx, T_BOOL\n"
 				"\tjne .retFalse\n"
-				"\tmov rbx, rax\n"
-				"\tcmp rbx, SOB_TRUE\n"
+				"\tmov rbx, r10\n"
+				"\tcmp rbx, sobTrue\n"
 				"\tje .retFalse\n"
-				"\tmov rax, SOB_TRUE\n"
+				"\tmov rax, sobTrue\n"
 				"\tjmp .done\n\n"
 				".retFalse:\n"
-				"\tmov rax, SOB_FALSE\n\n"
+				"\tmov rax, sobFalse\n\n"
 				"\tjmp .done\n"
 				".badArgCount:\n\n"
-				"\tmov rax, SOB_VOID\n"
+				"\tmov rax, sobVoid\n"
 				".done:\n"
 				"\tmov rsp, rbp\n" 
 				"\tpop rbp\n"
@@ -1640,17 +1913,18 @@
 				"\tcmp rax, 1\n"
 				"\tjne .badArgCount\n"
 				"\tmov rax, qword [rbp + 8*4]\n"
-				"\tmov rbx, rax\n"
+				"\tmov r10, [rax]\n"
+				"\tmov rbx, r10\n"
 				"\tTYPE rbx\n"
 				"\tcmp rbx, T_VECTOR\n"
 				"\tje .trueVector?\n"
-				"\tmov rax, SOB_FALSE\n"
+				"\tmov rax, sobFalse\n"
 				"\tjmp .done\n\n"
 				".trueVector?:\n"
-				"\tmov rax, SOB_TRUE\n\n"
+				"\tmov rax, sobTrue\n\n"
 				"\tjmp .done\n"
 				".badArgCount:\n\n"
-				"\tmov rax, SOB_VOID\n"
+				"\tmov rax, sobVoid\n"
 				".done:\n\n"
 				"\tmov rsp, rbp\n" 
 				"\tpop rbp\n"
@@ -1681,17 +1955,18 @@
 				"\tcmp rax, 1\n"
 				"\tjne .badArgCount\n"
 				"\tmov rax, qword [rbp + 8*4]\n"
-				"\tmov rbx, rax\n"
+				"\tmov r10, [rax]\n"
+				"\tmov rbx, r10\n"
 				"\tTYPE rbx\n"
 				"\tcmp rbx, T_STRING\n"
 				"\tje .trueString?\n"
-				"\tmov rax, SOB_FALSE\n"
+				"\tmov rax, sobFalse\n"
 				"\tjmp .done\n\n"
 				".trueString?:\n"
-				"\tmov rax, SOB_TRUE\n\n"
+				"\tmov rax, sobTrue\n\n"
 				"\tjmp .done\n"
 				".badArgCount:\n\n"
-				"\tmov rax, SOB_VOID\n"
+				"\tmov rax, sobVoid\n"
 				".done:\n"
 				"\tmov rsp, rbp\n" 
 				"\tpop rbp\n"
@@ -1723,17 +1998,18 @@
 				"\tcmp rax, 1\n"
 				"\tjne .badArgCount\n"
 				"\tmov rax, qword [rbp + 8*4]\n"
-				"\tmov rbx, rax\n"
+				"\tmov r10, [rax]\n"
+				"\tmov rbx, r10\n"
 				"\tTYPE rbx\n"
 				"\tcmp rbx, T_CHAR\n"
 				"\tje .trueChar?\n"
-				"\tmov rax, SOB_FALSE\n"
+				"\tmov rax, sobFalse\n"
 				"\tjmp .done\n\n"
 				".trueChar?:\n"
-				"\tmov rax, SOB_TRUE\n\n"
+				"\tmov rax, sobTrue\n\n"
 				"\tjmp .done\n"
 				".badArgCount:\n\n"
-				"\tmov rax, SOB_VOID\n"
+				"\tmov rax, sobVoid\n"
 				".done:\n"
 				"\tmov rsp, rbp\n" 
 				"\tpop rbp\n"
@@ -1746,6 +2022,49 @@
 ;=========================================================================================================================================
 ;======================================================= END OF FUNCTIONS FOR CHAR? EXPRESSION ===========================================
 ;=========================================================================================================================================
+
+;=========================================================================================================================================
+;======================================================= FUNCTIONS FOR PROCEDURE? EXPRESSION =============================================
+;=========================================================================================================================================
+
+(define handle_procedure?
+		(lambda ()
+
+			(string-append (applic-prolog "procedure?_code" "end_procedure?_code")
+
+				"\nprocedure?_code:\n"
+				"\tpush rbp\n"
+				"\tmov rbp, rsp\n"
+				"\tmov rax, qword [rbp + 8*3]\n"
+				"\tcmp rax, 1\n"
+				"\tjne .badArgCount\n"
+				"\tmov rax, qword [rbp + 8*4]\n"
+				"\tmov r10, [rax]\n"
+				"\tmov rbx, r10\n"
+				"\tTYPE rbx\n"
+				"\tcmp rbx, T_CLOSURE\n"
+				"\tje .trueProcedure?\n"
+				"\tmov rax, sobFalse\n"
+				"\tjmp .done\n\n"
+				".trueProcedure?:\n"
+				"\tmov rax, sobTrue\n\n"
+				"\tjmp .done\n"
+				".badArgCount:\n\n"
+				"\tmov rax, sobVoid\n"
+				".done:\n"
+				"\tmov rsp, rbp\n" 
+				"\tpop rbp\n"
+				"\tret\n\n"
+
+				"end_procedure?_code:\n"
+				"\tmov rax, [rax]\n"
+				"\tmov qword [procedure?], rax\n\n")))
+
+
+;=========================================================================================================================================
+;======================================================= END OF FUNCTIONS FOR PAIR? EXPRESSION ===========================================
+;=========================================================================================================================================
+
 
 
 ;=========================================================================================================================================
@@ -1764,17 +2083,18 @@
 				"\tcmp rax, 1\n"
 				"\tjne .badArgCount\n"
 				"\tmov rax, qword [rbp + 8*4]\n"
-				"\tmov rbx, rax\n"
+				"\tmov r10, [rax]\n"
+				"\tmov rbx, r10\n"
 				"\tTYPE rbx\n"
 				"\tcmp rbx, T_PAIR\n"
 				"\tje .truePair?\n"
-				"\tmov rax, SOB_FALSE\n"
+				"\tmov rax, sobFalse\n"
 				"\tjmp .done\n\n"
 				".truePair?:\n"
-				"\tmov rax, SOB_TRUE\n\n"
+				"\tmov rax, sobTrue\n\n"
 				"\tjmp .done\n"
 				".badArgCount:\n\n"
-				"\tmov rax, SOB_VOID\n"
+				"\tmov rax, sobVoid\n"
 				".done:\n"
 				"\tmov rsp, rbp\n" 
 				"\tpop rbp\n"
@@ -1808,17 +2128,18 @@
 				"\tcmp rax, 1\n"
 				"\tjne .badArgCount\n"
 				"\tmov rax, qword [rbp + 8*4]\n"
-				"\tmov rbx, rax\n"
+				"\tmov r10, [rax]\n"
+				"\tmov rbx, r10\n"
 				"\tTYPE rbx\n"
 				"\tcmp rbx, T_BOOL\n"
 				"\tje .trueBoolean?\n"
-				"\tmov rax, SOB_FALSE\n"
+				"\tmov rax, sobFalse\n"
 				"\tjmp .done\n\n"
 				".trueBoolean?:\n"
-				"\tmov rax, SOB_TRUE\n\n"
+				"\tmov rax, sobTrue\n\n"
 				"\tjmp .done\n"
 				".badArgCount:\n\n"
-				"\tmov rax, SOB_VOID\n"
+				"\tmov rax, sobVoid\n"
 				".done:\n"
 				"\tmov rsp, rbp\n" 
 				"\tpop rbp\n"
@@ -1835,7 +2156,7 @@
 ;=========================================================================================================================================
 
 ;=========================================================================================================================================
-;======================================================= FUNCTIONS FOR INTEGER? EXPRESSION ===============================================
+;======================================================= FUNCTIONS FOR RATIONAL? EXPRESSION ===============================================
 ;=========================================================================================================================================
 
 (define handle_rational?
@@ -1850,19 +2171,20 @@
 				"\tcmp rax, 1\n"
 				"\tjne .badArgCount\n"
 				"\tmov rax, qword [rbp + 8*4]\n"
-				"\tmov rbx, rax\n"
+				"\tmov r10, [rax]\n"
+				"\tmov rbx, r10\n"
 				"\tTYPE rbx\n"
 				"\tcmp rbx, T_FRACTION\n"
 				"\tje .trueRational?\n"
 				"\tcmp rbx, T_INTEGER\n"
 				"\tje .trueRational?\n"
-				"\tmov rax, SOB_FALSE\n"
+				"\tmov rax, sobFalse\n"
 				"\tjmp .done\n\n"
 				".trueRational?:\n"
-				"\tmov rax, SOB_TRUE\n\n"
+				"\tmov rax, sobTrue\n\n"
 				"\tjmp .done\n"
 				".badArgCount:\n\n"
-				"\tmov rax, SOB_VOID\n"
+				"\tmov rax, sobVoid\n"
 				".done:\n"
 				"\tmov rsp, rbp\n" 
 				"\tpop rbp\n"
@@ -1874,7 +2196,7 @@
 
 
 ;=========================================================================================================================================
-;======================================================= END OF FUNCTIONS FOR INTEGER? EXPRESSION ========================================
+;======================================================= END OF FUNCTIONS FOR RATIONAL? EXPRESSION ========================================
 ;=========================================================================================================================================
 
 
@@ -1894,17 +2216,18 @@
 				"\tcmp rax, 1\n"
 				"\tjne .badArgCount\n"
 				"\tmov rax, qword [rbp + 8*4]\n"
-				"\tmov rbx, rax\n"
+				"\tmov r10, [rax]\n"
+				"\tmov rbx, r10\n"
 				"\tTYPE rbx\n"
 				"\tcmp rbx, T_INTEGER\n"
 				"\tje .trueInteger?\n"
-				"\tmov rax, SOB_FALSE\n"
+				"\tmov rax, sobFalse\n"
 				"\tjmp .done\n\n"
 				".trueInteger?:\n"
-				"\tmov rax, SOB_TRUE\n\n"
+				"\tmov rax, sobTrue\n\n"
 				"\tjmp .done\n"
 				".badArgCount:\n\n"
-				"\tmov rax, SOB_VOID\n"
+				"\tmov rax, sobVoid\n"
 				".done:\n"
 				"\tmov rsp, rbp\n" 
 				"\tpop rbp\n"
@@ -1936,17 +2259,18 @@
 				"\tcmp rax, 1\n"
 				"\tjne .badArgCount\n"
 				"\tmov rax, qword [rbp + 8*4]\n"
-				"\tmov rbx, rax\n"
+				"\tmov r10, [rax]\n"
+				"\tmov rbx, r10\n"
 				"\tTYPE rbx\n"
 				"\tcmp rbx, T_NIL\n"
 				"\tje .trueNull?\n"
-				"\tmov rax, SOB_FALSE\n"
+				"\tmov rax, sobFalse\n"
 				"\tjmp .done\n\n"
 				".trueNull?:\n"
-				"\tmov rax, SOB_TRUE\n\n"
+				"\tmov rax, sobTrue\n\n"
 				"\tjmp .done\n"
 				".badArgCount:\n\n"
-				"\tmov rax, SOB_VOID\n"
+				"\tmov rax, sobVoid\n"
 				".done:\n"
 				"\tmov rsp, rbp\n" 
 				"\tpop rbp\n"
@@ -1978,21 +2302,23 @@
 				"\tcmp rax, 1\n"
 				"\tjne .badArgCount\n"
 				"\tmov rax, qword [rbp + 8*4]\n"
-				"\tmov rbx, rax\n"
+				"\tmov r10, [rax]\n"
+				"\tmov rbx, r10\n"
 				"\tTYPE rbx\n"
 				"\tcmp rbx, T_INTEGER\n"
 				"\tje .trueNumber?\n"
 				"\tcmp rbx, T_FRACTION\n"
 				"\tje .trueNumber?\n"
-				"\tmov rax, SOB_FALSE\n"
+				"\tmov rax, sobFalse\n"
 				"\tjmp .done\n\n"
 				".trueNumber?:\n"
-				"\tmov rax, SOB_TRUE\n\n"
+				"\tmov rax, sobTrue\n\n"
 				"\tjmp .done\n"
 				".badArgCount:\n\n"
-				"\tmov rax, SOB_VOID\n"
+				"\tmov rax, sobVoid\n"
 				".done:\n"
-				"\tmov rsp, rbp\n" "\tpop rbp\n"
+				"\tmov rsp, rbp\n" 
+				"\tpop rbp\n"
 				"\tret\n\n"
 
 				"end_number?_code:\n"
