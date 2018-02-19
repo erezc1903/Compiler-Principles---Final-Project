@@ -142,26 +142,52 @@ vector?:
 zero?:
 	dq SOB_UNDEFINED
 
-sobInt10:
-	dq MAKE_LITERAL (T_INTEGER, 10)
+sobVoid:
+	dq SOB_VOID
 
-sobInt4:
-	dq MAKE_LITERAL (T_INTEGER, 4)
+sobFalse:
+	dq SOB_FALSE
+sobTrue:
+	dq SOB_TRUE
 
-sobInt30:
-	dq MAKE_LITERAL (T_INTEGER, 30)
+sobNil:
+	dq SOB_NIL
 
-sobInt22:
-	dq MAKE_LITERAL (T_INTEGER, 22)
+sobInt34:
+	dq MAKE_LITERAL (T_INTEGER, 34)
 
-sobNegInt12:
-	dq MAKE_LITERAL (T_INTEGER, -12)
+sobInt49:
+	dq MAKE_LITERAL (T_INTEGER, 49)
+
+sobInt1:
+	dq MAKE_LITERAL (T_INTEGER, 1)
+
+sobInt2:
+	dq MAKE_LITERAL (T_INTEGER, 2)
 
 sobInt3:
 	dq MAKE_LITERAL (T_INTEGER, 3)
 
-sobNegInt56:
-	dq MAKE_LITERAL (T_INTEGER, -56)
+sobInt4:
+	dq MAKE_LITERAL (T_INTEGER, 4)
+
+sobInt69:
+	dq MAKE_LITERAL (T_INTEGER, 69)
+
+sobInt70:
+	dq MAKE_LITERAL (T_INTEGER, 70)
+
+sobInt71:
+	dq MAKE_LITERAL (T_INTEGER, 71)
+
+sobInt10:
+	dq MAKE_LITERAL (T_INTEGER, 10)
+
+sobInt39:
+	dq MAKE_LITERAL (T_INTEGER, 39)
+
+sobUndef:
+	dq SOB_UNDEFINED
 
 
 
@@ -1432,59 +1458,1153 @@ start_of_instructions:
 	mov rbp, rsp
 
 ; start
+; start of creating a closure of lambda-simple 0
+
+	mov rbx, 0
+	mov rdi, 16
+	call malloc; rax now hold a pointer to the target closure
+make_closure101:
+
+	MAKE_LITERAL_CLOSURE rax, rbx, bodyOfLambda101
+	jmp endLabel101
+
+bodyOfLambda101:
+	push rbp
+	mov rbp, rsp
+	mov r10, qword [rbp +3*8]
+	cmp r10, 2
+	jl bad_arg_count101
+	mov r15, 1
+	mov r14, qword [rbp + 3*8]
+	dec r14
+	mov r13, sobNil
+
+opt_args_loop101:
+
+	cmp r14, r15
+	je opt_args_loop_end101
+	mov rdi, 8
+	call malloc
+	mov r8, qword [rbp + 4*8 + r14*8]
+	mov r12, r8
+	sub r12, start_of_data
+	shl r12, 30
+	mov r9, r13
+	sub r9, start_of_data
+	or r12, r9
+	shl r12, 4
+	or r12, T_PAIR
+	mov  qword [rax], r12
+	mov r13, rax
+	dec r14
+	jmp opt_args_loop101
+opt_args_loop_end101:
+
+	mov qword [rbp + 4*8 + (r15 + 1)*8], r13
+	mov rax, qword [rbp + (4+0)*8]
+	mov r10, [rax]
+	mov rbx, r10
+	TYPE rbx
+	cmp rbx, SOB_FALSE
+	jne Lend101
+	mov rax, qword [rbp + (4+1)*8]
+	mov r10, [rax]
+	mov rbx, r10
+	TYPE rbx
+	cmp rbx, SOB_FALSE
+	jne Lend101
+Lend101:
+
+	mov rsp, rbp
+	pop rbp
+	ret
+
+bad_arg_count101:
+	mov rax, sobVoid
+	mov rsp, rbp
+	pop rbp
+	ret
+
+endLabel101:
+; end of creating a closure of lambda-simple 0
+
+	mov rax, [rax]
+	push rax
+	call write_sob_if_not_void
+	add rsp, 8
+
+; end
+
+; start
 ; start of applic of lambda-simple code: 
 
 	; codegen for const start
-	mov rax, qword [sobNegInt56]
+	mov rax, qword sobInt4
 	;code gen for constant end
 	push rax
 	; codegen for const start
-	mov rax, qword [sobInt3]
+	mov rax, qword sobInt3
 	;code gen for constant end
 	push rax
 	; codegen for const start
-	mov rax, qword [sobNegInt12]
+	mov rax, qword sobInt2
 	;code gen for constant end
 	push rax
 	; codegen for const start
-	mov rax, qword [sobInt22]
-	;code gen for constant end
-	push rax
-	; codegen for const start
-	mov rax, qword [sobInt30]
-	;code gen for constant end
-	push rax
-	; codegen for const start
-	mov rax, qword [sobInt4]
-	;code gen for constant end
-	push rax
-	; codegen for const start
-	mov rax, qword [sobInt10]
+	mov rax, qword sobInt49
 	;code gen for constant end
 	push rax
 
-	push 7
-	mov rax, [subtract]
-	mov rcx, rax
+	push 4
+; start of creating a closure of lambda-simple 0
+
+	mov rbx, 0
+	mov rdi, 16
+	call malloc; rax now hold a pointer to the target closure
+make_closure102:
+
+	MAKE_LITERAL_CLOSURE rax, rbx, bodyOfLambda102
+	jmp endLabel102
+
+bodyOfLambda102:
+	push rbp
+	mov rbp, rsp
+	mov r10, qword [rbp +3*8]
+	cmp r10, 2
+	jl bad_arg_count102
+	mov r15, 1
+	mov r14, qword [rbp + 3*8]
+	dec r14
+	mov r13, sobNil
+
+opt_args_loop102:
+
+	cmp r14, r15
+	je opt_args_loop_end102
+	mov rdi, 8
+	call malloc
+	mov r8, qword [rbp + 4*8 + r14*8]
+	mov r12, r8
+	sub r12, start_of_data
+	shl r12, 30
+	mov r9, r13
+	sub r9, start_of_data
+	or r12, r9
+	shl r12, 4
+	or r12, T_PAIR
+	mov  qword [rax], r12
+	mov r13, rax
+	dec r14
+	jmp opt_args_loop102
+opt_args_loop_end102:
+
+	mov qword [rbp + 4*8 + (r15 + 1)*8], r13
+	mov rax, qword [rbp + (4+0)*8]
+	mov r10, [rax]
+	mov rbx, r10
+	TYPE rbx
+	cmp rbx, SOB_FALSE
+	jne Lend102
+	mov rax, qword [rbp + (4+1)*8]
+	mov r10, [rax]
+	mov rbx, r10
+	TYPE rbx
+	cmp rbx, SOB_FALSE
+	jne Lend102
+Lend102:
+
+	mov rsp, rbp
+	pop rbp
+	ret
+
+bad_arg_count102:
+	mov rax, sobVoid
+	mov rsp, rbp
+	pop rbp
+	ret
+
+endLabel102:
+; end of creating a closure of lambda-simple 0
+
+	mov r10, [rax]
+	mov rcx, r10
 	TYPE rcx
 	cmp rcx, T_CLOSURE
 	jne not_a_closure101
-	mov rbx, rax
+	mov rbx, r10
 	CLOSURE_ENV rbx
 	push rbx
-	CLOSURE_CODE rax
-	call rax
+	CLOSURE_CODE r10
+	call r10
 	add rsp, 8*1
 	jmp done_closure101
 not_a_closure101:
 
-	mov rax, SOB_VOID
+	mov rax, sobVoid
 done_closure101:
 
-	add rsp, 8*8
+	add rsp, 8*5
 
 ; end of applic of lambda-simple code: 
 
+	mov rax, [rax]
+	push rax
+	call write_sob_if_not_void
+	add rsp, 8
+
+; end
+
+; start
+; start of applic of lambda-simple code: 
+
+	; codegen for const start
+	mov rax, qword sobInt34
+	;code gen for constant end
+	push rax
+
+	push 1
+; start of creating a closure of lambda-simple 0
+
+	mov rbx, 0
+	mov rdi, 16
+	call malloc; rax now hold a pointer to the target closure
+make_closure103:
+
+	MAKE_LITERAL_CLOSURE rax, rbx, bodyOfLambda103
+	jmp endLabel103
+
+bodyOfLambda103:
+	push rbp
+	mov rbp, rsp
+	mov r10, qword [rbp +3*8]
+	cmp r10, 2
+	jl bad_arg_count103
+	mov r15, 1
+	mov r14, qword [rbp + 3*8]
+	dec r14
+	mov r13, sobNil
+
+opt_args_loop103:
+
+	cmp r14, r15
+	je opt_args_loop_end103
+	mov rdi, 8
+	call malloc
+	mov r8, qword [rbp + 4*8 + r14*8]
+	mov r12, r8
+	sub r12, start_of_data
+	shl r12, 30
+	mov r9, r13
+	sub r9, start_of_data
+	or r12, r9
+	shl r12, 4
+	or r12, T_PAIR
+	mov  qword [rax], r12
+	mov r13, rax
+	dec r14
+	jmp opt_args_loop103
+opt_args_loop_end103:
+
+	mov qword [rbp + 4*8 + (r15 + 1)*8], r13
+	mov rax, qword [rbp + (4+0)*8]
+	mov r10, [rax]
+	mov rbx, r10
+	TYPE rbx
+	cmp rbx, SOB_FALSE
+	jne Lend103
+	mov rax, qword [rbp + (4+1)*8]
+	mov r10, [rax]
+	mov rbx, r10
+	TYPE rbx
+	cmp rbx, SOB_FALSE
+	jne Lend103
+Lend103:
+
+	mov rsp, rbp
+	pop rbp
+	ret
+
+bad_arg_count103:
+	mov rax, sobVoid
+	mov rsp, rbp
+	pop rbp
+	ret
+
+endLabel103:
+; end of creating a closure of lambda-simple 0
+
+	mov r10, [rax]
+	mov rcx, r10
+	TYPE rcx
+	cmp rcx, T_CLOSURE
+	jne not_a_closure102
+	mov rbx, r10
+	CLOSURE_ENV rbx
+	push rbx
+	CLOSURE_CODE r10
+	call r10
+	add rsp, 8*1
+	jmp done_closure102
+not_a_closure102:
+
+	mov rax, sobVoid
+done_closure102:
+
+	add rsp, 8*2
+
+; end of applic of lambda-simple code: 
+
+	mov rax, [rax]
+	push rax
+	call write_sob_if_not_void
+	add rsp, 8
+
+; end
+
+; start
+; start of applic of lambda-simple code: 
+
+	; codegen for const start
+	mov rax, qword sobInt4
+	;code gen for constant end
+	push rax
+	; codegen for const start
+	mov rax, qword sobInt3
+	;code gen for constant end
+	push rax
+	; codegen for const start
+	mov rax, qword sobInt2
+	;code gen for constant end
+	push rax
+	; codegen for const start
+	mov rax, qword sobInt49
+	;code gen for constant end
+	push rax
+
+	push 4
+; start of creating a closure of lambda-simple 0
+
+	mov rbx, 0
+	mov rdi, 16
+	call malloc; rax now hold a pointer to the target closure
+make_closure104:
+
+	MAKE_LITERAL_CLOSURE rax, rbx, bodyOfLambda104
+	jmp endLabel104
+
+bodyOfLambda104:
+	push rbp
+	mov rbp, rsp
+	mov r10, qword [rbp +3*8]
+	cmp r10, 2
+	jl bad_arg_count104
+	mov r15, 1
+	mov r14, qword [rbp + 3*8]
+	dec r14
+	mov r13, sobNil
+
+opt_args_loop104:
+
+	cmp r14, r15
+	je opt_args_loop_end104
+	mov rdi, 8
+	call malloc
+	mov r8, qword [rbp + 4*8 + r14*8]
+	mov r12, r8
+	sub r12, start_of_data
+	shl r12, 30
+	mov r9, r13
+	sub r9, start_of_data
+	or r12, r9
+	shl r12, 4
+	or r12, T_PAIR
+	mov  qword [rax], r12
+	mov r13, rax
+	dec r14
+	jmp opt_args_loop104
+opt_args_loop_end104:
+
+	mov qword [rbp + 4*8 + (r15 + 1)*8], r13
+	mov rax, qword [rbp + (4+0)*8]
+	mov rsp, rbp
+	pop rbp
+	ret
+
+bad_arg_count104:
+	mov rax, sobVoid
+	mov rsp, rbp
+	pop rbp
+	ret
+
+endLabel104:
+; end of creating a closure of lambda-simple 0
+
+	mov r10, [rax]
+	mov rcx, r10
+	TYPE rcx
+	cmp rcx, T_CLOSURE
+	jne not_a_closure103
+	mov rbx, r10
+	CLOSURE_ENV rbx
+	push rbx
+	CLOSURE_CODE r10
+	call r10
+	add rsp, 8*1
+	jmp done_closure103
+not_a_closure103:
+
+	mov rax, sobVoid
+done_closure103:
+
+	add rsp, 8*5
+
+; end of applic of lambda-simple code: 
+
+	mov rax, [rax]
+	push rax
+	call write_sob_if_not_void
+	add rsp, 8
+
+; end
+
+; start
+; start of applic of lambda-simple code: 
+
+	; codegen for const start
+	mov rax, qword sobInt4
+	;code gen for constant end
+	push rax
+	; codegen for const start
+	mov rax, qword sobInt3
+	;code gen for constant end
+	push rax
+	; codegen for const start
+	mov rax, qword sobInt2
+	;code gen for constant end
+	push rax
+	; codegen for const start
+	mov rax, qword sobInt49
+	;code gen for constant end
+	push rax
+
+	push 4
+; start of creating a closure of lambda-simple 0
+
+	mov rbx, 0
+	mov rdi, 16
+	call malloc; rax now hold a pointer to the target closure
+make_closure105:
+
+	MAKE_LITERAL_CLOSURE rax, rbx, bodyOfLambda105
+	jmp endLabel105
+
+bodyOfLambda105:
+	push rbp
+	mov rbp, rsp
+	mov r10, qword [rbp +3*8]
+	cmp r10, 2
+	jl bad_arg_count105
+	mov r15, 1
+	mov r14, qword [rbp + 3*8]
+	dec r14
+	mov r13, sobNil
+
+opt_args_loop105:
+
+	cmp r14, r15
+	je opt_args_loop_end105
+	mov rdi, 8
+	call malloc
+	mov r8, qword [rbp + 4*8 + r14*8]
+	mov r12, r8
+	sub r12, start_of_data
+	shl r12, 30
+	mov r9, r13
+	sub r9, start_of_data
+	or r12, r9
+	shl r12, 4
+	or r12, T_PAIR
+	mov  qword [rax], r12
+	mov r13, rax
+	dec r14
+	jmp opt_args_loop105
+opt_args_loop_end105:
+
+	mov qword [rbp + 4*8 + (r15 + 1)*8], r13
+	mov rax, qword [rbp + (4+1)*8]
+	mov rsp, rbp
+	pop rbp
+	ret
+
+bad_arg_count105:
+	mov rax, sobVoid
+	mov rsp, rbp
+	pop rbp
+	ret
+
+endLabel105:
+; end of creating a closure of lambda-simple 0
+
+	mov r10, [rax]
+	mov rcx, r10
+	TYPE rcx
+	cmp rcx, T_CLOSURE
+	jne not_a_closure104
+	mov rbx, r10
+	CLOSURE_ENV rbx
+	push rbx
+	CLOSURE_CODE r10
+	call r10
+	add rsp, 8*1
+	jmp done_closure104
+not_a_closure104:
+
+	mov rax, sobVoid
+done_closure104:
+
+	add rsp, 8*5
+
+; end of applic of lambda-simple code: 
+
+	mov rax, [rax]
+	push rax
+	call write_sob_if_not_void
+	add rsp, 8
+
+; end
+
+; start
+; start of applic of lambda-simple code: 
+
+	; codegen for const start
+	mov rax, qword sobInt4
+	;code gen for constant end
+	push rax
+	; codegen for const start
+	mov rax, qword sobInt3
+	;code gen for constant end
+	push rax
+	; codegen for const start
+	mov rax, qword sobInt2
+	;code gen for constant end
+	push rax
+	; codegen for const start
+	mov rax, qword sobInt49
+	;code gen for constant end
+	push rax
+
+	push 4
+; start of creating a closure of lambda-simple 0
+
+	mov rbx, 0
+	mov rdi, 16
+	call malloc; rax now hold a pointer to the target closure
+make_closure106:
+
+	MAKE_LITERAL_CLOSURE rax, rbx, bodyOfLambda106
+	jmp endLabel106
+
+bodyOfLambda106:
+	push rbp
+	mov rbp, rsp
+	mov r10, qword [rbp +3*8]
+	cmp r10, 2
+	jl bad_arg_count106
+	mov r15, 1
+	mov r14, qword [rbp + 3*8]
+	dec r14
+	mov r13, sobNil
+
+opt_args_loop106:
+
+	cmp r14, r15
+	je opt_args_loop_end106
+	mov rdi, 8
+	call malloc
+	mov r8, qword [rbp + 4*8 + r14*8]
+	mov r12, r8
+	sub r12, start_of_data
+	shl r12, 30
+	mov r9, r13
+	sub r9, start_of_data
+	or r12, r9
+	shl r12, 4
+	or r12, T_PAIR
+	mov  qword [rax], r12
+	mov r13, rax
+	dec r14
+	jmp opt_args_loop106
+opt_args_loop_end106:
+
+	mov qword [rbp + 4*8 + (r15 + 1)*8], r13
+	mov rax, qword [rbp + (4+2)*8]
+	mov rsp, rbp
+	pop rbp
+	ret
+
+bad_arg_count106:
+	mov rax, sobVoid
+	mov rsp, rbp
+	pop rbp
+	ret
+
+endLabel106:
+; end of creating a closure of lambda-simple 0
+
+	mov r10, [rax]
+	mov rcx, r10
+	TYPE rcx
+	cmp rcx, T_CLOSURE
+	jne not_a_closure105
+	mov rbx, r10
+	CLOSURE_ENV rbx
+	push rbx
+	CLOSURE_CODE r10
+	call r10
+	add rsp, 8*1
+	jmp done_closure105
+not_a_closure105:
+
+	mov rax, sobVoid
+done_closure105:
+
+	add rsp, 8*5
+
+; end of applic of lambda-simple code: 
+
+	mov rax, [rax]
+	push rax
+	call write_sob_if_not_void
+	add rsp, 8
+
+; end
+
+; start
+; start of applic of lambda-simple code: 
+
+	; codegen for const start
+	mov rax, qword sobInt2
+	;code gen for constant end
+	push rax
+	; codegen for const start
+	mov rax, qword sobInt49
+	;code gen for constant end
+	push rax
+
+	push 2
+; start of creating a closure of lambda-simple 0
+
+	mov rbx, 0
+	mov rdi, 16
+	call malloc; rax now hold a pointer to the target closure
+make_closure107:
+
+	MAKE_LITERAL_CLOSURE rax, rbx, bodyOfLambda107
+	jmp endLabel107
+
+bodyOfLambda107:
+	push rbp
+	mov rbp, rsp
+	mov r10, qword [rbp +3*8]
+	cmp r10, 2
+	jl bad_arg_count107
+	mov r15, 1
+	mov r14, qword [rbp + 3*8]
+	dec r14
+	mov r13, sobNil
+
+opt_args_loop107:
+
+	cmp r14, r15
+	je opt_args_loop_end107
+	mov rdi, 8
+	call malloc
+	mov r8, qword [rbp + 4*8 + r14*8]
+	mov r12, r8
+	sub r12, start_of_data
+	shl r12, 30
+	mov r9, r13
+	sub r9, start_of_data
+	or r12, r9
+	shl r12, 4
+	or r12, T_PAIR
+	mov  qword [rax], r12
+	mov r13, rax
+	dec r14
+	jmp opt_args_loop107
+opt_args_loop_end107:
+
+	mov qword [rbp + 4*8 + (r15 + 1)*8], r13
+	mov rax, qword [rbp + (4+2)*8]
+	mov rsp, rbp
+	pop rbp
+	ret
+
+bad_arg_count107:
+	mov rax, sobVoid
+	mov rsp, rbp
+	pop rbp
+	ret
+
+endLabel107:
+; end of creating a closure of lambda-simple 0
+
+	mov r10, [rax]
+	mov rcx, r10
+	TYPE rcx
+	cmp rcx, T_CLOSURE
+	jne not_a_closure106
+	mov rbx, r10
+	CLOSURE_ENV rbx
+	push rbx
+	CLOSURE_CODE r10
+	call r10
+	add rsp, 8*1
+	jmp done_closure106
+not_a_closure106:
+
+	mov rax, sobVoid
+done_closure106:
+
+	add rsp, 8*3
+
+; end of applic of lambda-simple code: 
+
+	mov rax, [rax]
+	push rax
+	call write_sob_if_not_void
+	add rsp, 8
+
+; end
+
+; start
+; start of applic of lambda-simple code: 
+
+	; codegen for const start
+	mov rax, qword sobInt49
+	;code gen for constant end
+	push rax
+
+	push 1
+; start of creating a closure of lambda-simple 0
+
+	mov rbx, 0
+	mov rdi, 16
+	call malloc; rax now hold a pointer to the target closure
+make_closure108:
+
+	MAKE_LITERAL_CLOSURE rax, rbx, bodyOfLambda108
+	jmp endLabel108
+
+bodyOfLambda108:
+	push rbp
+	mov rbp, rsp
+	mov r10, qword [rbp +3*8]
+	cmp r10, 2
+	jl bad_arg_count108
+	mov r15, 1
+	mov r14, qword [rbp + 3*8]
+	dec r14
+	mov r13, sobNil
+
+opt_args_loop108:
+
+	cmp r14, r15
+	je opt_args_loop_end108
+	mov rdi, 8
+	call malloc
+	mov r8, qword [rbp + 4*8 + r14*8]
+	mov r12, r8
+	sub r12, start_of_data
+	shl r12, 30
+	mov r9, r13
+	sub r9, start_of_data
+	or r12, r9
+	shl r12, 4
+	or r12, T_PAIR
+	mov  qword [rax], r12
+	mov r13, rax
+	dec r14
+	jmp opt_args_loop108
+opt_args_loop_end108:
+
+	mov qword [rbp + 4*8 + (r15 + 1)*8], r13
+	mov rax, qword [rbp + (4+2)*8]
+	mov rsp, rbp
+	pop rbp
+	ret
+
+bad_arg_count108:
+	mov rax, sobVoid
+	mov rsp, rbp
+	pop rbp
+	ret
+
+endLabel108:
+; end of creating a closure of lambda-simple 0
+
+	mov r10, [rax]
+	mov rcx, r10
+	TYPE rcx
+	cmp rcx, T_CLOSURE
+	jne not_a_closure107
+	mov rbx, r10
+	CLOSURE_ENV rbx
+	push rbx
+	CLOSURE_CODE r10
+	call r10
+	add rsp, 8*1
+	jmp done_closure107
+not_a_closure107:
+
+	mov rax, sobVoid
+done_closure107:
+
+	add rsp, 8*2
+
+; end of applic of lambda-simple code: 
+
+	mov rax, [rax]
+	push rax
+	call write_sob_if_not_void
+	add rsp, 8
+
+; end
+
+; start
+; start of applic of lambda-simple code: 
+
+	; codegen for const start
+	mov rax, qword sobInt4
+	;code gen for constant end
+	push rax
+	; codegen for const start
+	mov rax, qword sobInt3
+	;code gen for constant end
+	push rax
+	; codegen for const start
+	mov rax, qword sobInt2
+	;code gen for constant end
+	push rax
+	; codegen for const start
+	mov rax, qword sobInt1
+	;code gen for constant end
+	push rax
+
+	push 4
+; start of creating a closure of lambda-simple 0
+
+	mov rbx, 0
+	mov rdi, 16
+	call malloc; rax now hold a pointer to the target closure
+make_closure109:
+
+	MAKE_LITERAL_CLOSURE rax, rbx, bodyOfLambda109
+	jmp endLabel109
+
+bodyOfLambda109:
+	push rbp
+	mov rbp, rsp
+	mov r10, qword [rbp +3*8]
+	cmp r10, 0
+	jl bad_arg_count109
+	mov r15, -1
+	mov r14, qword [rbp + 3*8]
+	dec r14
+	mov r13, sobNil
+
+opt_args_loop109:
+
+	cmp r14, r15
+	je opt_args_loop_end109
+	mov rdi, 8
+	call malloc
+	mov r8, qword [rbp + 4*8 + r14*8]
+	mov r12, r8
+	sub r12, start_of_data
+	shl r12, 30
+	mov r9, r13
+	sub r9, start_of_data
+	or r12, r9
+	shl r12, 4
+	or r12, T_PAIR
+	mov  qword [rax], r12
+	mov r13, rax
+	dec r14
+	jmp opt_args_loop109
+opt_args_loop_end109:
+
+	mov qword [rbp + 4*8 + (r15 + 1)*8], r13
+	mov rax, qword [rbp + (4+0)*8]
+	mov rsp, rbp
+	pop rbp
+	ret
+
+bad_arg_count109:
+	mov rax, sobVoid
+	mov rsp, rbp
+	pop rbp
+	ret
+
+endLabel109:
+; end of creating a closure of lambda-simple 0
+
+	mov r10, [rax]
+	mov rcx, r10
+	TYPE rcx
+	cmp rcx, T_CLOSURE
+	jne not_a_closure108
+	mov rbx, r10
+	CLOSURE_ENV rbx
+	push rbx
+	CLOSURE_CODE r10
+	call r10
+	add rsp, 8*1
+	jmp done_closure108
+not_a_closure108:
+
+	mov rax, sobVoid
+done_closure108:
+
+	add rsp, 8*5
+
+; end of applic of lambda-simple code: 
+
+	mov rax, [rax]
+	push rax
+	call write_sob_if_not_void
+	add rsp, 8
+
+; end
+
+; start
+; start of applic of lambda-simple code: 
+
+	; codegen for const start
+	mov rax, qword sobInt69
+	;code gen for constant end
+	push rax
+	mov rax, integer?
+	push rax
+	; codegen for const start
+	mov rax, qword sobInt71
+	;code gen for constant end
+	push rax
+	; codegen for const start
+	mov rax, qword sobInt70
+	;code gen for constant end
+	push rax
+
+	push 4
+; start of creating a closure of lambda-simple 0
+
+	mov rbx, 0
+	mov rdi, 16
+	call malloc; rax now hold a pointer to the target closure
+make_closure110:
+
+	MAKE_LITERAL_CLOSURE rax, rbx, bodyOfLambda110
+	jmp endLabel110
+
+bodyOfLambda110:
+	push rbp
+	mov rbp, rsp
+	mov r10, qword [rbp +3*8]
+	cmp r10, 2
+	jl bad_arg_count110
+	mov r15, 1
+	mov r14, qword [rbp + 3*8]
+	dec r14
+	mov r13, sobNil
+
+opt_args_loop110:
+
+	cmp r14, r15
+	je opt_args_loop_end110
+	mov rdi, 8
+	call malloc
+	mov r8, qword [rbp + 4*8 + r14*8]
+	mov r12, r8
+	sub r12, start_of_data
+	shl r12, 30
+	mov r9, r13
+	sub r9, start_of_data
+	or r12, r9
+	shl r12, 4
+	or r12, T_PAIR
+	mov  qword [rax], r12
+	mov r13, rax
+	dec r14
+	jmp opt_args_loop110
+opt_args_loop_end110:
+
+	mov qword [rbp + 4*8 + (r15 + 1)*8], r13
+	mov rsp, rbp
+	pop rbp
+	ret
+
+bad_arg_count110:
+	mov rax, sobVoid
+	mov rsp, rbp
+	pop rbp
+	ret
+
+endLabel110:
+; end of creating a closure of lambda-simple 0
+
+	mov r10, [rax]
+	mov rcx, r10
+	TYPE rcx
+	cmp rcx, T_CLOSURE
+	jne not_a_closure109
+	mov rbx, r10
+	CLOSURE_ENV rbx
+	push rbx
+	CLOSURE_CODE r10
+	call r10
+	add rsp, 8*1
+	jmp done_closure109
+not_a_closure109:
+
+	mov rax, sobVoid
+done_closure109:
+
+	add rsp, 8*5
+
+; end of applic of lambda-simple code: 
+
+	mov rax, [rax]
+	push rax
+	call write_sob_if_not_void
+	add rsp, 8
+
+; end
+
+; start
+; start of applic of lambda-simple code: 
+
+	; codegen for const start
+	mov rax, qword sobInt39
+	;code gen for constant end
+	push rax
+; start of creating a closure of lambda-simple 0
+
+	mov rbx, 0
+	mov rdi, 16
+	call malloc; rax now hold a pointer to the target closure
+make_closure112:
+
+	MAKE_LITERAL_CLOSURE rax, rbx, bodyOfLambda112
+	jmp endLabel112
+
+bodyOfLambda112:
+	push rbp
+	mov rbp, rsp
+	mov r10, qword [rbp +3*8]
+	cmp r10, 1
+	jne bad_arg_count112
+	mov rsp, rbp
+	pop rbp
+	ret
+
+bad_arg_count112:
+	mov rax, sobVoid
+	mov rsp, rbp
+	pop rbp
+	ret
+
+endLabel112:
+; end of creating a closure of lambda-simple 0
+
+	push rax
+	; codegen for const start
+	mov rax, qword sobInt71
+	;code gen for constant end
+	push rax
+	; codegen for const start
+	mov rax, qword sobInt70
+	;code gen for constant end
+	push rax
+
+	push 4
+; start of creating a closure of lambda-simple 0
+
+	mov rbx, 0
+	mov rdi, 16
+	call malloc; rax now hold a pointer to the target closure
+make_closure111:
+
+	MAKE_LITERAL_CLOSURE rax, rbx, bodyOfLambda111
+	jmp endLabel111
+
+bodyOfLambda111:
+	push rbp
+	mov rbp, rsp
+	mov r10, qword [rbp +3*8]
+	cmp r10, 2
+	jl bad_arg_count111
+	mov r15, 1
+	mov r14, qword [rbp + 3*8]
+	dec r14
+	mov r13, sobNil
+
+opt_args_loop111:
+
+	cmp r14, r15
+	je opt_args_loop_end111
+	mov rdi, 8
+	call malloc
+	mov r8, qword [rbp + 4*8 + r14*8]
+	mov r12, r8
+	sub r12, start_of_data
+	shl r12, 30
+	mov r9, r13
+	sub r9, start_of_data
+	or r12, r9
+	shl r12, 4
+	or r12, T_PAIR
+	mov  qword [rax], r12
+	mov r13, rax
+	dec r14
+	jmp opt_args_loop111
+opt_args_loop_end111:
+
+	mov qword [rbp + 4*8 + (r15 + 1)*8], r13
+	mov rsp, rbp
+	pop rbp
+	ret
+
+bad_arg_count111:
+	mov rax, sobVoid
+	mov rsp, rbp
+	pop rbp
+	ret
+
+endLabel111:
+; end of creating a closure of lambda-simple 0
+
+	mov r10, [rax]
+	mov rcx, r10
+	TYPE rcx
+	cmp rcx, T_CLOSURE
+	jne not_a_closure110
+	mov rbx, r10
+	CLOSURE_ENV rbx
+	push rbx
+	CLOSURE_CODE r10
+	call r10
+	add rsp, 8*1
+	jmp done_closure110
+not_a_closure110:
+
+	mov rax, sobVoid
+done_closure110:
+
+	add rsp, 8*5
+
+; end of applic of lambda-simple code: 
+
+	mov rax, [rax]
 	push rax
 	call write_sob_if_not_void
 	add rsp, 8

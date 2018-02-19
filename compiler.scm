@@ -36,7 +36,7 @@
 	  	;(display "const-table in code-gen: ") (display const-table) (newline)
 	  	;(display "pe in code-gen: ") (display pe) (newline) (newline)
 	      (string-append  
-	      	(cond ((tagged-by? pe 'const) (string-append "\t; codegen for const start\n\tmov rax, qword [" (find-const-in-pairs (cadr pe) const-table) "]\n\t;code gen for constant end\n"))
+	      	(cond ((tagged-by? pe 'const) (string-append "\t; codegen for const start\n\tmov rax, qword " (find-const-in-pairs (cadr pe) const-table) "\n\t;code gen for constant end\n"))
 			       ((tagged-by? pe 'if3) (handle_if pe depth const-table global-env))
 			       ((tagged-by? pe 'seq) (handle_seq pe depth const-table global-env))
 			       ((tagged-by? pe 'or) (handle_or (cadr pe) depth (make-end-label-for-or) const-table global-env))
@@ -44,7 +44,7 @@
 			       ((tagged-by? pe 'applic) (handle_applic pe depth const-table global-env))
 			       ((tagged-by? pe 'lambda-simple) (handle_lambda_simple (cadr pe) (caddr pe) depth const-table global-env))
 			       ;((tagged-by? pe 'tc-applic) (handle_tc_applic pe))
-			       ;((tagged-by? pe 'lambda-opt) (handle_lambda_opt pe))
+			       ((tagged-by? pe 'lambda-opt) (handle_lambda_opt (cadr pe) (cadddr pe) depth const-table global-env))
 			       ((tagged-by? pe 'pvar) (handle_pvar pe))
 			       ((tagged-by? pe 'bvar) (handle_bvar pe))
 			       ((tagged-by? pe 'fvar) (handle_fvar (cadr pe) depth const-table global-env))
@@ -72,7 +72,7 @@
 			  ;(symbol-table (symbol_table input))
 
 			;(display "global-env-as-pairs: ") (display global-env-as-pairs) (newline) (newline)
-			(display "input: ") (display input) (newline) (newline)
+			;(display "input: ") (display input) (newline) (newline)
 			;(display "const-table-as-list-of-pairs: ") (display const-table-as-list-of-pairs) (newline) (newline)
 
 
@@ -84,7 +84,7 @@
 
 			;(fprintf out-port "globel_env:\n\n")
 
-			(fprintf out-port  (init-primitives primitive-procedures global-env-as-pairs))
+			(fprintf out-port (init-primitives primitive-procedures global-env-as-pairs))
 
 			(fprintf out-port (create_global_env_for_assembly global-env-as-pairs))
 
@@ -108,6 +108,7 @@
 			(for-each (lambda (pe) 
 					(fprintf out-port 
 						(string-append "\n; start\n" (code-gen pe 0 const-table-as-list-of-pairs global-env-as-pairs)
+							"\tmov rax, [rax]\n"
 							"\tpush rax\n"
 							"\tcall write_sob_if_not_void\n"
 							"\tadd rsp, 8\n"
@@ -169,46 +170,28 @@
 				  (args (caddr app-exp))
 				  (not-a-closure-label (make-not-a-closure-label))
 				  (done-closure-label (make-done-closure-label)))
-				  (display "app: ") (display app) (newline)
-				  ;(cond ((in-primitive-procedures? (cadr app)) (string-append (push-args (reverse args) (length args) (+ depth 1) const-table global-env)
-					 ; 															"\tpush " (number->string (length args)) "\n"
-					 ; 															"\tmov rax, qword [" (find-var-in-global-env (cadr app) global-env) "]\n" 
-					 ; 															"\tmov rcx, rax\n"
-					 ; 															"\tTYPE rcx\n"
-					 ; 															"\tcmp rcx, T_CLOSURE\n"
-					 ; 															"\tjne " not-a-closure-label "\n"
-					 ; 															"\tmov rbx, rax\n"
-						;  														"\tCLOSURE_ENV rbx\n"
-						;  														"\tpush rbx\n"
-						;  														"\tCLOSURE_CODE rax\n"
-						;  														"\tcall rax\n"
-						;  														"\tjmp " done-closure-label "\n"
-						;  														not-a-closure-label ":\n\n"
-						;  														"\tmov rax, SOB_VOID\n"
-						;  														done-closure-label ":\n\n"
-						;  														"\tadd rsp, 8*" (number->string (+ 1 (length args))) "\n\n"))
-					  ;((equal? (car app) 'lambda-simple) 
+				  ;(display "app: ") (display app) (newline)
 					  	(string-append "; start of applic of lambda-simple code: \n\n"
 										(push-args (reverse args) (length args) depth const-table global-env)
 										"\tpush " (number->string (length args)) "\n"
 										(code-gen app depth const-table global-env)
-										"\tmov rcx, rax\n"
+										"\tmov r10, [rax]\n" 
+										"\tmov rcx, r10\n"
 										"\tTYPE rcx\n"
 										"\tcmp rcx, T_CLOSURE\n"
 										"\tjne " not-a-closure-label "\n"
-										"\tmov rbx, rax\n"
+										"\tmov rbx, r10\n"
 										"\tCLOSURE_ENV rbx\n"
 										"\tpush rbx\n"
-										"\tCLOSURE_CODE rax\n"
-										"\tcall rax\n"
+										"\tCLOSURE_CODE r10\n"
+										"\tcall r10\n"
 										"\tadd rsp, 8*1\n"
 										"\tjmp " done-closure-label "\n"
 										not-a-closure-label ":\n\n"
-										"\tmov rax, SOB_VOID\n"
+										"\tmov rax, sobVoid\n"
 										done-closure-label ":\n\n"
 										"\tadd rsp, 8*" (number->string (+ 1 (length args))) "\n\n"
 										"; end of applic of lambda-simple code: \n\n"))
-					  ;((equal? app-exp '(fvar >)) (handle_greater_then (length (cdr args)) (cdr args) depth const-table global-env))
 
 					))
 
@@ -245,13 +228,13 @@
 
 (define handle_fvar
 		(lambda (var depth const-table global-env)
-			(string-append  "\tmov rax, [" (find-var-in-global-env var global-env) "]\n")))
+			(string-append  "\tmov rax, " (find-var-in-global-env var global-env) "\n")))
 
 
 (define handle_pvar
   (lambda (pe)
     (let ((min (caddr pe)))
-      (string-append "\tmov rax, qword [rbp + (4+" (number->string min)   ")*8]\n"))))
+      (string-append "\tmov rax, qword [rbp + (4+" (number->string min)")*8]\n"))))
 
 
 (define handle_bvar
@@ -275,9 +258,9 @@
 
 (define handle_lambda_simple
 		(lambda (params body depth const-table global-env)
-			(display "handle_lambda_simple params: ") (display params) (newline)
-			(display "handle_lambda_simple body: ") (display body) (newline)
-			(display "handle_lambda_simple depth: ") (display depth) (newline)
+			;(display "handle_lambda_simple params: ") (display params) (newline)
+			;(display "handle_lambda_simple body: ") (display body) (newline)
+			;(display "handle_lambda_simple depth: ") (display depth) (newline)
 			(let* ((body-label (make-body-label-for-lambda-simple))
 				  (copy-args-label (make-copy-args-label-for-lambda-simple))
 				  (copy-env-label (make-copy-env-label-for-lambda-simple))
@@ -286,6 +269,7 @@
 				  (make-closure-label (make-make-closure-label-for-lambda-simple))
 				  (end-label (make-end-label-for-lambda-simple))
 				  (done-copy-env (make-done-copying-env-label-for-lambda-simple))
+				  (bad-args-label (make-bad-arg-count-label-for-lambda-simple))
 				  (extended-env
 				  	 (string-append 
 				  	 			"\txor rax, rax\n"
@@ -356,13 +340,158 @@
 				 				body-label ":\n"
 				 				"\tpush rbp\n"
 				 				"\tmov rbp, rsp\n"
+				 				"\tmov r10, qword [rbp +3*8]\n"
+				 				"\tcmp r10, " (number->string (length params)) "\n"
+				 				"\tjne " bad-args-label "\n"
 							    (code-gen body (+ depth 1) const-table global-env)
 							    ;"\tmov rsp, rbp\n"
+							    "\tmov rsp, rbp\n"
 								"\tpop rbp\n"
 								"\tret\n\n"
 
-							end-label":\n"
-							"\tmov rax, [rax] ; rax now hold the closure object \n\n"
+								bad-args-label":\n"
+								"\tmov rax, sobVoid\n"
+								"\tmov rsp, rbp\n"
+								"\tpop rbp\n"
+								"\tret\n\n"
+								end-label":\n"
+								;"\tmov rax, [rax] ; rax now hold the closure object \n\n"
+
+						"; end of creating a closure of lambda-simple " (number->string depth) "\n\n"))))
+
+
+(define handle_lambda_opt
+		(lambda (params body depth const-table global-env)
+			;(display "handle_lambda_simple params: ") (display params) (newline)
+			;(display "handle_lambda_simple body: ") (display body) (newline)
+			;(display "handle_lambda_simple depth: ") (display depth) (newline)
+			(let* ((body-label (make-body-label-for-lambda-simple))
+				  (copy-args-label (make-copy-args-label-for-lambda-simple))
+				  (copy-env-label (make-copy-env-label-for-lambda-simple))
+				  (no-args-label (make-no-args-label-for-lambda-simple))
+				  (done-copy-args (make-done-copying-args-label-for-lambda-simple))
+				  (make-closure-label (make-make-closure-label-for-lambda-simple))
+				  (end-label (make-end-label-for-lambda-simple))
+				  (done-copy-env (make-done-copying-env-label-for-lambda-simple))
+				  (bad-args-label (make-bad-arg-count-label-for-lambda-simple))
+				  (opt-args-loop (make-opt-args-loop-label-for-lambda-simple))
+				  (opt-args-loop-end (make-opt-args-loop-end-label-for-lambda-simple))
+				  (extended-env
+				  	 (string-append 
+				  	 			"\txor rax, rax\n"
+				 				"\tmov rdi, qword [rbp + 3*8]\n"
+				 				"\tcall malloc\n"
+				 				"\tmov rdx, rax" "; rdx hold a pointer to store the params\n"
+				 				;"after1:\n"
+				 				"\tpush rdx\n"
+				 				"\txor rax, rax\n"
+				 				"\tmov rdi, " (number->string (* 8 (+ depth 1))) "\n"
+				 				"\tcall malloc\n"
+				 				"\tmov rbx, rax\n" "; rbx hold a pointer to store the previous environment\n"
+				 				;"after2:\n"
+				 				"\tpop rdx\n"
+				 				"\tpush rdx\n"
+				 				"\tpush rbx\n"
+				 				"\txor rax, rax\n"
+				 				"\tmov rdi, 16\n"
+				 				"\tcall malloc" "; rax now hold a pointer to the target closure\n"
+				 				;"after3:\n"
+				 				"\tpop rbx\n"
+				 				"\tpop rdx\n\n"
+				 				
+				 				"\tmov rcx, 0\n"
+				 				;"\tcmp rcx, [rbp + 3*8] " "; check if there are arguments in the lambda\n"
+				 				;"\tje " no-args-label "\n"
+				 				copy-args-label":\n"
+				 				;"\tmov r12, qword [rbp + 3*8]\n"
+				 				"\tcmp rcx, qword [rbp + 3*8] " "; check if we are done copying the args in the lambda\n"
+				 				"\tje " done-copy-args "\n"
+				 				"\tmov r9, qword [rbp + 8*(4 + rcx)]\n"
+				 				"\tmov [rdx + rcx*8], r9\n"
+				 				"\tinc rcx\n"
+				 				"\tjmp " copy-args-label "\n\n"
+
+				 				;no-args-label":\n"
+				 				;"\tmov qword [rdx], 0\n"
+
+								done-copy-args":\n"
+				 				"\tmov [rbx], rdx\n"
+				 				"\tmov r10, 0\n"
+				 				"\tmov r15, 1\n\n"
+
+				 				copy-env-label":\n"
+				 				"\tcmp r10, " (number->string (- depth 1)) "\n"
+				 				"\tje " done-copy-env "\n" 
+				 				"\tmov r12, [rbp + 8*2]\n"
+				 				"\tmov r12, [r12 + 8*r10]\n"
+				 				"\tmov [rbx + 8*r15], r12\n"
+				 				"\tinc r10\n"
+				 				"\tinc r15\n"
+				 				"\tjmp " copy-env-label "\n"
+				 				done-copy-env":\n\n"
+				 				"\tmov qword [rbx + 8*r15], 0\n"))
+				  (new-env (if (= depth 0) (string-append "\tmov rbx, 0\n"
+				  										  "\tmov rdi, 16\n"
+				 										  "\tcall malloc" "; rax now hold a pointer to the target closure\n") extended-env)))
+
+				  		(string-append 
+				  				"; start of creating a closure of lambda-simple " (number->string depth) "\n\n" 
+				  				new-env
+
+				 				make-closure-label":\n\n"
+
+				 				"\tMAKE_LITERAL_CLOSURE rax, rbx, " body-label "\n"
+				 				"\tjmp " end-label "\n\n"
+
+				 				body-label ":\n"
+				 				"\tpush rbp\n"
+				 				"\tmov rbp, rsp\n"
+				 				"\tmov r10, qword [rbp +3*8]\n"
+				 				"\tcmp r10, " (number->string (length params)) "\n"
+				 				"\tjl " bad-args-label "\n"
+
+			 				   
+			 				   "\tmov r15, " (number->string (- (length params) 1)) "\n"
+			 				   "\tmov r14, qword [rbp + 3*8]\n"
+			 				   "\tdec r14\n"
+			 				   "\tmov r13, sobNil\n\n"
+
+
+			 				   opt-args-loop ":\n\n"
+			 				   "\tcmp r14, r15\n"
+			 				   "\tje " opt-args-loop-end "\n"
+
+			 				   "\tmov rdi, 8\n"
+			 				   "\tcall malloc\n"
+			 				   "\tmov r8, qword [rbp + 4*8 + r14*8]\n"
+			 				   "\tmov r12, r8\n"
+			 				   "\tsub r12, start_of_data\n"
+			 				   "\tshl r12, 30\n"
+			 				   "\tmov r9, r13\n"
+			 				   "\tsub r9, start_of_data\n"
+			 				   "\tor r12, r9\n"
+			 				   "\tshl r12, 4\n"
+			 				   "\tor r12, T_PAIR\n"
+			 				   "\tmov  qword [rax], r12\n"
+			 				   "\tmov r13, rax\n"
+			 				   "\tdec r14\n"
+			 				   "\tjmp " opt-args-loop "\n"
+
+			 				   opt-args-loop-end ":\n\n"
+			 				   "\tmov qword [rbp + 4*8 + (r15 + 1)*8], r13\n"
+								
+							   (code-gen body (+ depth 1) const-table global-env)
+
+							   "\tmov rsp, rbp\n"
+							   "\tpop rbp\n"
+							   "\tret\n\n"
+
+							   bad-args-label":\n"
+							   "\tmov rax, sobVoid\n"
+							   "\tmov rsp, rbp\n"
+							   "\tpop rbp\n"
+							   "\tret\n\n"
+							   end-label":\n"
 
 						"; end of creating a closure of lambda-simple " (number->string depth) "\n\n"))))
 
@@ -415,6 +544,24 @@
 			(lambda ()
 				(set! num (+ num 1))
 				(string-append "done_copy_env" (number->string num)))))
+
+(define make-bad-arg-count-label-for-lambda-simple
+	(let ((num 100))
+			(lambda ()
+				(set! num (+ num 1))
+				(string-append "bad_arg_count" (number->string num)))))
+
+(define make-opt-args-loop-label-for-lambda-simple
+	(let ((num 100))
+			(lambda ()
+				(set! num (+ num 1))
+				(string-append "opt_args_loop" (number->string num)))))
+
+(define make-opt-args-loop-end-label-for-lambda-simple
+	(let ((num 100))
+			(lambda ()
+				(set! num (+ num 1))
+				(string-append "opt_args_loop_end" (number->string num)))))
 ;==========================================================================
 ;=========================================================================================================================================
 ;======================================================= END OF FUNCTIONS FOR LAMBDA SIMPLE EXPRESSION ===================================
@@ -1866,15 +2013,16 @@
 
 (define handle_define
 	(lambda (def-exp depth const-table global-env)
-		(display "def-exp handle_define: ") (display def-exp) (newline)
+		;(display "def-exp handle_define: ") (display def-exp) (newline)
 		;(display "global-env handle_define: ") (display global-env) (newline) 
 		(let ((free-var (find-var-in-global-env (cadar def-exp) global-env)))
-			(display "free-var handle_define: ") (display free-var) (newline)
+			;(display "free-var handle_define: ") (display free-var) (newline)
 				(string-append 
 					(code-gen (cadr def-exp) depth const-table global-env)
 					"\tmov rbx, " free-var "\n" 
-					"\tmov qword [rbx], rax\n"
-					"\tmov rax, SOB_VOID\n\n"))))
+					"\tmov r10, [rax]\n" 
+					"\tmov qword [rbx], r10\n"
+					"\tmov rax, sobVoid\n\n"))))
 
 
 ;=========================================================================================================================================
@@ -1910,7 +2058,8 @@
 					(string-append end-label ":\n\n")
 					(string-append 
 						(code-gen (car or-exp) depth const-table global-env)
-						"\tmov rbx, rax\n"
+						"\tmov r10, [rax]\n" 
+						"\tmov rbx, r10\n"
 						"\tTYPE rbx\n"
 						"\tcmp rbx, SOB_FALSE\n" 
 						"\tjne " end-label "\n"
@@ -1941,8 +2090,9 @@
 			(let ((dif-label (make-dif-label))
 				  (end-label (make-end-label)))
 				 (string-append 
-					(code-gen (cadr if-exp) depth const-table global-env) 
-					"\tcmp rax, SOB_FALSE\n" 
+					(code-gen (cadr if-exp) depth const-table global-env)
+					"\tmov r10, [rax]\n" 
+					"\tcmp r10, SOB_FALSE\n" 
 					"\tje " dif-label "\n"
 					(code-gen (caddr if-exp) depth const-table global-env) "\n"
 					"\tjmp " end-label "\n"
@@ -2017,14 +2167,14 @@
 	(lambda (input-file)
 		;(display "const-table: ") (display (make_const_table input-file)) (newline) (newline)
 		;(display "input-file: ") (display input-file) (newline) (newline)
-		(remove-duplicates (expand-const-table (make_const_table input-file)))))
+		(remove-duplicates (append (list (void) #f #t '()) (expand-const-table (make_const_table input-file))))))
 
 (define create_const_for_assembly
 	(lambda (const-table table-in-pairs num)
 		;(display "create_const_for_assembly const-table : ") (display const-table) (newline)
 		;(display "create_const_for_assembly table-in-pairs: ") (display table-in-pairs) (newline) (newline)
 		(set! num (+ num 1))
-		(cond ((null? const-table) "")
+		(cond ((null? const-table) (string-append "sobUndef:" "\n" "\tdq SOB_UNDEFINED\n\n"))
 			  ((integer? (car const-table)) 
 			  		(string-append (find-const-in-pairs (car const-table) table-in-pairs) ":" "\n" "\tdq MAKE_LITERAL (T_INTEGER, " (number->string (car const-table)) ")\n\n" (create_const_for_assembly (cdr const-table) table-in-pairs num)))
 			  ((number? (car const-table)) 
@@ -2046,6 +2196,7 @@
 			  		(string-append (find-const-in-pairs (car const-table) table-in-pairs) ":" "\n" "\tdq MAKE_LITERAL_PAIR (" (find-const-in-pairs (caar const-table) table-in-pairs) ", " (find-const-in-pairs (cadr (car const-table)) table-in-pairs) ")\n\n" (create_const_for_assembly (cdr const-table) table-in-pairs num)))
 			  ((or (list? (car const-table)) (pair? (car const-table))) 
 			  		(string-append (find-const-in-pairs (car const-table) table-in-pairs) ":" "\n" "\tdq MAKE_LITERAL_PAIR (" (find-const-in-pairs (caar const-table) table-in-pairs) ", " (find-const-in-pairs (cdr (car const-table)) table-in-pairs) ")\n\n" (create_const_for_assembly (cdr const-table) table-in-pairs num)))
+			  (else (string-append "sobVoid:" "\n" "\tdq SOB_VOID\n\n" (create_const_for_assembly (cdr const-table) table-in-pairs num)))
 			  )))
 
 (define trim-last-comma
@@ -2087,6 +2238,7 @@
 			  ((vector? con) (list (string-append "sobVector" (number->string num)) con))
 			  ((symbol? con) (list (string-append "sobSymbol" (symbol->string con)) con))
 			  ((or (list? con) (pair? con)) (list (string-append "sobPair" (number->string num)) con))
+			  (else (list "sobVoid" con))
 			  )))
 
 ;=========================================================================================================================================

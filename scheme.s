@@ -673,8 +673,28 @@ write_sob_fraction:
 	push rbp
 	mov rbp, rsp
 
+	mov rax, qword [rbp +8+1*8]
+	NUMERATOR rax
+	push rax
+	call write_sob
+	add rsp, 1*8
+
+	mov rax, 0
+	mov rdi, frac_line
+	call printf
+
+	mov rax, qword [rbp +8+1*8]
+	DENOMINATOR rax
+	push rax
+	call write_sob
+	add rsp, 1*8
+
 	leave
 	ret
+
+section .data
+frac_line:
+	db "/", 0
 
 write_sob_closure:
 	push rbp
