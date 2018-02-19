@@ -42,7 +42,6 @@
 			       ((tagged-by? pe 'or) (handle_or (cadr pe) depth (make-end-label-for-or) const-table global-env))
 			       ((tagged-by? pe 'def) (handle_define (cdr pe) depth const-table global-env))
 			       ((tagged-by? pe 'applic) (handle_applic pe depth const-table global-env))
-			       ;((tagged-by? pe 'apply) (handle_applic pe depth const-table global-env))
 			       ((tagged-by? pe 'lambda-simple) (handle_lambda_simple (cadr pe) (caddr pe) depth const-table global-env))
 			       ((tagged-by? pe 'tc-applic) (handle_applic pe depth const-table global-env))
 			       ((tagged-by? pe 'lambda-opt) (handle_lambda_opt (cadr pe) (cadddr pe) depth const-table global-env))
@@ -158,14 +157,16 @@
 				(handle_greater_than)
 				(handle_less_than)
 				(handle_equal)
-				(handle_remainder)
-				(handle_string_length)
-				(handle_string_ref)
+				(handle_remainder) ;V
+				(handle_string_length); V
+				(handle_string_ref) ;V
 				(handle_multiply)
 				(handle_subtract)
-				;(handle_make_vector)
-				(handle_procedure?)
+				(handle_make_vector)
+				(handle_procedure?) ;V
 				;(handle_apply) ;V
+				(handle_vector_length) ;V
+				(handle_vector_ref)
 				 "")))
 
 
@@ -179,11 +180,13 @@
 		(lambda (app-exp depth const-table global-env)
 			;(display "handle_applic app: ") (display app-exp) (newline)
 			;(display "handle_applic depth: ") (display depth) (newline) (newline)
+			
 			(let ((app (cadr app-exp))
 				  (args (caddr app-exp))
 				  (not-a-closure-label (make-not-a-closure-label))
 				  (done-closure-label (make-done-closure-label)))
 				  ;(display "app: ") (display app) (newline)
+				  (if (equal? (cadr app) 'apply) (handle_apply app-exp depth const-table global-env)
 					  	(string-append "; start of applic of lambda-simple code: \n\n"
 										(push-args (reverse args) (length args) depth const-table global-env)
 										"\tpush " (number->string (length args)) "\n"
@@ -204,7 +207,7 @@
 										"\tmov rax, sobVoid\n"
 										done-closure-label ":\n\n"
 										"\tadd rsp, 8*" (number->string (+ 1 (length args))) "\n\n"
-										"; end of applic of lambda-simple code: \n\n"))
+										"; end of applic of lambda-simple code: \n\n")))
 					))
 
 
@@ -592,37 +595,147 @@
 						   "\tMAKE_LITERAL_CLOSURE rax, rbx, " app-label "\n"
 						   "\tjmp " end-app-label "\n\n")))
 
+'((applic (fvar apply) ((lambda-simple (a) (or ((pvar a 0) (pvar a 0)))) (const (2)))))
 
-;(define handle_apply
-;		(lambda (app-exp depth const-table global-env)
-;			;(display "handle_applic app: ") (display app-exp) (newline)
-;			;(display "handle_applic depth: ") (display depth) (newline) (newline)
-;			(let ((app (cadr app-exp))
-;				  (args (caddr app-exp))
-;				  (not-a-closure-label (make-not-a-closure-label))
-;				  (done-closure-label (make-done-closure-label)))
-;				  ;(display "app: ") (display app) (newline)
-;					  	(string-append ""
-;										(push-args (reverse (car args)) (length (car args)) depth const-table global-env)
-;										"\tpush " (number->string (length args)) "\n"
-;										(code-gen app depth const-table global-env)
-;										"\tmov r10, [rax]\n" 
-;										"\tmov rcx, r10\n"
-;										"\tTYPE rcx\n"
-;										"\tcmp rcx, T_CLOSURE\n"
-;										"\tjne " not-a-closure-label "\n"
-;										"\tmov rbx, r10\n"
-;										"\tCLOSURE_ENV rbx\n"
-;										"\tpush rbx\n"
-;										"\tCLOSURE_CODE r10\n"
-;										"\tcall r10\n"
-;										"\tadd rsp, 8*1\n"
-;										"\tjmp " done-closure-label "\n"
-;										not-a-closure-label ":\n\n"
-;										"\tmov rax, sobVoid\n"
-;										done-closure-label ":\n\n"
-;										"\tadd rsp, 8*" (number->string (+ 1 (length args))) "\n\n"
-;										"; end of applic of lambda-simple code: \n\n"))))
+(define handle_apply
+		(lambda (app-exp depth const-table global-env)
+			(display "handle_apply app: ") (display app-exp) (newline)
+			;(display "handle_applic depth: ") (display depth) (newline) (newline)
+			(let ((app (caaddr app-exp))
+				  (args (cdr (caddr app-exp)))
+				  (not-a-closure-label (make-not-a-closure-label-for-apply))
+				  (done-closure-label (make-done-closure-label-for-apply)))
+				  ;(display "app: ") (display app) (newline)
+					  	(string-append 	"; end of applic of lambda-simple code: \n"
+					  					(push-args (reverse args) (length args) depth const-table global-env)
+										"\tpush " (number->string (length args)) "\n"
+										(code-gen app depth const-table global-env)
+										"\tmov r10, [rax]\n" 
+										"\tmov rcx, r10\n"
+										"\tTYPE rcx\n"
+										"\tcmp rcx, T_CLOSURE\n"
+										"\tjne " not-a-closure-label "\n"
+										"\tmov rbx, r10\n"
+										"\tCLOSURE_ENV rbx\n"
+										"\tpush rbx\n"
+										"\tCLOSURE_CODE r10\n"
+										"\tcall r10\n"
+										"\tadd rsp, 8*1\n"
+										"\tjmp " done-closure-label "\n"
+										not-a-closure-label ":\n\n"
+										"\tmov rax, sobVoid\n"
+										done-closure-label ":\n\n"
+										"\tadd rsp, 8*" (number->string (+ 1 (length args))) "\n\n"
+										"; end of applic of lambda-simple code: \n\n"))))
+
+(define make-not-a-closure-label-for-apply
+	(let ((num 300))
+			(lambda ()
+				(set! num (+ num 1))
+				(string-append "not_a_closure" (number->string num)))))
+
+(define make-done-closure-label-for-apply
+	(let ((num 300))
+			(lambda ()
+				(set! num (+ num 1))
+				(string-append "done_closure" (number->string num)))))
+
+
+
+;=========================================================================================================================================
+;======================================================= FUNCTIONS FOR VECTOR-LENGTH EXPRESSION ==========================================
+;=========================================================================================================================================
+
+(define handle_vector_length
+		(lambda () 
+
+			(string-append (applic-prolog "vector_length_code" "end_vector_length_code")
+
+				"\nvector_length_code:\n"
+				"\tpush rbp\n"
+				"\tmov rbp, rsp\n"
+				"\tmov rax, qword [rbp + 8*3]\n"
+				"\tcmp rax, 1\n"
+				"\tjne .notAVector\n"
+				"\tmov rax, qword [rbp + 8*4]\n"
+				"\tmov r10, [rax]\n"
+				"\tmov rbx, r10\n"
+				"\tTYPE rbx\n"
+				"\tcmp rbx, T_VECTOR\n"
+				"\tjne .notAVector\n"
+				"\tmov rax, qword [rbp + 8*4]\n"
+				"\tmov r10, [rax]\n"
+				"\tVECTOR_LENGTH r10\n"
+				"\tshl r10, 4\n"
+				"\tor r10, T_INTEGER\n"
+				"\tmov rdi, 8\n"
+				"\tcall malloc\n"
+				"\tmov qword [rax], r10\n"
+				"\tjmp .done\n\n"
+				".notAVector:\n"
+				"\tmov rax, sobVoid\n"
+				".done:\n"
+				"\tmov rsp, rbp\n" 
+				"\tpop rbp\n"
+				"\tret\n\n"
+
+				"end_vector_length_code:\n"
+				"\tmov rax, [rax]\n"
+				"\tmov qword [vectorLength], rax\n\n")))
+
+;=========================================================================================================================================
+;======================================================= END OF FUNCTIONS FOR VECTOR-LENGTH EXPRESSION ===================================
+;=========================================================================================================================================
+
+
+;=========================================================================================================================================
+;======================================================= FUNCTIONS FOR VECTOR-REF EXPRESSION =============================================
+;=========================================================================================================================================
+
+(define handle_vector_ref
+		(lambda () 
+
+			(string-append (applic-prolog "vector_ref_code" "end_vector_ref_code")
+
+				"\nvector_ref_code:\n"
+				"\tpush rbp\n"
+				"\tmov rbp, rsp\n"
+				"\tmov rax, qword [rbp + 8*3]\n"
+				"\tcmp rax, 2\n"
+				"\tjne .badArgs\n"
+				"\tmov rax, qword [rbp + 8*4]\n"
+				"\tmov r10, [rax]\n"
+				"\tmov rbx, r10\n"
+				"\tTYPE rbx\n"
+				"\tcmp rbx, T_VECTOR\n"
+				"\tjne .badArgs\n"
+				"\tmov rcx, qword [rbp + 8*5]\n"
+				"\tmov r10, [rcx]\n"
+				"\tTYPE r10\n"
+				"\tcmp r10, T_INTEGER\n"
+				"\tjne .badArgs\n"
+				"\tmov rbx, qword [rbp + 8*4] ; a pointer to the vector\n"
+				"\tmov r9, qword [rbp + 8*5]\n"
+				"\tmov r10, [r9] ; the position in the vector\n"
+				"\tDATA r10\n"
+				"\tmov rax, [rbx + 1*8 + r10*8]\n"
+				"\tjmp .done\n\n"
+				".badArgs:\n"
+				"\tmov rax, sobVoid\n"
+				".done:\n"
+				"\tmov rsp, rbp\n" 
+				"\tpop rbp\n"
+				"\tret\n\n"
+
+				"end_vector_ref_code:\n"
+				"\tmov rax, [rax]\n"
+				"\tmov qword [vectorRef], rax\n\n")))
+
+;=========================================================================================================================================
+;======================================================= END OF FUNCTIONS FOR STRING-REF EXPRESSION ======================================
+;=========================================================================================================================================
+
+
 
 ;=========================================================================================================================================
 ;======================================================= FUNCTIONS FOR MAKE-VECTOR EXPRESSION ============================================
@@ -657,17 +770,69 @@
 						"\tje " two-arg-label "\n"
 						"\tjmp " bad-input-label "\n"
 
+						one-arg-label ":\n"
 
-						two-arg-label":\n\n"
-
-
-						; actual body
 						"\tmov rcx, qword [rbp + 4*8]\n"
 						"\tmov r10, [rcx]\n"
 						"\tTYPE r10\n"
 						"\tcmp r10, T_INTEGER\n"
 						"\tjne "bad-input-label "\n"
-						"\tmov r11, [rcx]\n"
+
+						; Put code for #(0 0 0 0 0) here
+						; Initializing the runtime constant zero and putting its address into r12
+						"\tmov rdi, 8\n"
+						"\tcall malloc\n"
+						"\tmov qword [rax], 0\n"
+						"\tshl qword [rax], TYPE_BITS\n"
+						"\tor qword [rax], T_INTEGER\n"
+						"\tmov r12, rax ; r12 now holds a pointer to a runtime constant zero\n"
+
+
+						; Initializing the first qword of the vector
+						"\tmov r8, qword [rbp + 4*8] ; r8 holds a pointer to the vector length \n"
+						"\tmov r13, [r8]\n"
+						"\tDATA r13\n"
+						"\tinc r13\n"
+						"\tshl r13, 3\n"
+						"\tmov rdi, r13\n"
+						"\tcall malloc\n"
+						"\tmov r13, [r8]\n"
+						"\tDATA r13 \n"
+						"\tmov qword [rax], r13\n"
+						"\tshl qword [rax], 30\n"
+						"\tlea r13, [rax + 1*8]\n"
+						"\tsub r13, start_of_data\n"
+						"\tor qword [rax], r13\n"
+						"\tshl qword [rax], TYPE_BITS\n"
+						"\tor qword [rax], T_VECTOR\n"
+
+
+						; Loop over the vector length and initialize its elements to zero.
+						"\tmov r15, [r8]\n"
+						"\tDATA r15\n"
+						"\tmov r14, 0\n"
+
+
+						one-arg-loop-label ":\n\n"
+						"\tcmp r14, r15\n"
+						"\tje " one-arg-loop-end-label "\n"
+
+						"\tmov qword [rax + 1*8 + r14*8], r12\n"
+						"\tinc r14\n"
+						"\tjmp " one-arg-loop-label "\n"
+
+						one-arg-loop-end-label ":\n\n"
+						"\tjmp " end-label "\n"
+
+
+						two-arg-label":\n\n"
+
+						"\tmov r8, qword [rbp + 4*8]\n"
+						"\tmov r10, [r8]\n"
+						"\tTYPE r10\n"
+						"\tcmp r10, T_INTEGER\n"
+						"\tjne "bad-input-label "\n"
+						"\tmov r11, [r8]\n"
 						"\tDATA r11\n"
 						"\tcmp r11, 0\n"
 						"\tjl " bad-input-label "\n"
@@ -675,17 +840,18 @@
 
 						; Put code for #(4 4 4 4 4) here
 						; Setting r12 to the second argument
-						"\tmov r12, qword [rbp + 5*8]\n"
+						"\tmov r8, qword [rbp + 4*8] ; length of the vector\n"
+						"\tmov r12, qword [rbp + 5*8] ; elements of the vector\n"
 
 
 						; Initializing the first qword of the vector
-						"\tmov r11, [rcx]\n"
-						"\tDATA r13\n"
+						"\tmov r11, [r8]\n"
+						"\tDATA r11\n"
 						"\tinc r11\n"
 						"\tshl r11, 3\n"
 						"\tmov rdi, r11\n"
 						"\tcall malloc\n"
-						"\tmov r11, [rbx]\n"
+						"\tmov r11, [r8]\n"
 						"\tDATA r13\n"
 						"\tmov qword [rax], r11\n"
 						"\tshl qword [rax], 30\n"
@@ -697,7 +863,7 @@
 
 
 						; Loop over the vector length and put in its elements the address of the second argument.
-						"\tmov r15, [rbx]\n"
+						"\tmov r15, [r8]\n"
 						"\tDATA r15\n"
 						"\tmov r14, 0\n"
 
@@ -714,59 +880,15 @@
 						"\tjmp " end-label "\n"
 
 
-						one-arg-label ":\n"
-						; Put code for #(0 0 0 0 0) here
-						; Initializing the runtime constant zero and putting its address into r12
-						"\tmov rdi, 8\n"
-						"\tcall malloc\n"
-						"\tmov qword [rax], 0\n"
-						"\tshl qword [rax], TYPE_BITS\n"
-						"\tor qword [rax], T_INTEGER\n"
-						"\tmov r12, rax ; r12 now holds a pointer to a runtime constant zero\n"
-
-
-						; Initializing the first qword of the vector
-						"\tmov r13, [rbx]\n"
-						"\tDATA r13\n"
-						"\tinc r13\n"
-						"\tshl r13, 3\n"
-						"\tmov rdi, r13\n"
-						"\tcall malloc\n"
-						"\tmov r13, [rbx]\n"
-						"\tDATA r13 \n"
-						"\tmov qword [rax], r13\n"
-						"\tshl qword [rax], 30\n"
-						"\tlea r13, [rax + 1*8]\n"
-						"\tsub r13, start_of_data\n"
-						"\tor qword [rax], r13\n"
-						"\tshl qword [rax], TYPE_BITS\n"
-						"\tor qword [rax], T_VECTOR\n"
-
-
-						; Loop over the vector length and initialize its elements to zero.
-						"\tmov r15, [rbx]\n"
-						"\tDATA r15\n"
-						"\tmov r14, 0\n"
-
-
-						one-arg-loop-label ":\n\n"
-						"\tcmp r14, r15\n"
-						"\tje " one-arg-loop-end-label "\n"
-
-						"\tmov qword [rax + 1*8 + r14*8], r12\n"
-						"\tinc r14\n"
-						"\tjmp " one-arg-loop-label "\n"
-
-						one-arg-loop-end-label ":\n\n"
-						"\tjmp " end-label "\n"
+						
 
 						bad-input-label":\n\n"
 						"\tmov rax, sobVoid\n"
+						
 						end-label ":\n\n"
 						"\tmov rsp, rbp\n"
 						"\tpop rbp\n"
 						"\tret\n"
-
 
 
 						"end_make_vector_code:\n"
@@ -865,26 +987,32 @@
 				"\tcmp rax, 2\n"
 				"\tjne .badArgs\n"
 				"\tmov rax, qword [rbp + 8*4]\n"
-				"\tmov rbx, rax\n"
+				"\tmov r10, [rax]\n"
+				"\tmov rbx, r10\n"
 				"\tTYPE rbx\n"
 				"\tcmp rbx, T_STRING\n"
 				"\tjne .badArgs\n"
 				"\tmov rcx, qword [rbp + 8*5]\n"
-				"\tTYPE rcx\n"
-				"\tcmp rcx, T_INTEGER\n"
+				"\tmov r10, [rcx]\n"
+				"\tTYPE r10\n"
+				"\tcmp r10, T_INTEGER\n"
 				"\tjne .badArgs\n"
 				"\tmov rbx, qword [rbp + 8*4]\n"
+				"\tmov r11, [rbx] ; the string \n"
 				"\tmov r9, qword [rbp + 8*5]\n"
-				"\tDATA r9\n"
-				"\tSTRING_ELEMENTS rbx\n"
-				"\tadd rbx, r9\n"
-				"\tmov rax, 0\n"
-				"\tmov rax, qword [rbx]\n"
-				"\tshl rax, 4\n"
-				"\tor rax, T_CHAR\n"
+				"\tmov r10, [r9] ; the position in the string\n"
+				"\tDATA r10\n"
+				"\tSTRING_ELEMENTS r11 ; the individual chars of the string\n"
+				"\tadd r11, r10\n"
+				"\tmov rdi, 8\n"
+				"\tcall malloc\n"
+				"\tmov r11, qword [r11]\n"
+				"\tshl r11, 4\n"
+				"\tor r11, T_CHAR\n"
+				"\tmov qword [rax], r11\n"
 				"\tjmp .done\n\n"
 				".badArgs:\n"
-				"\tmov rax, SOB_VOID\n"
+				"\tmov rax, sobVoid\n"
 				".done:\n"
 				"\tmov rsp, rbp\n" 
 				"\tpop rbp\n"
@@ -915,17 +1043,22 @@
 				"\tcmp rax, 1\n"
 				"\tjne .notAString\n"
 				"\tmov rax, qword [rbp + 8*4]\n"
-				"\tmov rbx, rax\n"
+				"\tmov r10, [rax]\n"
+				"\tmov rbx, r10\n"
 				"\tTYPE rbx\n"
 				"\tcmp rbx, T_STRING\n"
 				"\tjne .notAString\n"
 				"\tmov rax, qword [rbp + 8*4]\n"
-				"\tSTRING_LENGTH rax\n"
-				"\tshl rax, 4\n"
-				"\tor rax, T_INTEGER\n"
+				"\tmov r10, [rax]\n"
+				"\tSTRING_LENGTH r10\n"
+				"\tshl r10, 4\n"
+				"\tor r10, T_INTEGER\n"
+				"\tmov rdi, 8\n"
+				"\tcall malloc\n"
+				"\tmov qword [rax], r10\n"
 				"\tjmp .done\n\n"
 				".notAString:\n"
-				"\tmov rax, SOB_VOID\n"
+				"\tmov rax, sobVoid\n"
 				".done:\n"
 				"\tmov rsp, rbp\n" 
 				"\tpop rbp\n"
@@ -1498,8 +1631,8 @@
 				"\tcmp rax, 2\n"
 				"\tjne .badArgCount\n"
 				"\tmov rax, qword [rbp + 8*4]\n"
-				"\tmov rax, [rax]\n"
-				"\tmov rbx, rax\n"
+				"\tmov r10, [rax]\n"
+				"\tmov rbx, r10\n"
 				"\tTYPE rbx\n"
 				"\tcmp rbx, T_INTEGER\n"
 				"\tjne .badArgs\n"
@@ -1511,10 +1644,10 @@
 				"\tjne .badArgs\n"
 				"\tmov rax, qword [rbp + 8*4]\n"
 				"\tmov rax, [rax]\n"
-				"\tDATA rax\n"
+				"\tDATA rax ; rax hold the dividend \n"
 				"\tmov rcx, qword [rbp + 8*5]\n"
 				"\tmov r10, [rcx]\n"
-				"\tDATA r10\n"
+				"\tDATA r10 ; r10 holds the divisor\n"
 				"\tcmp rax, 0\n"
 				"\tjl .firstArgsIsNeg\n"
 				"\tcmp r10, 0\n"
@@ -1533,7 +1666,7 @@
 				"\tjmp .done\n"
 
 				".firstArgsIsNeg:\n\n"
-				"\tmov r9, 1\n"
+				"\tmov r15, 1\n"
 				"\tneg rax\n"
 				"\tcmp r10, 0\n"
 				"\tjl .secondArgIsNeg\n"
@@ -1541,7 +1674,7 @@
 
 				".secondArgIsNeg:\n\n"
 				"\tneg r10\n"
-				"\tcmp r9, 1\n"
+				"\tcmp r15, 1\n"
 				"\tje .devidendIsNeg\n"
 				"\tmov rdx, 0\n"
 				"\tdiv r10\n"
@@ -1731,6 +1864,51 @@
 ;=========================================================================================================================================
 ;======================================================= END OF FUNCTIONS FOR CONS EXPRESSION ============================================
 ;=========================================================================================================================================
+
+
+
+;=========================================================================================================================================
+;======================================================= FUNCTIONS FOR SET-CAR! EXPRESSION ===============================================
+;=========================================================================================================================================
+
+;(define handle_set_car
+;		(lambda () 
+
+;			(string-append (applic-prolog "set_car_code" "end_set_car_code")
+
+;				"\nset_car_code:\n"
+;				"\tpush rbp\n"
+;				"\tmov rbp, rsp\n"
+;				"\tmov rax, qword [rbp + 8*3]\n"
+;				"\tcmp rax, 2\n"
+;				"\tjne .badArgs\n"
+;				"\tmov rax, qword [rbp + 8*4]\n"
+;				"\tmov r10, [rax] ; r10 hold the pair \n"
+;				"\tmov rbx, r10\n"
+;				"\tTYPE rbx\n"
+;				"\tcmp rbx, T_PAIR\n"
+;				"\tjne .badArgs\n"
+;				;"\tCAR r10\n"
+;				"\tDATA_UPPER r10\n"
+;				"\tadd r10, start_of_data\n"
+;				"\tmov rax, r10\n"
+;				"\tjmp .done\n\n"
+;				".badArgs:\n"
+;				"\tmov rax, sobVoid\n"
+;				".done:\n"
+;				"\tmov rsp, rbp\n" 
+;				"\tpop rbp\n"
+;				"\tret\n\n"
+
+;				"end_set_car_code:\n"
+;				"\tmov rax, [rax]\n"
+;				"\tmov qword [setCar], rax\n\n")))
+
+;=========================================================================================================================================
+;======================================================= END OF FUNCTIONS FOR SET-CAR! EXPRESSION ========================================
+;=========================================================================================================================================
+
+
 
 
 ;=========================================================================================================================================
@@ -2755,3 +2933,4 @@
 ;=========================================================================================================================================
 ;======================================================= END OF GENERAL UTILITY FUNCTIONS ================================================
 ;=========================================================================================================================================
+

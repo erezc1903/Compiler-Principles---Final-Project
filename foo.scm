@@ -30,7 +30,9 @@
 ;===========================================================================================
 ;===========================================================================================
 
-(apply (lambda (a) (or a a)) '(2))
+;(apply (lambda (a) (or a a)) '(2))
+
+
 
 ;;; primitives tests
 ;append
@@ -184,6 +186,10 @@
 ;((lambda (w x y z) (make-vector w x)) 5 4 7 1/2) ; #(4 4 4 4 4)
 ;((lambda (w x y z) (make-vector z)) 5 4 7 1/2) ; exception not a nonnegative fixnum
 
+;(string-length "")
+;(string-length " ")
+;(string-length 2)
+;(string-length "abc")
 ;map
 
 ;not
@@ -325,7 +331,7 @@
 ;(vector-ref 4 3) ; exception not a vector
 ;(vector-ref '#(10 20 30 40) "f") ; exception not a valid index
 ;(vector-ref '#(10 20 30 40) 4) ; exception not a valid index
-;(vector-ref '#(10 20 30 40) 3) ; 40
+;(vector-ref '#(10 20 30 40) 1) ; 40
 ;((lambda (w x y z) (vector-ref w)) '#(10 20 30 40) 3 4 "f") ; exception incorrect arg count
 ;((lambda (w x y z) (vector-ref x)) '#(10 20 30 40) 3 4 "f") ; exception incorrect arg count
 ;((lambda (w x y z) (vector-ref w x z)) '#(10 20 30 40) 3 4 "f") ; exception incorrect arg count
