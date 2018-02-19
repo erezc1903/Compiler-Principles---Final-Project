@@ -81,7 +81,6 @@
 			;(newline)(display "exp in pe->lex-pe-pvar: ") (display exp) (newline)
 			(cond ((and (> (length exp) 1) (equal? (car exp) 'seq)) (list (car exp) (map pe->lex-pe (cadr exp))))
 				  ((and (> (length exp) 1) (equal? (car exp) 'or)) (list (car exp) (map pe->lex-pe (cadr exp))))
-				  ((and (list? exp) (> (length exp) 0) (equal? (car exp) 'const)) exp)
 				  ((and (list? exp) (= (length exp) 2) (not (list? (car exp))) (not (list? (cadr exp)))) exp)
 				  ((and (list? exp) (= (length exp) 2) (not (list? (car exp))) (list? (cadr exp))) (list (car exp) (pe->lex-pe-pvar (cdr exp))))
 				  ((and (not (null? exp)) (equal? (car exp) 'lambda-simple)) ;(newline) (display "(car (check-if-in-params (cadr exp) (cddr exp))) in pe->lex-pe-pvar:") (display (car (check-if-in-params (cadr exp) (cddr exp)))) (newline) 
@@ -103,7 +102,6 @@
 			;(display "lst in a pe->lex-pe-fvar: ") (display lst) (newline)
 			(cond ((and (> (length exp) 1) (equal? (car exp) 'seq)) (list (car exp) (map pe->lex-pe (cadr exp))))
 				  ((and (> (length exp) 1) (equal? (car exp) 'or)) (list (car exp) (map pe->lex-pe (cadr exp))))
-				  ((and (list? exp) (> (length exp) 0) (equal? (car exp) 'const)) exp)
 				  ((and (list? exp) (= (length exp) 2) (not (list? (car exp))) (list? (cadr exp))) (list (car exp) (pe->lex-pe-fvar (cdr exp) lst)))
 				  ((and (not (null? exp)) (equal? (car exp) 'lambda-simple)) (list (car exp) (cadr exp) (car (check-if-free (cddr exp) (append lst (cadr exp))))))
 				  ((and (not (null? exp)) (equal? (car exp) 'lambda-opt)) (list (car exp) (cadr exp) (caddr exp) (car (check-if-free (cdddr exp) (append lst (append (cadr exp) (list (caddr exp))))))))
@@ -124,7 +122,6 @@
 			;(display "lst in a pe->lex-pe-bvar: ") (display lst) (newline)
 			(cond ((or (not (list? exp)) (null? exp)) exp)
 				  ((and (list? exp) (= (length exp) 1) (list? (car exp)) (null? (car exp))) (car exp))
-				  ((and (list? exp) (> (length exp) 0) (equal? (car exp) 'const)) exp)
 				  ((and (list? exp) (= (length exp) 2) (not (list? (car exp))) (not (list? (cadr exp)))) exp)
 				  ((and (> (length exp) 1) (equal? (car exp) 'seq)) (list (car exp) (map pe->lex-pe (cadr exp))))
 				  ((and (> (length exp) 1) (equal? (car exp) 'or)) (list (car exp) (map pe->lex-pe (cadr exp))))
@@ -138,6 +135,7 @@
 				  ((and (> (length exp) 1) (list? (car exp)) (list (pe->lex-pe-bvar (car exp) lst) (list (pe->lex-pe-bvar (cdr exp) lst)))))
 				  ((and (= (length exp) 1) (list? (car exp))) (pe->lex-pe-bvar (car exp) lst))
 				  (else exp))))
+'((if3 (if3 (applic (fvar =) ((pvar num 1) (const 0))) (applic (fvar null?) ((pvar exp 0))) (const #f)) (const #t) (if3 (or ((applic (fvar <) ((pvar num 1) (const 0))) (applic (fvar null?) ((pvar exp 0))))) (const #f) (if3 (applic (fvar char=?) ((applic (fvar car) ((pvar exp 0))) (const ())) (applic (box-get (bvar are-parentheses-balanced-list? 0 0)) ((applic (fvar cdr) ((pvar exp 0))) (applic (fvar +) ((pvar num 1) (const 1))))) (if3 (applic (fvar char=?) ((applic (fvar car) ((pvar exp 0))) (const )))) (applic (box-get (bvar are-parentheses-balanced-list? 0 0)) ((applic (fvar cdr) ((pvar exp 0))) (applic (fvar -) ((pvar num 1) (const 1))))) (applic (box-get (bvar are-parentheses-balanced-list? 0 0)) ((applic (fvar cdr) ((pvar exp 0))) (pvar num 1))))))))
 
 
 (define handle-sequence-in-lambda
@@ -403,3 +401,99 @@
 			  ((and (= (length exp) 1) (list? (car exp))) (annotate-tc (car exp)))
 			  (else exp))))
 
+
+;; parsed exp
+
+'(define (var make-monitored)
+  (lambda-simple
+    (proc)
+    (applic
+      (lambda-simple
+        (counter how-many-calls reset-count compute dispatch)
+        (seq ((set (var counter) (const 0)) (set (var how-many-calls) (lambda-simple () (var counter)))
+               (set (var reset-count)
+                    (lambda-simple () (set (var counter) (const 0))))
+               (set (var compute)
+                    (lambda-simple
+                      (arg)
+                      (seq ((set (var counter)
+                                 (applic
+                                   (var +)
+                                   ((var counter) (const 1))))
+                             (applic (var proc) ((var arg)))))))
+               (set (var dispatch)
+                    (lambda-simple
+                      (op arg)
+                      (if3 (applic
+                             (var eq?)
+                             ((var op) (const how-many-calls?)))
+                           (applic (var how-many-calls) ())
+                           (if3 (applic
+                                  (var eq?)
+                                  ((var op) (const reset-count)))
+                                (applic (var reset-count) ())
+                                (if3 (applic
+                                       (var eq?)
+                                       ((var op) (const compute)))
+                                     (applic (var compute) ((var arg)))
+                                     (const 0))))))
+               (applic (lambda-simple () (var dispatch)) ()))))
+      ((const #f) (const #f) (const #f) (const #f) (const #f)))))
+
+;; final result
+
+
+'(def (fvar make-monitored)
+     (lambda-simple
+       (proc)
+       (tc-applic
+         (lambda-simple
+           (counter how-many-calls reset-count compute dispatch)
+           (seq ((set (pvar counter 0) (box (pvar counter 0)))
+                  (set (pvar how-many-calls 1)
+                       (box (pvar how-many-calls 1)))
+                  (set (pvar reset-count 2) (box (pvar reset-count 2)))
+                  (set (pvar compute 3) (box (pvar compute 3)))
+                  (box-set (pvar counter 0) (const 0))
+                  (box-set
+                    (pvar how-many-calls 1)
+                    (lambda-simple () (box-get (bvar counter 0 0))))
+                  (box-set
+                    (pvar reset-count 2)
+                    (lambda-simple
+                      ()
+                      (box-set (bvar counter 0 0) (const 0))))
+                  (box-set
+                    (pvar compute 3)
+                    (lambda-simple
+                      (arg)
+                      (seq ((box-set
+                              (bvar counter 0 0)
+                              (applic
+                                (fvar +)
+                                ((box-get (bvar counter 0 0)) (const 1))))
+                             (tc-applic (bvar proc 1 0) ((pvar arg 0)))))))
+                  (set (pvar dispatch 4)
+                       (lambda-simple
+                         (op arg)
+                         (if3 (applic
+                                (fvar eq?)
+                                ((pvar op 0) (const how-many-calls?)))
+                              (tc-applic
+                                (box-get (bvar how-many-calls 0 1))
+                                ())
+                              ((if3 (applic
+                                      (fvar eq?)
+                                      ((pvar op 0) (const reset-count)))
+                                    (tc-applic
+                                      (box-get (bvar reset-count 0 2))
+                                      ())
+                                    (if3 (applic
+                                           (fvar eq?)
+                                           ((pvar op 0) (const compute)))
+                                         (tc-applic
+                                           (box-get (bvar compute 0 3))
+                                           ((pvar arg 1)))
+                                         (const 0)))))))
+                  (pvar dispatch 4))))
+         ((const #f) (const #f) (const #f) (const #f) (const #f)))))

@@ -42,23 +42,33 @@
 			       ((tagged-by? pe 'or) (handle_or (cadr pe) depth (make-end-label-for-or) const-table global-env))
 			       ((tagged-by? pe 'def) (handle_define (cdr pe) depth const-table global-env))
 			       ((tagged-by? pe 'applic) (handle_applic pe depth const-table global-env))
+			       ;((tagged-by? pe 'apply) (handle_applic pe depth const-table global-env))
 			       ((tagged-by? pe 'lambda-simple) (handle_lambda_simple (cadr pe) (caddr pe) depth const-table global-env))
 			       ((tagged-by? pe 'tc-applic) (handle_applic pe depth const-table global-env))
 			       ((tagged-by? pe 'lambda-opt) (handle_lambda_opt (cadr pe) (cadddr pe) depth const-table global-env))
 			       ((tagged-by? pe 'pvar) (handle_pvar pe))
 			       ((tagged-by? pe 'bvar) (handle_bvar pe))
 			       ((tagged-by? pe 'fvar) (handle_fvar (cadr pe) depth const-table global-env))
-			       ;((tagged-by? pe 'set) (cond ((tagged-by? (cadr pe) 'pvar) (handle_pvar_set pe))
-							   ;((tagged-by? (cadr pe) 'bvar) (handle_bvar_set pe))
-							   ;((tagged-by? (cadr pe) 'fvar) (handle_fvar_set pe))))
-			       ;((tagged-by? pe 'box-set) (cond ((tagged-by? (cadr pe) 'pvar) (handle_pvar_boxset pe))
-							   ;    ((tagged-by? (cadr pe) 'bvar) (handle_bvar_boxset pe))))
-			       ;((tagged-by? pe 'box-get) (cond ((tagged-by? (cadr pe) 'pvar) (handle_pvar_boxget pe))
-							   ;    ((tagged-by? (cadr pe) 'bvar) (handle_bvar_boxget pe))))
-			       ;((tagged-by? pe 'box) (handle_box pe))
-			       (else "")))
+			       ((tagged-by? pe 'set) (string-append (code-gen (caddr pe) depth const-table global-env)
+			       											"\tmov r10, rax\n"
+			       											(code-gen (cadr pe) depth const-table global-env)
+			       											"\tmov qword [rax], r10\n"
+			       											"\tmov rax, sobVoid\n"))
+			       ((tagged-by? pe 'box) (string-append (code-gen (cadr pe) depth const-table global-env)
+			      									   "\tmov r10, rax\n"
+			      									   "\tmov rdi, 8\n"
+			      									   "\tcall malloc\n"
+			      									   "\tmov qword [rax], r10\n"))
+			       ((tagged-by? pe 'box-get) (string-append (code-gen (cadr pe) depth const-table global-env)
+															"\tmov rax, [rax]\n"))
+			       ((tagged-by? pe 'box-set) (string-append (code-gen (caddr pe) depth const-table global-env)
+			       											"\tmov r10, rax\n"
+			       											(code-gen (cadr pe) depth const-table global-env)
+			       											"\tmov qword [rax], r10\n"
+			       											"\tmov rax, sobVoid\n"))
+			       (else ""))))
 	      ;(set! num (+ num 1))
-	  ))
+	  )
 
 (define compile-scheme-file
 	(lambda (in-file out-file)
@@ -154,7 +164,8 @@
 				(handle_multiply)
 				(handle_subtract)
 				;(handle_make_vector)
-				(handle_procedure?) ;V
+				(handle_procedure?)
+				;(handle_apply) ;V
 				 "")))
 
 
@@ -194,7 +205,6 @@
 										done-closure-label ":\n\n"
 										"\tadd rsp, 8*" (number->string (+ 1 (length args))) "\n\n"
 										"; end of applic of lambda-simple code: \n\n"))
-
 					))
 
 
@@ -566,7 +576,8 @@
 			(lambda ()
 				(set! num (+ num 1))
 				(string-append "opt_args_loop_end" (number->string num)))))
-;==========================================================================
+
+
 ;=========================================================================================================================================
 ;======================================================= END OF FUNCTIONS FOR LAMBDA SIMPLE EXPRESSION ===================================
 ;=========================================================================================================================================
@@ -582,6 +593,36 @@
 						   "\tjmp " end-app-label "\n\n")))
 
 
+;(define handle_apply
+;		(lambda (app-exp depth const-table global-env)
+;			;(display "handle_applic app: ") (display app-exp) (newline)
+;			;(display "handle_applic depth: ") (display depth) (newline) (newline)
+;			(let ((app (cadr app-exp))
+;				  (args (caddr app-exp))
+;				  (not-a-closure-label (make-not-a-closure-label))
+;				  (done-closure-label (make-done-closure-label)))
+;				  ;(display "app: ") (display app) (newline)
+;					  	(string-append ""
+;										(push-args (reverse (car args)) (length (car args)) depth const-table global-env)
+;										"\tpush " (number->string (length args)) "\n"
+;										(code-gen app depth const-table global-env)
+;										"\tmov r10, [rax]\n" 
+;										"\tmov rcx, r10\n"
+;										"\tTYPE rcx\n"
+;										"\tcmp rcx, T_CLOSURE\n"
+;										"\tjne " not-a-closure-label "\n"
+;										"\tmov rbx, r10\n"
+;										"\tCLOSURE_ENV rbx\n"
+;										"\tpush rbx\n"
+;										"\tCLOSURE_CODE r10\n"
+;										"\tcall r10\n"
+;										"\tadd rsp, 8*1\n"
+;										"\tjmp " done-closure-label "\n"
+;										not-a-closure-label ":\n\n"
+;										"\tmov rax, sobVoid\n"
+;										done-closure-label ":\n\n"
+;										"\tadd rsp, 8*" (number->string (+ 1 (length args))) "\n\n"
+;										"; end of applic of lambda-simple code: \n\n"))))
 
 ;=========================================================================================================================================
 ;======================================================= FUNCTIONS FOR MAKE-VECTOR EXPRESSION ============================================
@@ -804,6 +845,7 @@
 ;=========================================================================================================================================
 ;======================================================= END OF FUNCTIONS FOR MAKE-VECTOR EXPRESSION =====================================
 ;=========================================================================================================================================
+
 
 
 
