@@ -171,6 +171,8 @@
 				(handle_vector_ref) ;V
 				(handle_vector) ;V
 				(handle_vector_set) ;V
+				(handle_set_car) ;V
+				(handle_set_cdr) ;V
 				 "")))
 
 
@@ -1256,6 +1258,113 @@
 ;=========================================================================================================================================
 
 
+;=========================================================================================================================================
+;======================================================= FUNCTIONS FOR SET-CAR EXPRESSION ================================================
+;=========================================================================================================================================
+
+
+(define handle_set_car
+		(lambda ()
+			(string-append (applic-prolog "set_car_code" "end_set_car_code")
+
+				"\nset_car_code:\n"
+				"\tpush rbp\n"
+				"\tmov rbp, rsp\n"
+				"\tmov rax, qword [rbp + 8*3]\n"
+				"\tcmp rax, 2\n"
+				"\tjne .badArgs\n"
+				"\tmov rax, qword [rbp + 8*4]\n"
+				"\tmov r10, [rax]\n"
+				"\tmov rbx, r10\n"
+				"\tTYPE rbx\n"
+				"\tcmp rbx, T_PAIR\n"
+				"\tjne .badArgs\n"
+
+				"\tmov r13, qword [rbp + 8*4] ; r13 holds a pointer to the pair\n"
+				"\tmov r13, [r13] ; hold the actual pair\n"
+				"\tmov r12, qword [rbp + 8*5] ; r12 holds a pointer to the element to replace the car element of the pair \n"
+				"\tsub r12, start_of_data\n"
+
+				"\tshl r13, 30\n"
+				"\tshr r13, 30\n"
+				"\tshl r12, 34\n" 
+				"\tor r13,r12\n" 
+				"\tmov [rax], r13\n"
+
+				"\tmov rax, sobVoid\n"
+				"\tjmp .done\n\n"
+				".badArgs:\n"
+				"\tmov rax, sobVoid\n"
+				".done:\n"
+				"\tmov rsp, rbp\n" 
+				"\tpop rbp\n"
+				"\tret\n\n"
+
+				"end_set_car_code:\n"
+				"\tmov rax, [rax]\n"
+				"\tmov qword [setCar], rax\n\n")))
+
+
+
+
+;=========================================================================================================================================
+;======================================================= END OF FUNCTIONS FOR SET-CAR EXPRESSION =========================================
+;=========================================================================================================================================
+
+;=========================================================================================================================================
+;======================================================= FUNCTIONS FOR SET-CDR EXPRESSION ================================================
+;=========================================================================================================================================
+
+
+(define handle_set_cdr
+		(lambda ()
+			(string-append (applic-prolog "set_cdr_code" "end_set_cdr_code")
+
+				"\nset_cdr_code:\n"
+				"\tpush rbp\n"
+				"\tmov rbp, rsp\n"
+				"\tmov rax, qword [rbp + 8*3]\n"
+				"\tcmp rax, 2\n"
+				"\tjne .badArgs\n"
+				"\tmov rax, qword [rbp + 8*4]\n"
+				"\tmov r10, [rax]\n"
+				"\tmov rbx, r10\n"
+				"\tTYPE rbx\n"
+				"\tcmp rbx, T_PAIR\n"
+				"\tjne .badArgs\n"
+
+				"\tmov r13, qword [rbp + 8*4] ; r13 holds a pointer to the pair\n"
+				"\tmov r13, [r13] ; hold the actual pair\n"
+				"\tmov r12, qword [rbp + 8*5] ; r12 holds a pointer to the element to replace the cdr element of the pair \n"
+				"\tsub r12, start_of_data\n"
+
+				"\tshr r13, 34\n"
+				"\tshl r13, 34\n"
+				"\tor r13, T_PAIR\n"
+				"\tshl r12, 4\n" 
+				"\tor r13,r12\n" 
+				"\tmov [rax], r13\n"
+
+				"\tmov rax, sobVoid\n"
+				"\tjmp .done\n\n"
+				".badArgs:\n"
+				"\tmov rax, sobVoid\n"
+				".done:\n"
+				"\tmov rsp, rbp\n" 
+				"\tpop rbp\n"
+				"\tret\n\n"
+
+				"end_set_cdr_code:\n"
+				"\tmov rax, [rax]\n"
+				"\tmov qword [setCdr], rax\n\n")))
+
+
+
+
+;=========================================================================================================================================
+;======================================================= END OF FUNCTIONS FOR SET-CDR EXPRESSION =========================================
+;=========================================================================================================================================
+
 
 
 ;=========================================================================================================================================
@@ -2215,49 +2324,6 @@
 
 ;=========================================================================================================================================
 ;======================================================= END OF FUNCTIONS FOR CONS EXPRESSION ============================================
-;=========================================================================================================================================
-
-
-
-;=========================================================================================================================================
-;======================================================= FUNCTIONS FOR SET-CAR! EXPRESSION ===============================================
-;=========================================================================================================================================
-
-;(define handle_set_car
-;		(lambda () 
-
-;			(string-append (applic-prolog "set_car_code" "end_set_car_code")
-
-;				"\nset_car_code:\n"
-;				"\tpush rbp\n"
-;				"\tmov rbp, rsp\n"
-;				"\tmov rax, qword [rbp + 8*3]\n"
-;				"\tcmp rax, 2\n"
-;				"\tjne .badArgs\n"
-;				"\tmov rax, qword [rbp + 8*4]\n"
-;				"\tmov r10, [rax] ; r10 hold the pair \n"
-;				"\tmov rbx, r10\n"
-;				"\tTYPE rbx\n"
-;				"\tcmp rbx, T_PAIR\n"
-;				"\tjne .badArgs\n"
-;				;"\tCAR r10\n"
-;				"\tDATA_UPPER r10\n"
-;				"\tadd r10, start_of_data\n"
-;				"\tmov rax, r10\n"
-;				"\tjmp .done\n\n"
-;				".badArgs:\n"
-;				"\tmov rax, sobVoid\n"
-;				".done:\n"
-;				"\tmov rsp, rbp\n" 
-;				"\tpop rbp\n"
-;				"\tret\n\n"
-
-;				"end_set_car_code:\n"
-;				"\tmov rax, [rax]\n"
-;				"\tmov qword [setCar], rax\n\n")))
-
-;=========================================================================================================================================
-;======================================================= END OF FUNCTIONS FOR SET-CAR! EXPRESSION ========================================
 ;=========================================================================================================================================
 
 

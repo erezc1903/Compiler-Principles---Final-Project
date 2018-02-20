@@ -391,8 +391,8 @@
 ;3
 ;10
 
-(make-string 4 #\f)
-(make-string 5 #\0)
+;(make-string 4 #\f)
+;(make-string 5 #\0)
 
 
 ;((car '(+ 2 1)) 1 2)
