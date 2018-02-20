@@ -186,6 +186,11 @@
 ;((lambda (w x y z) (make-vector w x)) 5 4 7 1/2) ; #(4 4 4 4 4)
 ;((lambda (w x y z) (make-vector z)) 5 4 7 1/2) ; exception not a nonnegative fixnum
 
+;(vector 1 2 3)
+;(vector)
+;((lambda (x y z) (vector x 2 y z 7)) 3 8 6)
+
+
 ;(string-length "")
 ;(string-length " ")
 ;(string-length 2)

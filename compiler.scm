@@ -167,6 +167,7 @@
 				;(handle_apply) ;V
 				(handle_vector_length) ;V
 				(handle_vector_ref) ;V
+				(handle_vector)
 				 "")))
 
 
@@ -732,6 +733,109 @@
 ;=========================================================================================================================================
 ;======================================================= END OF FUNCTIONS FOR STRING-REF EXPRESSION ======================================
 ;=========================================================================================================================================
+
+
+
+;=========================================================================================================================================
+;======================================================= FUNCTIONS FOR VECTOR EXPRESSION =================================================
+;=========================================================================================================================================
+
+(define handle_vector
+		(lambda ()
+			(let* ((body-label (make-body-label-for-vector))
+				  (end-label (make-end-label-for-lambda-simple))		  
+				  (bad-input-label (make-bad-input-for-make-vector))
+				  (insert-args-loop-label (make-insert-args-loop-input-for-vector))
+				  (insert-args-loop-end-label (make-insert-args-loop-input-end-for-vector)))
+
+				  
+
+				  (string-append (applic-prolog "vector_code" "end_vector_code")
+
+				  		"\tvector_code:\n\n"
+						"\tpush rbp\n"
+						"\tmov rbp, rsp\n"
+
+						; Initializing the first qword of the vector
+						"\tmov r11, qword [rbp + 3*8] ; length of the vector\n"
+						"\tinc r11\n"
+						"\tshl r11, 3\n"
+						"\tmov rdi, r11\n"
+						"\tcall malloc\n"
+						"\tmov r11, qword [rbp + 3*8] ; length of the vector\n"
+						"\tmov qword [rax], r11\n"
+						"\tshl qword [rax], 30\n"
+						"\tlea r11, [rax + 1*8]\n"
+						"\tsub r11, start_of_data\n"
+						"\tor qword [rax], r11\n"
+						"\tshl qword [rax], TYPE_BITS\n"
+						"\tor qword [rax], T_VECTOR\n"
+
+
+						; Loop over the vector length and put in its elements the address of the second argument.
+						"\tmov r15, qword [rbp + 3*8] ; length of the vector\n"
+						"\tmov r14, 0\n"
+						;"\tmov r12, qword [rbp + 4*8] ; first element of the vector\n"
+
+
+						insert-args-loop-label":\n\n"
+						"\tcmp r14, r15\n"
+						"\tje " insert-args-loop-end-label "\n"
+						"\tmov r12, qword [rbp + (4 + r14)*8]\n"
+						"\tmov qword [rax + 1*8 + r14*8], r12\n"
+						"\tinc r14\n"
+						"\tjmp " insert-args-loop-label "\n"
+
+						insert-args-loop-end-label ":\n\n"
+						"\tjmp " end-label "\n"
+
+						end-label ":\n\n"
+						"\tmov rsp, rbp\n"
+						"\tpop rbp\n"
+						"\tret\n"
+
+
+						"end_vector_code:\n"
+						"\tmov rax, [rax]\n"
+						"\tmov qword [vector], rax\n\n"))))
+
+
+(define make-body-label-for-vector
+	(let ((num 400))
+			(lambda ()
+				(set! num (+ num 1))
+				(string-append "bodyOfVector" (number->string num)))))
+
+(define make-end-label-for-vector
+	(let ((num 400))
+			(lambda ()
+				(set! num (+ num 1))
+				(string-append "endLabel" (number->string num)))))
+
+
+(define make-bad-input-for-vector
+	(let ((num 400))
+			(lambda ()
+				(set! num (+ num 1))
+				(string-append "badInputForVector" (number->string num)))))
+
+(define make-insert-args-loop-input-for-vector
+	(let ((num 400))
+			(lambda ()
+				(set! num (+ num 1))
+				(string-append "insertArgSLoopForVector" (number->string num)))))
+
+(define make-insert-args-loop-input-end-for-vector
+	(let ((num 400))
+			(lambda ()
+				(set! num (+ num 1))
+				(string-append "insertArgsLoopEndForVector" (number->string num)))))
+
+
+;=========================================================================================================================================
+;======================================================= END OF FUNCTIONS FOR VECTOR EXPRESSION ==========================================
+;=========================================================================================================================================
+
 
 
 
