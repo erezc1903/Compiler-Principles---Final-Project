@@ -153,8 +153,17 @@ sobTrue:
 sobNil:
 	dq SOB_NIL
 
-sobString0:
-	MAKE_LITERAL_STRING ""
+sobInt4:
+	dq MAKE_LITERAL (T_INTEGER, 4)
+
+sobChar3:
+	dq MAKE_LITERAL(T_CHAR, 102)
+
+sobInt5:
+	dq MAKE_LITERAL (T_INTEGER, 5)
+
+sobChar1:
+	dq MAKE_LITERAL(T_CHAR, 48)
 
 sobUndef:
 	dq SOB_UNDEFINED
@@ -1360,6 +1369,130 @@ end_string_ref_code:
 	mov rdi, 16
 	call malloc
 	mov rbx, 1
+	MAKE_LITERAL_CLOSURE rax, rbx, string_set_code
+	jmp end_string_set_code
+
+
+string_set_code:
+	push rbp
+	mov rbp, rsp
+	mov rax, qword [rbp + 8*3]
+	cmp rax, 3
+	jl .badArgs
+	mov rax, qword [rbp + 8*4]
+	mov r10, [rax]
+	mov rbx, r10
+	TYPE rbx
+	cmp rbx, T_STRING
+	jne .badArgs
+	mov rcx, qword [rbp + 8*5]
+	mov r10, [rcx]
+	TYPE r10
+	cmp r10, T_INTEGER
+	jne .badArgs
+	mov r15, qword [rbp + 8*6]
+	mov r15, [r15]
+	TYPE r15
+	cmp r15, T_CHAR
+	jne .badArgs
+	mov r13, qword [rbp + 8*4] ; rbx holds a pointer to the string
+	mov r13, [r13] ; hold the actual string
+	mov r9, qword [rbp + 8*5]
+	mov r10, [r9] ; r10 hold k - the position in the string
+	DATA r10
+	mov rbx, qword [rbp + 8*6] ; r12 holds a pointer to the char to replace the k-th element of the string 
+	mov rbx, [rbx]
+	DATA rbx
+	STRING_ELEMENTS r13
+	mov byte [r13 + r10*1], bl
+	mov rax, sobVoid
+	jmp .done
+
+.badArgs:
+	mov rax, sobVoid
+.done:
+	mov rsp, rbp
+	pop rbp
+	ret
+
+end_string_set_code:
+	mov rax, [rax]
+	mov qword [stringSet], rax
+
+	mov rbp, rsp
+	mov rdi, 16
+	call malloc
+	mov rbx, 1
+	MAKE_LITERAL_CLOSURE rax, rbx, make_string_code
+	jmp end_make_string_code
+
+
+make_string_code:
+
+	push rbp
+	mov rbp, rsp
+	mov r8, qword [rbp + 4*8]
+	mov r10, [r8]
+	TYPE r10
+	cmp r10, T_INTEGER
+	jne badInputForMakeString501
+	mov r11, [r8]
+	DATA r11
+	cmp r11, 0
+	jl badInputForMakeString501
+	mov r8, qword [rbp + 5*8]
+	mov r10, [r8]
+	TYPE r10
+	cmp r10, T_CHAR
+	jne badInputForMakeString501
+	mov r8, qword [rbp + 4*8] ; length of the string
+	mov r12, qword [rbp + 5*8] ; elements of the string
+	mov r12, [r12]
+	DATA r12
+	mov r11, [r8]
+	DATA r11
+	inc r11
+	shl r11, 3
+	mov rdi, r11
+	call malloc
+	mov r11, [r8]
+	DATA r11
+	mov qword [rax], r11
+	shl qword [rax], 30
+	lea r11, [rax + 1*8]
+	sub r11, start_of_data
+	or qword [rax], r11
+	shl qword [rax], TYPE_BITS
+	or qword [rax], T_STRING
+	mov r15, [r8]
+	DATA r15
+	mov r14, 0
+insertArgSLoopForMakeString501:
+
+	cmp r14, r15
+	je insertArgsLoopEndForMakeString501
+	mov qword [rax + 1*8 + r14*1], r12
+	inc r14
+	jmp insertArgSLoopForMakeString501
+insertArgsLoopEndForMakeString501:
+
+	jmp endLabel501
+badInputForMakeString501:
+
+	mov rax, sobVoid
+endLabel501:
+
+	mov rsp, rbp
+	pop rbp
+	ret
+end_make_string_code:
+	mov rax, [rax]
+	mov qword [makeString], rax
+
+	mov rbp, rsp
+	mov rdi, 16
+	call malloc
+	mov rbx, 1
 	MAKE_LITERAL_CLOSURE rax, rbx, multiply_code
 	jmp end_multiply_code
 
@@ -1496,13 +1629,13 @@ end_subtract_code:
 	je oneArgForVector201
 	cmp qword [rbp + 3*8], 2
 	je twoArgForVector201
-	jmp badInputForVector202
+	jmp badInputForVector201
 oneArgForVector201:
 	mov rcx, qword [rbp + 4*8]
 	mov r10, [rcx]
 	TYPE r10
 	cmp r10, T_INTEGER
-	jne badInputForVector202
+	jne badInputForVector201
 	mov rdi, 8
 	call malloc
 	mov qword [rax], 0
@@ -1537,18 +1670,18 @@ oneArgLoopForVector201:
 	jmp oneArgLoopForVector201
 oneArgLoopEndForVector201:
 
-	jmp endLabel102
+	jmp endLabel101
 twoArgForVector201:
 
 	mov r8, qword [rbp + 4*8]
 	mov r10, [r8]
 	TYPE r10
 	cmp r10, T_INTEGER
-	jne badInputForVector202
+	jne badInputForVector201
 	mov r11, [r8]
 	DATA r11
 	cmp r11, 0
-	jl badInputForVector202
+	jl badInputForVector201
 	mov r8, qword [rbp + 4*8] ; length of the vector
 	mov r12, qword [rbp + 5*8] ; elements of the vector
 	mov r11, [r8]
@@ -1578,11 +1711,11 @@ twoArgLoopForVector201:
 	jmp twoArgLoopForVector201
 twoArgLoopEndForVector201:
 
-	jmp endLabel102
-badInputForVector202:
+	jmp endLabel101
+badInputForVector201:
 
 	mov rax, sobVoid
-endLabel102:
+endLabel101:
 
 	mov rsp, rbp
 	pop rbp
@@ -1752,8 +1885,8 @@ insertArgSLoopForVector401:
 	jmp insertArgSLoopForVector401
 insertArgsLoopEndForVector401:
 
-	jmp endLabel101
-endLabel101:
+	jmp endLabel401
+endLabel401:
 
 	mov rsp, rbp
 	pop rbp
@@ -1809,60 +1942,6 @@ end_vector_set_code:
 	mov rax, [rax]
 	mov qword [vectorSet], rax
 
-	mov rbp, rsp
-	mov rdi, 16
-	call malloc
-	mov rbx, 1
-	MAKE_LITERAL_CLOSURE rax, rbx, string_set_code
-	jmp end_string_set_code
-
-
-string_set_code:
-	push rbp
-	mov rbp, rsp
-	mov rax, qword [rbp + 8*3]
-	cmp rax, 3
-	jl .badArgs
-	mov rax, qword [rbp + 8*4]
-	mov r10, [rax]
-	mov rbx, r10
-	TYPE rbx
-	cmp rbx, T_STRING
-	jne .badArgs
-	mov rcx, qword [rbp + 8*5]
-	mov r10, [rcx]
-	TYPE r10
-	cmp r10, T_INTEGER
-	jne .badArgs
-	mov r15, qword [rbp + 8*6]
-	mov r15, [r15]
-	TYPE r15
-	cmp r15, T_CHAR
-	jne .badArgs
-	mov r13, qword [rbp + 8*4] ; rbx holds a pointer to the string
-	mov r13, [r13] ; hold the actual string
-	mov r9, qword [rbp + 8*5]
-	mov r10, [r9] ; r10 hold k - the position in the string
-	DATA r10
-	mov rbx, qword [rbp + 8*6] ; r12 holds a pointer to the char to replace the k-th element of the string 
-	mov rbx, [rbx]
-	DATA rbx
-	STRING_ELEMENTS r13
-	mov byte [r13 + r10*1], bl
-	mov rax, sobVoid
-	jmp .done
-
-.badArgs:
-	mov rax, sobVoid
-.done:
-	mov rsp, rbp
-	pop rbp
-	ret
-
-end_string_set_code:
-	mov rax, [rax]
-	mov qword [stringSet], rax
-
 ; =============================== PRIMITIVE FUNCTIONS =========================
 
 start_of_instructions:
@@ -1871,9 +1950,82 @@ start_of_instructions:
 	mov rbp, rsp
 
 ; start
+; start of applic of lambda-simple code: 
+
 	; codegen for const start
-	mov rax, sobString0
+	mov rax, sobChar3
 	;code gen for constant end
+	push rax
+	; codegen for const start
+	mov rax, sobInt4
+	;code gen for constant end
+	push rax
+
+	push 2
+	mov rax, makeString
+	mov r10, [rax]
+	mov rcx, r10
+	TYPE rcx
+	cmp rcx, T_CLOSURE
+	jne not_a_closure101
+	mov rbx, r10
+	CLOSURE_ENV rbx
+	push rbx
+	CLOSURE_CODE r10
+	call r10
+	add rsp, 8*1
+	jmp done_closure101
+not_a_closure101:
+
+	mov rax, sobVoid
+done_closure101:
+
+	add rsp, 8*3
+
+; end of applic of lambda-simple code: 
+
+	mov rax, [rax]
+	push rax
+	call write_sob_if_not_void
+	add rsp, 8
+
+; end
+
+; start
+; start of applic of lambda-simple code: 
+
+	; codegen for const start
+	mov rax, sobChar1
+	;code gen for constant end
+	push rax
+	; codegen for const start
+	mov rax, sobInt5
+	;code gen for constant end
+	push rax
+
+	push 2
+	mov rax, makeString
+	mov r10, [rax]
+	mov rcx, r10
+	TYPE rcx
+	cmp rcx, T_CLOSURE
+	jne not_a_closure102
+	mov rbx, r10
+	CLOSURE_ENV rbx
+	push rbx
+	CLOSURE_CODE r10
+	call r10
+	add rsp, 8*1
+	jmp done_closure102
+not_a_closure102:
+
+	mov rax, sobVoid
+done_closure102:
+
+	add rsp, 8*3
+
+; end of applic of lambda-simple code: 
+
 	mov rax, [rax]
 	push rax
 	call write_sob_if_not_void

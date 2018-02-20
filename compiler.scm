@@ -160,6 +160,8 @@
 				(handle_remainder) ;V
 				(handle_string_length); V
 				(handle_string_ref) ;V
+				(handle_string_set) ;V
+				(handle_make_string)
 				(handle_multiply)
 				(handle_subtract)
 				(handle_make_vector)
@@ -169,7 +171,6 @@
 				(handle_vector_ref) ;V
 				(handle_vector) ;V
 				(handle_vector_set) ;V
-				(handle_string_set)
 				 "")))
 
 
@@ -801,8 +802,8 @@
 (define handle_vector
 		(lambda ()
 			(let* ((body-label (make-body-label-for-vector))
-				  (end-label (make-end-label-for-lambda-simple))		  
-				  (bad-input-label (make-bad-input-for-make-vector))
+				  (end-label (make-end-label-for-vector))		  
+				  (bad-input-label (make-bad-input-for-vector))
 				  (insert-args-loop-label (make-insert-args-loop-input-for-vector))
 				  (insert-args-loop-end-label (make-insert-args-loop-input-end-for-vector)))
 
@@ -1124,6 +1125,134 @@
 
 ;=========================================================================================================================================
 ;======================================================= END OF FUNCTIONS FOR MAKE-VECTOR EXPRESSION =====================================
+;=========================================================================================================================================
+
+
+
+;=========================================================================================================================================
+;======================================================= FUNCTIONS FOR MAKE-STRING EXPRESSION ============================================
+;=========================================================================================================================================
+
+(define handle_make_string
+		(lambda ()
+			(let* ((body-label (make-body-label-for-make-string))
+				  (end-label (make-end-label-for-make-string))		  
+				  (bad-input-label (make-bad-input-for-make-string))
+				  (insert-args-loop-label (make-insert-args-loop-input-for-make-string))
+				  (insert-args-loop-end-label (make-insert-args-loop-input-end-for-make-string)))
+
+				  
+
+				  (string-append (applic-prolog "make_string_code" "end_make_string_code")
+
+				  		"\nmake_string_code:\n\n"
+						"\tpush rbp\n"
+						"\tmov rbp, rsp\n"
+
+						"\tmov r8, qword [rbp + 4*8]\n"
+						"\tmov r10, [r8]\n"
+						"\tTYPE r10\n"
+						"\tcmp r10, T_INTEGER\n"
+						"\tjne "bad-input-label "\n"
+						"\tmov r11, [r8]\n"
+						"\tDATA r11\n"
+						"\tcmp r11, 0\n"
+						"\tjl " bad-input-label "\n"
+						"\tmov r8, qword [rbp + 5*8]\n"
+						"\tmov r10, [r8]\n"
+						"\tTYPE r10\n"
+						"\tcmp r10, T_CHAR\n"
+						"\tjne "bad-input-label "\n"
+
+
+						"\tmov r8, qword [rbp + 4*8] ; length of the string\n"
+						"\tmov r12, qword [rbp + 5*8] ; elements of the string\n"
+						"\tmov r12, [r12]\n"
+						"\tDATA r12\n"
+
+
+						; Initializing the first qword of the string
+						"\tmov r11, [r8]\n"
+						"\tDATA r11\n"
+						"\tinc r11\n"
+						"\tshl r11, 3\n"
+						"\tmov rdi, r11\n"
+						"\tcall malloc\n"
+						"\tmov r11, [r8]\n"
+						"\tDATA r11\n"
+						"\tmov qword [rax], r11\n"
+						"\tshl qword [rax], 30\n"
+						"\tlea r11, [rax + 1*8]\n"
+						"\tsub r11, start_of_data\n"
+						"\tor qword [rax], r11\n"
+						"\tshl qword [rax], TYPE_BITS\n"
+						"\tor qword [rax], T_STRING\n"
+
+
+						; Loop over the string length and put in its elements the address of the second argument.
+						"\tmov r15, [r8]\n"
+						"\tDATA r15\n"
+						"\tmov r14, 0\n"
+
+
+						insert-args-loop-label":\n\n"
+						"\tcmp r14, r15\n"
+						"\tje " insert-args-loop-end-label "\n"
+
+						"\tmov qword [rax + 1*8 + r14*1], r12\n"
+						"\tinc r14\n"
+						"\tjmp " insert-args-loop-label "\n"
+
+						insert-args-loop-end-label ":\n\n"
+						"\tjmp " end-label "\n"
+
+						bad-input-label":\n\n"
+						"\tmov rax, sobVoid\n"
+
+						end-label ":\n\n"
+						"\tmov rsp, rbp\n"
+						"\tpop rbp\n"
+						"\tret\n"
+
+
+						"end_make_string_code:\n"
+						"\tmov rax, [rax]\n"
+						"\tmov qword [makeString], rax\n\n"))))
+
+
+(define make-body-label-for-make-string
+	(let ((num 500))
+			(lambda ()
+				(set! num (+ num 1))
+				(string-append "bodyOfMakeString" (number->string num)))))
+
+(define make-end-label-for-make-string
+	(let ((num 500))
+			(lambda ()
+				(set! num (+ num 1))
+				(string-append "endLabel" (number->string num)))))
+
+
+(define make-bad-input-for-make-string
+	(let ((num 500))
+			(lambda ()
+				(set! num (+ num 1))
+				(string-append "badInputForMakeString" (number->string num)))))
+
+(define make-insert-args-loop-input-for-make-string
+	(let ((num 500))
+			(lambda ()
+				(set! num (+ num 1))
+				(string-append "insertArgSLoopForMakeString" (number->string num)))))
+
+(define make-insert-args-loop-input-end-for-make-string
+	(let ((num 500))
+			(lambda ()
+				(set! num (+ num 1))
+				(string-append "insertArgsLoopEndForMakeString" (number->string num)))))
+
+;=========================================================================================================================================
+;======================================================= END OF FUNCTIONS FOR MAKE-STRING EXPRESSION =====================================
 ;=========================================================================================================================================
 
 

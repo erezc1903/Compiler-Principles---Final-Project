@@ -390,7 +390,11 @@
 ;c ; '#(1 2 10)
 ;3
 ;10
-""
+
+(make-string 4 #\f)
+(make-string 5 #\0)
+
+
 ;((car '(+ 2 1)) 1 2)
 ;(define s "abcde")
 ;s
