@@ -71,7 +71,7 @@
 
 (define compile-scheme-file
 	(lambda (in-file out-file)
-		(let* ((input (pipeline (file->list in-file)))
+		(let* ((input (pipeline (append (file->list "scheme_implementations.scm") (file->list in-file))))
 			  (out-port (open-output-file out-file 'replace))
 			  (index -1)
 			  (const-table (const_table input))
@@ -82,7 +82,7 @@
 
 			;(display "global-env-as-pairs: ") (display global-env-as-pairs) (newline) (newline)
 			(display "input: ") (display input) (newline) (newline)
-			(display "const-table-as-list-of-pairs: ") (display const-table-as-list-of-pairs) (newline) (newline)
+			;(display "const-table-as-list-of-pairs: ") (display const-table-as-list-of-pairs) (newline) (newline)
 
 
 			(fprintf out-port "%include \"scheme.s\"\n\n") 
@@ -161,7 +161,7 @@
 				(handle_string_length); V
 				(handle_string_ref) ;V
 				(handle_string_set) ;V
-				(handle_make_string)
+				(handle_make_string) ;V
 				(handle_multiply)
 				(handle_subtract)
 				(handle_make_vector)
@@ -380,6 +380,15 @@
 
 						"; end of creating a closure of lambda-simple " (number->string depth) "\n\n"))))
 
+;=========================================================================================================================================
+;======================================================= END OF FUNCTIONS FOR LAMBDA SIMPLE EXPRESSION ===================================
+;=========================================================================================================================================
+
+
+;=========================================================================================================================================
+;======================================================= FUNCTIONS FOR LAMBDA OPT EXPRESSION =============================================
+;=========================================================================================================================================
+
 
 (define handle_lambda_opt
 		(lambda (params body depth const-table global-env)
@@ -586,7 +595,7 @@
 
 
 ;=========================================================================================================================================
-;======================================================= END OF FUNCTIONS FOR LAMBDA SIMPLE EXPRESSION ===================================
+;======================================================= END OF FUNCTIONS FOR LAMBDA OPT EXPRESSION ======================================
 ;=========================================================================================================================================
 
 
@@ -643,6 +652,71 @@
 			(lambda ()
 				(set! num (+ num 1))
 				(string-append "done_closure" (number->string num)))))
+
+;=========================================================================================================================================
+;======================================================= FUNCTIONS FOR MAP EXPRESSION ====================================================
+;=========================================================================================================================================
+
+
+;(define handle_map
+;  (lambda (f ls . more)
+;    (if (null? more)
+;        (let map1 ((ls ls))
+;          (if (null? ls)
+;              '()
+;              (cons (f (car ls))
+;                    (map1 (cdr ls)))))
+;        (let map-more ((ls ls) (more more))
+;          (if (null? ls)
+;              '()
+;              (cons (apply f (car ls) (map car more))
+;                    (map-more (cdr ls)
+;                              (map cdr more))))))))
+
+;(define handle_map
+;		(lambda ()
+
+;			(let* ((end-label (make-end-label-for-vector))		  
+;				  (bad-input-label (make-bad-input-for-vector))
+;				  (insert-args-loop-label (make-insert-args-loop-input-for-vector))
+;				  (insert-args-loop-end-label (make-insert-args-loop-input-end-for-vector)))
+;			(string-append (applic-prolog "map_code" "end_map_code")
+;				"\nvector_length_code:\n"
+;				"\tpush rbp\n"
+;				"\tmov rbp, rsp\n"
+;				"\tmov rax, qword [rbp + 8*3]\n"
+;				"\tcmp rax, 2\n"
+;				"\tjl .badArgs\n"
+				
+
+;				"\tmov r10, qword [rbp + 8*3]\n"
+;				"\tmov r12, qword [rbp + 8*4]\n"
+;				"\tmov r12, [r12]\n"
+;				"\tCLOSURE_CODE r12\n"
+;				"\tdec r10\n"
+;				"\tmov r11, 0 ; counter that goes over the lists\n"
+
+
+
+
+
+
+
+;				"\tjmp .done\n\n"
+;				".badArgs:\n"
+;				"\tmov rax, sobVoid\n"
+;				".done:\n"
+;				"\tmov rsp, rbp\n" 
+;				"\tpop rbp\n"
+;				"\tret\n\n"
+
+
+;				"end_map_code:\n"
+;				"\tmov rax, [rax]\n"
+;				"\tmov qword [map], rax\n\n"))))
+;=========================================================================================================================================
+;======================================================= END OF FUNCTIONS FOR MAP EXPRESSION =============================================
+;=========================================================================================================================================
 
 
 
@@ -908,7 +982,7 @@
 		(lambda ()
 			(let* ((body-label (make-body-label-for-make-vector))
 				  (no-args-label (make-no-args-label-for-make-vector))
-				  (end-label (make-end-label-for-lambda-simple))
+				  (end-label (make-end-label-for-make-vector))
 				  (one-arg-label (make-one-arg-for-make-vector))
 				  (two-arg-label (make-two-arg-for-make-vector))				  
 				  (bad-input-label (make-bad-input-for-make-vector))
@@ -1138,18 +1212,82 @@
 (define handle_make_string
 		(lambda ()
 			(let* ((body-label (make-body-label-for-make-string))
-				  (end-label (make-end-label-for-make-string))		  
+				  (no-args-label (make-no-args-label-for-make-string))
+				  (end-label (make-end-label-for-make-string))
+				  (one-arg-label (make-one-arg-for-make-string))
+				  (two-arg-label (make-two-arg-for-make-string))				  
 				  (bad-input-label (make-bad-input-for-make-string))
-				  (insert-args-loop-label (make-insert-args-loop-input-for-make-string))
-				  (insert-args-loop-end-label (make-insert-args-loop-input-end-for-make-string)))
+				  (one-arg-loop-label (make-one-arg-loop-input-for-make-string))
+				  (one-arg-loop-end-label (make-one-arg-loop-input-end-for-make-string))
+				  (two-arg-loop-label (make-two-arg-loop-input-for-make-string))
+				  (two-arg-loop-end-label (make-two-arg-loop-input-end-for-make-string)))
 
 				  
 
 				  (string-append (applic-prolog "make_string_code" "end_make_string_code")
 
-				  		"\nmake_string_code:\n\n"
+				  		"\tmake_string_code:\n\n"
 						"\tpush rbp\n"
 						"\tmov rbp, rsp\n"
+
+
+						"\tcmp qword [rbp + 3*8], 1\n"
+						"\tje " one-arg-label "\n"
+
+						"\tcmp qword [rbp + 3*8], 2\n"
+						"\tje " two-arg-label "\n"
+						"\tjmp " bad-input-label "\n"
+
+						one-arg-label ":\n"
+
+						"\tmov rcx, qword [rbp + 4*8]\n"
+						"\tmov r10, [rcx]\n"
+						"\tTYPE r10\n"
+						"\tcmp r10, T_INTEGER\n"
+						"\tjne "bad-input-label "\n"
+
+						; Put code for #(0 0 0 0 0) here
+						; Initializing the runtime constant zero and putting its address into r1
+						"\tmov r12, 0\n"
+
+						; Initializing the first qword of the vector
+						"\tmov r8, qword [rbp + 4*8] ; r8 holds a pointer to the string length \n"
+						"\tmov r13, [r8]\n"
+						"\tDATA r13\n"
+						"\tinc r13\n"
+						"\tshl r13, 3\n"
+						"\tmov rdi, r13\n"
+						"\tcall malloc\n"
+						"\tmov r13, [r8]\n"
+						"\tDATA r13 \n"
+						"\tmov qword [rax], r13\n"
+						"\tshl qword [rax], 30\n"
+						"\tlea r13, [rax + 1*8]\n"
+						"\tsub r13, start_of_data\n"
+						"\tor qword [rax], r13\n"
+						"\tshl qword [rax], TYPE_BITS\n"
+						"\tor qword [rax], T_STRING\n"
+
+
+						; Loop over the string length and initialize its elements to zero char.
+						"\tmov r15, [r8]\n"
+						"\tDATA r15\n"
+						"\tmov r14, 0\n"
+
+
+						one-arg-loop-label ":\n\n"
+						"\tcmp r14, r15\n"
+						"\tje " one-arg-loop-end-label "\n"
+
+						"\tmov qword [rax + 1*8 + r14*1], r12\n"
+						"\tinc r14\n"
+						"\tjmp " one-arg-loop-label "\n"
+
+						one-arg-loop-end-label ":\n\n"
+						"\tjmp " end-label "\n"
+
+
+						two-arg-label":\n\n"
 
 						"\tmov r8, qword [rbp + 4*8]\n"
 						"\tmov r10, [r8]\n"
@@ -1160,20 +1298,17 @@
 						"\tDATA r11\n"
 						"\tcmp r11, 0\n"
 						"\tjl " bad-input-label "\n"
-						"\tmov r8, qword [rbp + 5*8]\n"
-						"\tmov r10, [r8]\n"
-						"\tTYPE r10\n"
-						"\tcmp r10, T_CHAR\n"
-						"\tjne "bad-input-label "\n"
 
 
+						; Put code for #(4 4 4 4 4) here
+						; Setting r12 to the second argument
 						"\tmov r8, qword [rbp + 4*8] ; length of the string\n"
 						"\tmov r12, qword [rbp + 5*8] ; elements of the string\n"
 						"\tmov r12, [r12]\n"
 						"\tDATA r12\n"
 
 
-						; Initializing the first qword of the string
+						; Initializing the first qword of the vector
 						"\tmov r11, [r8]\n"
 						"\tDATA r11\n"
 						"\tinc r11\n"
@@ -1197,20 +1332,21 @@
 						"\tmov r14, 0\n"
 
 
-						insert-args-loop-label":\n\n"
+						two-arg-loop-label":\n\n"
 						"\tcmp r14, r15\n"
-						"\tje " insert-args-loop-end-label "\n"
+						"\tje " two-arg-loop-end-label "\n"
 
 						"\tmov qword [rax + 1*8 + r14*1], r12\n"
 						"\tinc r14\n"
-						"\tjmp " insert-args-loop-label "\n"
+						"\tjmp " two-arg-loop-label "\n"
 
-						insert-args-loop-end-label ":\n\n"
+						two-arg-loop-end-label ":\n\n"
 						"\tjmp " end-label "\n"
+
 
 						bad-input-label":\n\n"
 						"\tmov rax, sobVoid\n"
-
+						
 						end-label ":\n\n"
 						"\tmov rsp, rbp\n"
 						"\tpop rbp\n"
@@ -1223,35 +1359,67 @@
 
 
 (define make-body-label-for-make-string
-	(let ((num 500))
+	(let ((num 600))
 			(lambda ()
 				(set! num (+ num 1))
 				(string-append "bodyOfMakeString" (number->string num)))))
 
+(define make-no-args-label-for-make-string
+	(let ((num 600))
+			(lambda ()
+				(set! num (+ num 1))
+				(string-append "no_args" (number->string num)))))
+
+
 (define make-end-label-for-make-string
-	(let ((num 500))
+	(let ((num 600))
 			(lambda ()
 				(set! num (+ num 1))
 				(string-append "endLabel" (number->string num)))))
 
 
+(define make-one-arg-for-make-string
+	(let ((num 600))
+			(lambda ()
+				(set! num (+ num 1))
+				(string-append "oneArgForString" (number->string num)))))
+
+(define make-two-arg-for-make-string
+	(let ((num 600))
+			(lambda ()
+				(set! num (+ num 1))
+				(string-append "twoArgForString" (number->string num)))))
+
 (define make-bad-input-for-make-string
-	(let ((num 500))
+	(let ((num 600))
 			(lambda ()
 				(set! num (+ num 1))
-				(string-append "badInputForMakeString" (number->string num)))))
+				(string-append "badInputForString" (number->string num)))))
 
-(define make-insert-args-loop-input-for-make-string
-	(let ((num 500))
+(define make-two-arg-loop-input-for-make-string
+	(let ((num 600))
 			(lambda ()
 				(set! num (+ num 1))
-				(string-append "insertArgSLoopForMakeString" (number->string num)))))
+				(string-append "twoArgLoopForString" (number->string num)))))
 
-(define make-insert-args-loop-input-end-for-make-string
-	(let ((num 500))
+(define make-two-arg-loop-input-end-for-make-string
+	(let ((num 600))
 			(lambda ()
 				(set! num (+ num 1))
-				(string-append "insertArgsLoopEndForMakeString" (number->string num)))))
+				(string-append "twoArgLoopEndForString" (number->string num)))))
+
+(define make-one-arg-loop-input-for-make-string
+	(let ((num 600))
+			(lambda ()
+				(set! num (+ num 1))
+				(string-append "oneArgLoopForString" (number->string num)))))
+
+(define make-one-arg-loop-input-end-for-make-string
+	(let ((num 600))
+			(lambda ()
+				(set! num (+ num 1))
+				(string-append "oneArgLoopEndForString" (number->string num)))))
+
 
 ;=========================================================================================================================================
 ;======================================================= END OF FUNCTIONS FOR MAKE-STRING EXPRESSION =====================================

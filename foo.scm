@@ -198,7 +198,10 @@
 
 ;list
 ;make-string
-
+(integer->char 1)
+(make-string 4)
+(make-string 4 #\b)
+#\d
 ;make-vector
 ;(make-vector 5 4 -7) ; ecxeption incorrect arg count
 ;(make-vector 5) ; #(0 0 0 0 0)
@@ -470,6 +473,7 @@
 ;444
 ;;; lambda-simple, applic
 
+;(append '(5 6) '(7 8 (9)))
 
 ;;;; lambda-opt
 ;(lambda (a b . c) (or a b)) ; procedure
