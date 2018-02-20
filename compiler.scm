@@ -82,7 +82,7 @@
 
 			;(display "global-env-as-pairs: ") (display global-env-as-pairs) (newline) (newline)
 			(display "input: ") (display input) (newline) (newline)
-			;(display "const-table-as-list-of-pairs: ") (display const-table-as-list-of-pairs) (newline) (newline)
+			(display "const-table-as-list-of-pairs: ") (display const-table-as-list-of-pairs) (newline) (newline)
 
 
 			(fprintf out-port "%include \"scheme.s\"\n\n") 
@@ -167,7 +167,8 @@
 				;(handle_apply) ;V
 				(handle_vector_length) ;V
 				(handle_vector_ref) ;V
-				(handle_vector)
+				(handle_vector) ;V
+				(handle_vector_set)
 				 "")))
 
 
@@ -687,6 +688,60 @@
 ;=========================================================================================================================================
 
 
+
+;=========================================================================================================================================
+;======================================================= FUNCTIONS FOR VECTOR-SET EXPRESSION =============================================
+;=========================================================================================================================================
+
+(define handle_vector_set
+		(lambda () 
+
+			(string-append (applic-prolog "vector_set_code" "end_vector_set_code")
+
+				"\nvector_set_code:\n"
+				"\tpush rbp\n"
+				"\tmov rbp, rsp\n"
+				"\tmov rax, qword [rbp + 8*3]\n"
+				"\tcmp rax, 3\n"
+				"\tjl .badArgs\n"
+				"\tmov rax, qword [rbp + 8*4]\n"
+				"\tmov r10, [rax]\n"
+				"\tmov rbx, r10\n"
+				"\tTYPE rbx\n"
+				"\tcmp rbx, T_VECTOR\n"
+				"\tjne .badArgs\n"
+				"\tmov rcx, qword [rbp + 8*5]\n"
+				"\tmov r10, [rcx]\n"
+				"\tTYPE r10\n"
+				"\tcmp r10, T_INTEGER\n"
+				"\tjne .badArgs\n"
+				"\tmov r13, qword [rbp + 8*4] ; rbx holds a pointer to the vector\n"
+				"\tmov r13, [r13] ; hold the actual vector\n"
+				"\tmov r9, qword [rbp + 8*5]\n"
+				"\tmov r10, [r9] ; r10 hold k - the position in the vector\n"
+				"\tDATA r10\n"
+				"\tmov r12, qword [rbp + 8*6] ; r12 holds a pointer to the object to replace the k-th element of the vector \n"
+				"\tVECTOR_ELEMENTS r13\n"
+				"\tmov qword [r13 + r10*8], r12\n"
+				"\tmov rax, sobVoid\n"
+				"\tjmp .done\n\n"
+				".badArgs:\n"
+				"\tmov rax, sobVoid\n"
+				".done:\n"
+				"\tmov rsp, rbp\n" 
+				"\tpop rbp\n"
+				"\tret\n\n"
+
+				"end_vector_set_code:\n"
+				"\tmov rax, [rax]\n"
+				"\tmov qword [vectorSet], rax\n\n")))
+
+;=========================================================================================================================================
+;======================================================= END OF FUNCTIONS FOR VECTOR-SET EXPRESSION ======================================
+;=========================================================================================================================================
+
+
+
 ;=========================================================================================================================================
 ;======================================================= FUNCTIONS FOR VECTOR-REF EXPRESSION =============================================
 ;=========================================================================================================================================
@@ -714,10 +769,12 @@
 				"\tcmp r10, T_INTEGER\n"
 				"\tjne .badArgs\n"
 				"\tmov rbx, qword [rbp + 8*4] ; a pointer to the vector\n"
+				"\tmov rbx, [rbx]\n"
 				"\tmov r9, qword [rbp + 8*5]\n"
 				"\tmov r10, [r9] ; the position in the vector\n"
 				"\tDATA r10\n"
-				"\tmov rax, [rbx + 1*8 + r10*8]\n"
+				"\tVECTOR_ELEMENTS rbx\n"
+				"\tmov rax, [rbx + r10*8]\n"
 				"\tjmp .done\n\n"
 				".badArgs:\n"
 				"\tmov rax, sobVoid\n"
@@ -731,7 +788,7 @@
 				"\tmov qword [vectorRef], rax\n\n")))
 
 ;=========================================================================================================================================
-;======================================================= END OF FUNCTIONS FOR STRING-REF EXPRESSION ======================================
+;======================================================= END OF FUNCTIONS FOR VECTOR-REF EXPRESSION ======================================
 ;=========================================================================================================================================
 
 
@@ -2822,7 +2879,7 @@
 	(lambda (input-file)
 		;(display "const-table: ") (display (make_const_table input-file)) (newline) (newline)
 		;(display "input-file: ") (display input-file) (newline) (newline)
-		(remove-duplicates (append (list (void) #f #t '()) (expand-const-table (make_const_table input-file))))))
+		(reverse (remove-duplicates (reverse (append (list (void) #f #t '()) (expand-const-table (make_const_table input-file))))))))
 
 (define create_const_for_assembly
 	(lambda (const-table table-in-pairs num)

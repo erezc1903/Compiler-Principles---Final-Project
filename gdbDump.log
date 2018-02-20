@@ -6878,3 +6878,1950 @@ Value can't be converted to integer.
 16: /x $r13 = 0x7fffffffdde0
 17: /x $r14 = 0x0
 18: /x $r15 = 0x0
+Breakpoint 1 at 0x401dfb
+SIGTRAP is used by the debugger.
+Are you sure you want to change it? (y or n) [answered Y; input not from terminal]
+
+Breakpoint 1, 0x0000000000401dfb in vector_set_code ()
+1: x/i $pc
+=> 0x401dfb <vector_set_code+4>:	mov    0x18(%rbp),%rax
+2: /x $rax = 0x6036e1
+3: /x $rbx = 0x1
+4: /x $rcx = 0x9
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0x401df7
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x7fffffffdcc8:	0xffffdd00	0x00007fff	0x00401f83	0x00000000
+0x7fffffffdcd8:	0x00000001	0x00000000	0x00000003	0x00000000
+0x7fffffffdce8:	0x006036f9	0x00000000	0x00603731	0x00000000
+0x7fffffffdcf8:	0x00603739	0x00000000	0xffffdd08	0x00007fff
+0x7fffffffdd08:	0xf7a2d830	0x00007fff	0x00000000	0x00000000
+0x7fffffffdd18:	0xffffdde8	0x00007fff	0xf7ffcca0	0x00000001
+0x7fffffffdd28:	0x00400684	0x00000000	0x00000000	0x00000000
+0x7fffffffdd38:	0x39517548	0xa4092b66	0x004004c0	0x00000000
+0x7fffffffdd48:	0xffffdde0	0x00007fff	0x00000000	0x00000000
+0x7fffffffdd58:	0x00000000	0x00000000	0x88f17548	0x5bf6d419
+0x7fffffffdd68:	0x9d017548	0x5bf6c4a3	0x00000000	0x00007fff
+0x7fffffffdd78:	0x00000000	0x00000000	0x00000000	0x00000000
+0x7fffffffdd88:	0x00400630	0x00000000	0xf7de7ab0	0x00007fff
+0x7fffffffdd98:	0xf7de77cb	0x00007fff	0x00000000	0x00000000
+0x7fffffffdda8:	0x00000000	0x00000000	0x004004c0	0x00000000
+0x7fffffffddb8:	0xffffdde0	0x00007fff	0x00000000	0x00000000
+0x0000000000401dff in vector_set_code ()
+1: x/i $pc
+=> 0x401dff <vector_set_code+8>:	cmp    $0x3,%rax
+2: /x $rax = 0x3
+3: /x $rbx = 0x1
+4: /x $rcx = 0x9
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0x401df7
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e03 in vector_set_code ()
+1: x/i $pc
+=> 0x401e03 <vector_set_code+12>:	
+    jl     0x401e51 <vector_set_code.badArgs>
+2: /x $rax = 0x3
+3: /x $rbx = 0x1
+4: /x $rcx = 0x9
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0x401df7
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e05 in vector_set_code ()
+1: x/i $pc
+=> 0x401e05 <vector_set_code+14>:	mov    0x20(%rbp),%rax
+2: /x $rax = 0x3
+3: /x $rbx = 0x1
+4: /x $rcx = 0x9
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0x401df7
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e09 in vector_set_code ()
+1: x/i $pc
+=> 0x401e09 <vector_set_code+18>:	mov    (%rax),%r10
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0x1
+4: /x $rcx = 0x9
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0x401df7
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e0c in vector_set_code ()
+1: x/i $pc
+=> 0x401e0c <vector_set_code+21>:	mov    %r10,%rbx
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0x1
+4: /x $rcx = 0x9
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0xc00013f8b
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e0f in vector_set_code ()
+1: x/i $pc
+=> 0x401e0f <vector_set_code+24>:	and    $0xf,%rbx
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0xc00013f8b
+4: /x $rcx = 0x9
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0xc00013f8b
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e13 in vector_set_code ()
+1: x/i $pc
+=> 0x401e13 <vector_set_code+28>:	cmp    $0xb,%rbx
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0xb
+4: /x $rcx = 0x9
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0xc00013f8b
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e17 in vector_set_code ()
+1: x/i $pc
+=> 0x401e17 <vector_set_code+32>:	
+    jne    0x401e51 <vector_set_code.badArgs>
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0xb
+4: /x $rcx = 0x9
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0xc00013f8b
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e19 in vector_set_code ()
+1: x/i $pc
+=> 0x401e19 <vector_set_code+34>:	mov    0x28(%rbp),%rcx
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0xb
+4: /x $rcx = 0x9
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0xc00013f8b
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e1d in vector_set_code ()
+1: x/i $pc
+=> 0x401e1d <vector_set_code+38>:	mov    (%rcx),%r10
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0xb
+4: /x $rcx = 0x603731
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0xc00013f8b
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e20 in vector_set_code ()
+1: x/i $pc
+=> 0x401e20 <vector_set_code+41>:	and    $0xf,%r10
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0xb
+4: /x $rcx = 0x603731
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0x23
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e24 in vector_set_code ()
+1: x/i $pc
+=> 0x401e24 <vector_set_code+45>:	cmp    $0x3,%r10
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0xb
+4: /x $rcx = 0x603731
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0x3
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e28 in vector_set_code ()
+1: x/i $pc
+=> 0x401e28 <vector_set_code+49>:	
+    jne    0x401e51 <vector_set_code.badArgs>
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0xb
+4: /x $rcx = 0x603731
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0x3
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e2a in vector_set_code ()
+1: x/i $pc
+=> 0x401e2a <vector_set_code+51>:	mov    0x20(%rbp),%rbx
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0xb
+4: /x $rcx = 0x603731
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0x3
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e2e in vector_set_code ()
+1: x/i $pc
+=> 0x401e2e <vector_set_code+55>:	mov    0x28(%rbp),%r9
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0x6036f9
+4: /x $rcx = 0x603731
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0x3
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e32 in vector_set_code ()
+1: x/i $pc
+=> 0x401e32 <vector_set_code+59>:	mov    (%r9),%r10
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0x6036f9
+4: /x $rcx = 0x603731
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x603731
+13: /x $r10 = 0x3
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e35 in vector_set_code ()
+1: x/i $pc
+=> 0x401e35 <vector_set_code+62>:	sar    $0x4,%r10
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0x6036f9
+4: /x $rcx = 0x603731
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x603731
+13: /x $r10 = 0x23
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e39 in vector_set_code ()
+1: x/i $pc
+=> 0x401e39 <vector_set_code+66>:	mov    0x8(%rbx,%r10,8),%r11
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0x6036f9
+4: /x $rcx = 0x603731
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x603731
+13: /x $r10 = 0x2
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e3e in vector_set_code ()
+1: x/i $pc
+=> 0x401e3e <vector_set_code+71>:	mov    0x30(%rbp),%r12
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0x6036f9
+4: /x $rcx = 0x603731
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x603731
+13: /x $r10 = 0x2
+14: /x $r11 = 0x15
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e42 in vector_set_code ()
+1: x/i $pc
+=> 0x401e42 <vector_set_code+75>:	mov    %r12,(%r11)
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0x6036f9
+4: /x $rcx = 0x603731
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x603731
+13: /x $r10 = 0x2
+14: /x $r11 = 0x15
+15: /x $r12 = 0x603739
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+
+Program received signal SIGSEGV, Segmentation fault.
+0x0000000000401e42 in vector_set_code ()
+1: x/i $pc
+=> 0x401e42 <vector_set_code+75>:	mov    %r12,(%r11)
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0x6036f9
+4: /x $rcx = 0x603731
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ IF RF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x603731
+13: /x $r10 = 0x2
+14: /x $r11 = 0x15
+15: /x $r12 = 0x603739
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+Breakpoint 1 at 0x401dfb
+SIGTRAP is used by the debugger.
+Are you sure you want to change it? (y or n) [answered Y; input not from terminal]
+
+Breakpoint 1, 0x0000000000401dfb in vector_set_code ()
+1: x/i $pc
+=> 0x401dfb <vector_set_code+4>:	mov    0x18(%rbp),%rax
+2: /x $rax = 0x6036e1
+3: /x $rbx = 0x1
+4: /x $rcx = 0x9
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0x401df7
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x7fffffffdcc8:	0xffffdd00	0x00007fff	0x00401f83	0x00000000
+0x7fffffffdcd8:	0x00000001	0x00000000	0x00000003	0x00000000
+0x7fffffffdce8:	0x006036f9	0x00000000	0x00603731	0x00000000
+0x7fffffffdcf8:	0x00603739	0x00000000	0xffffdd08	0x00007fff
+0x7fffffffdd08:	0xf7a2d830	0x00007fff	0x00000000	0x00000000
+0x7fffffffdd18:	0xffffdde8	0x00007fff	0xf7ffcca0	0x00000001
+0x7fffffffdd28:	0x00400684	0x00000000	0x00000000	0x00000000
+0x7fffffffdd38:	0xc66298e3	0x4c52d096	0x004004c0	0x00000000
+0x7fffffffdd48:	0xffffdde0	0x00007fff	0x00000000	0x00000000
+0x7fffffffdd58:	0x00000000	0x00000000	0x77c298e3	0xb3ad2fe9
+0x7fffffffdd68:	0x623298e3	0xb3ad3f53	0x00000000	0x00007fff
+0x7fffffffdd78:	0x00000000	0x00000000	0x00000000	0x00000000
+0x7fffffffdd88:	0x00400630	0x00000000	0xf7de7ab0	0x00007fff
+0x7fffffffdd98:	0xf7de77cb	0x00007fff	0x00000000	0x00000000
+0x7fffffffdda8:	0x00000000	0x00000000	0x004004c0	0x00000000
+0x7fffffffddb8:	0xffffdde0	0x00007fff	0x00000000	0x00000000
+0x0000000000401dff in vector_set_code ()
+1: x/i $pc
+=> 0x401dff <vector_set_code+8>:	cmp    $0x3,%rax
+2: /x $rax = 0x3
+3: /x $rbx = 0x1
+4: /x $rcx = 0x9
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0x401df7
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+Breakpoint 1 at 0x401dfb
+SIGTRAP is used by the debugger.
+Are you sure you want to change it? (y or n) [answered Y; input not from terminal]
+
+Breakpoint 1, 0x0000000000401dfb in vector_set_code ()
+1: x/i $pc
+=> 0x401dfb <vector_set_code+4>:	mov    0x18(%rbp),%rax
+2: /x $rax = 0x6036e1
+3: /x $rbx = 0x1
+4: /x $rcx = 0x9
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0x401df7
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x7fffffffdcc8:	0xffffdd00	0x00007fff	0x00401f83	0x00000000
+0x7fffffffdcd8:	0x00000001	0x00000000	0x00000003	0x00000000
+0x7fffffffdce8:	0x006036f9	0x00000000	0x00603731	0x00000000
+0x7fffffffdcf8:	0x00603739	0x00000000	0xffffdd08	0x00007fff
+0x7fffffffdd08:	0xf7a2d830	0x00007fff	0x00000000	0x00000000
+0x7fffffffdd18:	0xffffdde8	0x00007fff	0xf7ffcca0	0x00000001
+0x7fffffffdd28:	0x00400684	0x00000000	0x00000000	0x00000000
+0x7fffffffdd38:	0xbccb0f22	0x7a932510	0x004004c0	0x00000000
+0x7fffffffdd48:	0xffffdde0	0x00007fff	0x00000000	0x00000000
+0x7fffffffdd58:	0x00000000	0x00000000	0x0d6b0f22	0x856cda6f
+0x7fffffffdd68:	0x189b0f22	0x856ccad5	0x00000000	0x00007fff
+0x7fffffffdd78:	0x00000000	0x00000000	0x00000000	0x00000000
+0x7fffffffdd88:	0x00400630	0x00000000	0xf7de7ab0	0x00007fff
+0x7fffffffdd98:	0xf7de77cb	0x00007fff	0x00000000	0x00000000
+0x7fffffffdda8:	0x00000000	0x00000000	0x004004c0	0x00000000
+0x7fffffffddb8:	0xffffdde0	0x00007fff	0x00000000	0x00000000
+0x0000000000401dff in vector_set_code ()
+1: x/i $pc
+=> 0x401dff <vector_set_code+8>:	cmp    $0x3,%rax
+2: /x $rax = 0x3
+3: /x $rbx = 0x1
+4: /x $rcx = 0x9
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0x401df7
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e03 in vector_set_code ()
+1: x/i $pc
+=> 0x401e03 <vector_set_code+12>:	
+    jl     0x401e51 <vector_set_code.badArgs>
+2: /x $rax = 0x3
+3: /x $rbx = 0x1
+4: /x $rcx = 0x9
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0x401df7
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e05 in vector_set_code ()
+1: x/i $pc
+=> 0x401e05 <vector_set_code+14>:	mov    0x20(%rbp),%rax
+2: /x $rax = 0x3
+3: /x $rbx = 0x1
+4: /x $rcx = 0x9
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0x401df7
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e09 in vector_set_code ()
+1: x/i $pc
+=> 0x401e09 <vector_set_code+18>:	mov    (%rax),%r10
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0x1
+4: /x $rcx = 0x9
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0x401df7
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e0c in vector_set_code ()
+1: x/i $pc
+=> 0x401e0c <vector_set_code+21>:	mov    %r10,%rbx
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0x1
+4: /x $rcx = 0x9
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0xc00013f8b
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e0f in vector_set_code ()
+1: x/i $pc
+=> 0x401e0f <vector_set_code+24>:	and    $0xf,%rbx
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0xc00013f8b
+4: /x $rcx = 0x9
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0xc00013f8b
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e13 in vector_set_code ()
+1: x/i $pc
+=> 0x401e13 <vector_set_code+28>:	cmp    $0xb,%rbx
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0xb
+4: /x $rcx = 0x9
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0xc00013f8b
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e17 in vector_set_code ()
+1: x/i $pc
+=> 0x401e17 <vector_set_code+32>:	
+    jne    0x401e51 <vector_set_code.badArgs>
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0xb
+4: /x $rcx = 0x9
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0xc00013f8b
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e19 in vector_set_code ()
+1: x/i $pc
+=> 0x401e19 <vector_set_code+34>:	mov    0x28(%rbp),%rcx
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0xb
+4: /x $rcx = 0x9
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0xc00013f8b
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e1d in vector_set_code ()
+1: x/i $pc
+=> 0x401e1d <vector_set_code+38>:	mov    (%rcx),%r10
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0xb
+4: /x $rcx = 0x603731
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0xc00013f8b
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e20 in vector_set_code ()
+1: x/i $pc
+=> 0x401e20 <vector_set_code+41>:	and    $0xf,%r10
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0xb
+4: /x $rcx = 0x603731
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0x13
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e24 in vector_set_code ()
+1: x/i $pc
+=> 0x401e24 <vector_set_code+45>:	cmp    $0x3,%r10
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0xb
+4: /x $rcx = 0x603731
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0x3
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e28 in vector_set_code ()
+1: x/i $pc
+=> 0x401e28 <vector_set_code+49>:	
+    jne    0x401e51 <vector_set_code.badArgs>
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0xb
+4: /x $rcx = 0x603731
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0x3
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e2a in vector_set_code ()
+1: x/i $pc
+=> 0x401e2a <vector_set_code+51>:	mov    0x20(%rbp),%rbx
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0xb
+4: /x $rcx = 0x603731
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0x3
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e2e in vector_set_code ()
+1: x/i $pc
+=> 0x401e2e <vector_set_code+55>:	mov    0x28(%rbp),%r9
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0x6036f9
+4: /x $rcx = 0x603731
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0x3
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e32 in vector_set_code ()
+1: x/i $pc
+=> 0x401e32 <vector_set_code+59>:	mov    (%r9),%r10
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0x6036f9
+4: /x $rcx = 0x603731
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x603731
+13: /x $r10 = 0x3
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e35 in vector_set_code ()
+1: x/i $pc
+=> 0x401e35 <vector_set_code+62>:	sar    $0x4,%r10
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0x6036f9
+4: /x $rcx = 0x603731
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x603731
+13: /x $r10 = 0x13
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e39 in vector_set_code ()
+1: x/i $pc
+=> 0x401e39 <vector_set_code+66>:	mov    0x8(%rbx,%r10,8),%r11
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0x6036f9
+4: /x $rcx = 0x603731
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x603731
+13: /x $r10 = 0x1
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e3e in vector_set_code ()
+1: x/i $pc
+=> 0x401e3e <vector_set_code+71>:	mov    0x30(%rbp),%r12
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0x6036f9
+4: /x $rcx = 0x603731
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x603731
+13: /x $r10 = 0x1
+14: /x $r11 = 0x5
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e42 in vector_set_code ()
+1: x/i $pc
+=> 0x401e42 <vector_set_code+75>:	mov    %r12,%r11
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0x6036f9
+4: /x $rcx = 0x603731
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x603731
+13: /x $r10 = 0x1
+14: /x $r11 = 0x5
+15: /x $r12 = 0x603739
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+Breakpoint 1 at 0x401dfb
+SIGTRAP is used by the debugger.
+Are you sure you want to change it? (y or n) [answered Y; input not from terminal]
+
+Breakpoint 1, 0x0000000000401dfb in vector_set_code ()
+1: x/i $pc
+=> 0x401dfb <vector_set_code+4>:	mov    0x18(%rbp),%rax
+2: /x $rax = 0x6036e1
+3: /x $rbx = 0x1
+4: /x $rcx = 0x9
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0x401df7
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x7fffffffdcc8:	0xffffdd00	0x00007fff	0x00401f80	0x00000000
+0x7fffffffdcd8:	0x00000001	0x00000000	0x00000003	0x00000000
+0x7fffffffdce8:	0x006036f9	0x00000000	0x00603731	0x00000000
+0x7fffffffdcf8:	0x00603739	0x00000000	0xffffdd08	0x00007fff
+0x7fffffffdd08:	0xf7a2d830	0x00007fff	0x00000000	0x00000000
+0x7fffffffdd18:	0xffffdde8	0x00007fff	0xf7ffcca0	0x00000001
+0x7fffffffdd28:	0x00400684	0x00000000	0x00000000	0x00000000
+0x7fffffffdd38:	0xc1abf213	0x9f572507	0x004004c0	0x00000000
+0x7fffffffdd48:	0xffffdde0	0x00007fff	0x00000000	0x00000000
+0x7fffffffdd58:	0x00000000	0x00000000	0x700bf213	0x60a8da78
+0x7fffffffdd68:	0x65fbf213	0x60a8cac2	0x00000000	0x00007fff
+0x7fffffffdd78:	0x00000000	0x00000000	0x00000000	0x00000000
+0x7fffffffdd88:	0x00400630	0x00000000	0xf7de7ab0	0x00007fff
+0x7fffffffdd98:	0xf7de77cb	0x00007fff	0x00000000	0x00000000
+0x7fffffffdda8:	0x00000000	0x00000000	0x004004c0	0x00000000
+0x7fffffffddb8:	0xffffdde0	0x00007fff	0x00000000	0x00000000
+0x0000000000401dff in vector_set_code ()
+1: x/i $pc
+=> 0x401dff <vector_set_code+8>:	cmp    $0x3,%rax
+2: /x $rax = 0x3
+3: /x $rbx = 0x1
+4: /x $rcx = 0x9
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0x401df7
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e03 in vector_set_code ()
+1: x/i $pc
+=> 0x401e03 <vector_set_code+12>:	
+    jl     0x401e4e <vector_set_code.badArgs>
+2: /x $rax = 0x3
+3: /x $rbx = 0x1
+4: /x $rcx = 0x9
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0x401df7
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e05 in vector_set_code ()
+1: x/i $pc
+=> 0x401e05 <vector_set_code+14>:	mov    0x20(%rbp),%rax
+2: /x $rax = 0x3
+3: /x $rbx = 0x1
+4: /x $rcx = 0x9
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0x401df7
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e09 in vector_set_code ()
+1: x/i $pc
+=> 0x401e09 <vector_set_code+18>:	mov    (%rax),%r10
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0x1
+4: /x $rcx = 0x9
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0x401df7
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e0c in vector_set_code ()
+1: x/i $pc
+=> 0x401e0c <vector_set_code+21>:	mov    %r10,%rbx
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0x1
+4: /x $rcx = 0x9
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0xc00013f8b
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e0f in vector_set_code ()
+1: x/i $pc
+=> 0x401e0f <vector_set_code+24>:	and    $0xf,%rbx
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0xc00013f8b
+4: /x $rcx = 0x9
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0xc00013f8b
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e13 in vector_set_code ()
+1: x/i $pc
+=> 0x401e13 <vector_set_code+28>:	cmp    $0xb,%rbx
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0xb
+4: /x $rcx = 0x9
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0xc00013f8b
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e17 in vector_set_code ()
+1: x/i $pc
+=> 0x401e17 <vector_set_code+32>:	
+    jne    0x401e4e <vector_set_code.badArgs>
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0xb
+4: /x $rcx = 0x9
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0xc00013f8b
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e19 in vector_set_code ()
+1: x/i $pc
+=> 0x401e19 <vector_set_code+34>:	mov    0x28(%rbp),%rcx
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0xb
+4: /x $rcx = 0x9
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0xc00013f8b
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e1d in vector_set_code ()
+1: x/i $pc
+=> 0x401e1d <vector_set_code+38>:	mov    (%rcx),%r10
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0xb
+4: /x $rcx = 0x603731
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0xc00013f8b
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e20 in vector_set_code ()
+1: x/i $pc
+=> 0x401e20 <vector_set_code+41>:	and    $0xf,%r10
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0xb
+4: /x $rcx = 0x603731
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0x13
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e24 in vector_set_code ()
+1: x/i $pc
+=> 0x401e24 <vector_set_code+45>:	cmp    $0x3,%r10
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0xb
+4: /x $rcx = 0x603731
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0x3
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e28 in vector_set_code ()
+1: x/i $pc
+=> 0x401e28 <vector_set_code+49>:	
+    jne    0x401e4e <vector_set_code.badArgs>
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0xb
+4: /x $rcx = 0x603731
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0x3
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e2a in vector_set_code ()
+1: x/i $pc
+=> 0x401e2a <vector_set_code+51>:	mov    0x20(%rbp),%rbx
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0xb
+4: /x $rcx = 0x603731
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0x3
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e2e in vector_set_code ()
+1: x/i $pc
+=> 0x401e2e <vector_set_code+55>:	mov    0x28(%rbp),%r9
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0x6036f9
+4: /x $rcx = 0x603731
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0x3
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e32 in vector_set_code ()
+1: x/i $pc
+=> 0x401e32 <vector_set_code+59>:	mov    (%r9),%r10
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0x6036f9
+4: /x $rcx = 0x603731
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x603731
+13: /x $r10 = 0x3
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e35 in vector_set_code ()
+1: x/i $pc
+=> 0x401e35 <vector_set_code+62>:	sar    $0x4,%r10
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0x6036f9
+4: /x $rcx = 0x603731
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x603731
+13: /x $r10 = 0x13
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e39 in vector_set_code ()
+1: x/i $pc
+=> 0x401e39 <vector_set_code+66>:	mov    0x30(%rbp),%r12
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0x6036f9
+4: /x $rcx = 0x603731
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x603731
+13: /x $r10 = 0x1
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e3d in vector_set_code ()
+1: x/i $pc
+=> 0x401e3d <vector_set_code+70>:	mov    %r12,0x8(%rbx,%r10,8)
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0x6036f9
+4: /x $rcx = 0x603731
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x603731
+13: /x $r10 = 0x1
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603739
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x603736:	0x43000000	0x00000000	0x00000000	0x00000000
+0x603746:	0x00000000	0x00000000	0x00000000	0x00000000
+0x603756:	0x00000000	0x00000000	0x00000000	0x00000000
+0x603766:	0x00000000	0x00000000	0x00000000	0x00000000
+0x603776:	0x00000000	0x00000000	0x00000000	0x00000000
+0x603786:	0x00000000	0x00000000	0x00000000	0x00000000
+0x603796:	0x00000000	0x00000000	0x00000000	0x00000000
+0x6037a6:	0x00000000	0x00000000	0x00000000	0x00000000
+0x6037b6:	0x00000000	0x00000000	0x00000000	0x00000000
+0x6037c6:	0x00000000	0x00000000	0x00000000	0x00000000
+0x6037d6:	0x00000000	0x00000000	0x00000000	0x00000000
+0x6037e6:	0x00000000	0x00000000	0x00000000	0x00000000
+0x6037f6:	0x00000000	0x00000000	0x00000000	0x00000000
+0x603806:	0x00000000	0x00000000	0x00000000	0x00000000
+0x603816:	0x00000000	0x00000000	0x00000000	0x00000000
+0x603826:	0x00000000	0x00000000	0x00000000	0x00000000
+0x6036f9:	0x00013f8b	0x0000000c	0x00000001	0x00000000
+0x603709:	0x00000005	0x00000000	0x00000015	0x00000000
+0x603719:	0x00000002	0x00000000	0x00000023	0x00000000
+0x603729:	0x00000033	0x00000000	0x00000013	0x00000000
+0x603739:	0x00000043	0x00000000	0x00000000	0x00000000
+0x603749:	0x00000000	0x00000000	0x00000000	0x00000000
+0x603759:	0x00000000	0x00000000	0x00000000	0x00000000
+0x603769:	0x00000000	0x00000000	0x00000000	0x00000000
+0x603779:	0x00000000	0x00000000	0x00000000	0x00000000
+0x603789:	0x00000000	0x00000000	0x00000000	0x00000000
+0x603799:	0x00000000	0x00000000	0x00000000	0x00000000
+0x6037a9:	0x00000000	0x00000000	0x00000000	0x00000000
+0x6037b9:	0x00000000	0x00000000	0x00000000	0x00000000
+0x6037c9:	0x00000000	0x00000000	0x00000000	0x00000000
+0x6037d9:	0x00000000	0x00000000	0x00000000	0x00000000
+0x6037e9:	0x00000000	0x00000000	0x00000000	0x00000000
+Undefined command: "nii".  Try "help".
+0x0000000000401e42 in vector_set_code ()
+1: x/i $pc
+=> 0x401e42 <vector_set_code+75>:	movabs $0x603701,%rax
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0x6036f9
+4: /x $rcx = 0x603731
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x603731
+13: /x $r10 = 0x1
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603739
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e4c in vector_set_code ()
+1: x/i $pc
+=> 0x401e4c <vector_set_code+85>:	jmp    0x401e58 <vector_set_code.done>
+2: /x $rax = 0x603701
+3: /x $rbx = 0x6036f9
+4: /x $rcx = 0x603731
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x603731
+13: /x $r10 = 0x1
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603739
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e58 in vector_set_code.done ()
+1: x/i $pc
+=> 0x401e58 <vector_set_code.done>:	mov    %rbp,%rsp
+2: /x $rax = 0x603701
+3: /x $rbx = 0x6036f9
+4: /x $rcx = 0x603731
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x603731
+13: /x $r10 = 0x1
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603739
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+Breakpoint 1 at 0x401dfb
+SIGTRAP is used by the debugger.
+Are you sure you want to change it? (y or n) [answered Y; input not from terminal]
+
+Breakpoint 1, 0x0000000000401dfb in vector_set_code ()
+1: x/i $pc
+=> 0x401dfb <vector_set_code+4>:	mov    0x18(%rbp),%rax
+2: /x $rax = 0x6036e1
+3: /x $rbx = 0x1
+4: /x $rcx = 0x9
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0x401df7
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x7fffffffdcc8:	0xffffdd00	0x00007fff	0x00401f84	0x00000000
+0x7fffffffdcd8:	0x00000001	0x00000000	0x00000003	0x00000000
+0x7fffffffdce8:	0x006036f9	0x00000000	0x00603731	0x00000000
+0x7fffffffdcf8:	0x00603739	0x00000000	0xffffdd08	0x00007fff
+0x7fffffffdd08:	0xf7a2d830	0x00007fff	0x00000000	0x00000000
+0x7fffffffdd18:	0xffffdde8	0x00007fff	0xf7ffcca0	0x00000001
+0x7fffffffdd28:	0x00400684	0x00000000	0x00000000	0x00000000
+0x7fffffffdd38:	0xf54c3699	0xa22349c3	0x004004c0	0x00000000
+0x7fffffffdd48:	0xffffdde0	0x00007fff	0x00000000	0x00000000
+0x7fffffffdd58:	0x00000000	0x00000000	0x44ec3699	0x5ddcb6bc
+0x7fffffffdd68:	0x511c3699	0x5ddca606	0x00000000	0x00007fff
+0x7fffffffdd78:	0x00000000	0x00000000	0x00000000	0x00000000
+0x7fffffffdd88:	0x00400630	0x00000000	0xf7de7ab0	0x00007fff
+0x7fffffffdd98:	0xf7de77cb	0x00007fff	0x00000000	0x00000000
+0x7fffffffdda8:	0x00000000	0x00000000	0x004004c0	0x00000000
+0x7fffffffddb8:	0xffffdde0	0x00007fff	0x00000000	0x00000000
+0x0000000000401dff in vector_set_code ()
+1: x/i $pc
+=> 0x401dff <vector_set_code+8>:	cmp    $0x3,%rax
+2: /x $rax = 0x3
+3: /x $rbx = 0x1
+4: /x $rcx = 0x9
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0x401df7
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e03 in vector_set_code ()
+1: x/i $pc
+=> 0x401e03 <vector_set_code+12>:	
+    jl     0x401e52 <vector_set_code.badArgs>
+2: /x $rax = 0x3
+3: /x $rbx = 0x1
+4: /x $rcx = 0x9
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0x401df7
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e05 in vector_set_code ()
+1: x/i $pc
+=> 0x401e05 <vector_set_code+14>:	mov    0x20(%rbp),%rax
+2: /x $rax = 0x3
+3: /x $rbx = 0x1
+4: /x $rcx = 0x9
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0x401df7
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e09 in vector_set_code ()
+1: x/i $pc
+=> 0x401e09 <vector_set_code+18>:	mov    (%rax),%r10
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0x1
+4: /x $rcx = 0x9
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0x401df7
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e0c in vector_set_code ()
+1: x/i $pc
+=> 0x401e0c <vector_set_code+21>:	mov    %r10,%rbx
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0x1
+4: /x $rcx = 0x9
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0xc00013f8b
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e0f in vector_set_code ()
+1: x/i $pc
+=> 0x401e0f <vector_set_code+24>:	and    $0xf,%rbx
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0xc00013f8b
+4: /x $rcx = 0x9
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0xc00013f8b
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e13 in vector_set_code ()
+1: x/i $pc
+=> 0x401e13 <vector_set_code+28>:	cmp    $0xb,%rbx
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0xb
+4: /x $rcx = 0x9
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0xc00013f8b
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e17 in vector_set_code ()
+1: x/i $pc
+=> 0x401e17 <vector_set_code+32>:	
+    jne    0x401e52 <vector_set_code.badArgs>
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0xb
+4: /x $rcx = 0x9
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0xc00013f8b
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e19 in vector_set_code ()
+1: x/i $pc
+=> 0x401e19 <vector_set_code+34>:	mov    0x28(%rbp),%rcx
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0xb
+4: /x $rcx = 0x9
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0xc00013f8b
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e1d in vector_set_code ()
+1: x/i $pc
+=> 0x401e1d <vector_set_code+38>:	mov    (%rcx),%r10
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0xb
+4: /x $rcx = 0x603731
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0xc00013f8b
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e20 in vector_set_code ()
+1: x/i $pc
+=> 0x401e20 <vector_set_code+41>:	and    $0xf,%r10
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0xb
+4: /x $rcx = 0x603731
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0x13
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e24 in vector_set_code ()
+1: x/i $pc
+=> 0x401e24 <vector_set_code+45>:	cmp    $0x3,%r10
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0xb
+4: /x $rcx = 0x603731
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0x3
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e28 in vector_set_code ()
+1: x/i $pc
+=> 0x401e28 <vector_set_code+49>:	
+    jne    0x401e52 <vector_set_code.badArgs>
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0xb
+4: /x $rcx = 0x603731
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0x3
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e2a in vector_set_code ()
+1: x/i $pc
+=> 0x401e2a <vector_set_code+51>:	mov    0x20(%rbp),%rbx
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0xb
+4: /x $rcx = 0x603731
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0x3
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e2e in vector_set_code ()
+1: x/i $pc
+=> 0x401e2e <vector_set_code+55>:	mov    0x28(%rbp),%r9
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0x6036f9
+4: /x $rcx = 0x603731
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0x3
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e32 in vector_set_code ()
+1: x/i $pc
+=> 0x401e32 <vector_set_code+59>:	mov    (%r9),%r10
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0x6036f9
+4: /x $rcx = 0x603731
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x603731
+13: /x $r10 = 0x3
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e35 in vector_set_code ()
+1: x/i $pc
+=> 0x401e35 <vector_set_code+62>:	sar    $0x4,%r10
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0x6036f9
+4: /x $rcx = 0x603731
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x603731
+13: /x $r10 = 0x13
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e39 in vector_set_code ()
+1: x/i $pc
+=> 0x401e39 <vector_set_code+66>:	mov    0x30(%rbp),%r12
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0x6036f9
+4: /x $rcx = 0x603731
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x603731
+13: /x $r10 = 0x1
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603729
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e3d in vector_set_code ()
+1: x/i $pc
+=> 0x401e3d <vector_set_code+70>:	mov    (%r12),%r12
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0x6036f9
+4: /x $rcx = 0x603731
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x603731
+13: /x $r10 = 0x1
+14: /x $r11 = 0x246
+15: /x $r12 = 0x603739
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e41 in vector_set_code ()
+1: x/i $pc
+=> 0x401e41 <vector_set_code+74>:	mov    %r12,0x8(%rbx,%r10,8)
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0x6036f9
+4: /x $rcx = 0x603731
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x603731
+13: /x $r10 = 0x1
+14: /x $r11 = 0x246
+15: /x $r12 = 0x43
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3
+0x0000000000401e46 in vector_set_code ()
+1: x/i $pc
+=> 0x401e46 <vector_set_code+79>:	movabs $0x603701,%rax
+2: /x $rax = 0x6036f9
+3: /x $rbx = 0x6036f9
+4: /x $rcx = 0x603731
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x1
+7: /x $rsi = 0x604460
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x603731
+13: /x $r10 = 0x1
+14: /x $r11 = 0x246
+15: /x $r12 = 0x43
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x3
+18: /x $r15 = 0x3

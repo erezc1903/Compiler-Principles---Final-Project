@@ -191,6 +191,22 @@
 ;((lambda (x y z) (vector x 2 y z 7)) 3 8 6)
 
 
+(define v '#(8 9 10 11 12 13))
+v
+(vector-set! v 2 4)
+v
+
+
+
+
+;(define v '#(8 9 10 11 12 13))
+;v
+;(vector-ref v 4)
+
+;(vector-ref '#(2 3 4 5 6) 4)
+;(vector-ref (vector 2 3 4 5 6) 4)
+
+
 ;(string-length "")
 ;(string-length " ")
 ;(string-length 2)
