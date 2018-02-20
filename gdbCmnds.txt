@@ -1,6 +1,6 @@
 set logging file gdbDump.log
 set logging on
-break vector_set_code
+break string_set_code
 display /i $pc
 display /x $rax
 display /x $rbx

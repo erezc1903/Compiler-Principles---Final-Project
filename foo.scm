@@ -6,7 +6,7 @@
 ;#t
 ;#f
 ;#\k
-;;#\newline ; TODO: support this
+;#\newline
 ;'()
 ;"av"
 ;"at\nme"
@@ -20,23 +20,30 @@
 ;;'a ;; to figure out how to handle symbol type const
 ;;; Constants
 
-;===========================================================================================
-;===========================================================================================
-;===========================================================================================
-;===========================================================================================
-;(((lambda (x y z) (lambda (a b c) (set! y 7) (or x y a c))) 10 20 30) 100 200 300)
-;===========================================================================================
-;===========================================================================================
-;===========================================================================================
-;===========================================================================================
-
-;(apply (lambda (a) (or a a)) '(2))
-
-
 
 ;;; primitives tests
 ;append
-;apply
+
+;apply ; procedure
+;(apply) ; Exception: incorrect argument count in call (apply)
+;(apply +) ; Exception: incorrect argument count in call (apply +)
+;(apply + 4) ; Exception in apply: 4 is not a proper list
+;(apply + '(1 2 3)) ; 6
+;(apply + '(4)) ; 4
+;(apply 1 '(4)) ; Exception: attempt to apply non-procedure 1
+;(apply + 1 '(4)) ; 5
+;(apply + 1 2 '(3 4 5)) ; 15
+;(apply + 1 2 3 4 '(5 6 7 8 9 10)) ; 55
+;((lambda (a b c d e f g) (apply)) + 4 '(1 2 3) '(4) 1 2 '(3 4 5)) ; Exception: incorrect argument count in call (apply)
+;((lambda (a b c d e f g) (apply a)) + 4 '(1 2 3) '(4) 1 2 '(3 4 5)) ; Exception: incorrect argument count in call (apply +)
+;((lambda (a b c d e f g) (apply a b)) + 4 '(1 2 3) '(4) 1 2 '(3 4 5)) ; Exception in apply: 4 is not a proper list
+;((lambda (a b c d e f g) (apply a c)) + 4 '(1 2 3) '(4) 1 2 '(3 4 5)) ; 6
+;((lambda (a b c d e f g) (apply a d)) + 4 '(1 2 3) '(4) 1 2 '(3 4 5)) ; 4
+;((lambda (a b c d e f g) (apply e d)) + 4 '(1 2 3) '(4) 1 2 '(3 4 5)) ; Exception: attempt to apply non-procedure 1
+;((lambda (a b c d e f g) (apply a e d)) + 4 '(1 2 3) '(4) 1 2 '(3 4 5)) ; 5
+;((lambda (a b c d e f g) (apply a e f g)) + 4 '(1 2 3) '(4) 1 2 '(3 4 5)) ; 15
+
+
 ;<
 ;=
 ;>
@@ -58,10 +65,12 @@
 ;boolean?
 ;(boolean? #t #f) ; exception incorrect arg count
 ;(boolean? #f) ; #t
+;(boolean? #f) ; #t
 ;(boolean? 1/3) ; #f
 ;(boolean? '(1 . 8)) ; #f
 ;(boolean? ((lambda () #t))) ; #t
-;;((lambda (v w x y z) (boolean? v w)) #t #f 1/3 '(1 . 8) ((lambda () #t))) ; exception incorrect arg count
+;((lambda (v w x y z) (boolean? v w)) #t #f 1/3 '(1 . 8) ((lambda () #t))) ; exception incorrect arg count
+;((lambda (v w x y z) (boolean? w)) #t #f 1/3 '(1 . 8) ((lambda () #t))) ; #t
 ;((lambda (v w x y z) (boolean? w)) #t #f 1/3 '(1 . 8) ((lambda () #t))) ; #t
 ;((lambda (v w x y z) (boolean? x)) #t #f 1/3 '(1 . 8) ((lambda () #t))) ; #f
 ;((lambda (v w x y z) (boolean? y)) #t #f 1/3 '(1 . 8) ((lambda () #t))) ; #f
@@ -69,15 +78,17 @@
 
 ;car
 ;(car '(111 2 3)) ; 111
+;(car '(111 2 3)) ; 111
 ;(car '(111 2 3) 6) ; exception incorrect arg count
 ;(car 6) ; exception argument is not a pair
 ;(car "king") ; exception argument is not a pair
 ;((lambda (x y z) (car x)) '(111 2 3) 6 "king") ; 111
+;((lambda (x y z) (car x)) '(111 2 3) 6 "king") ; 111
 ;((lambda (x y z) (car x y)) '(111 2 3) 6 "king") ; exception incorrect arg count
-;((lambda (x y z) (car x) (x y)) '(111 2 3) 6 "king") ; exception incorrect arg count TODO: check this. possibility that the car application will 
-;;																						   mess up rbx that holds the closure in which the exception occurs
+;((lambda (x y z) (car x) (x y)) '(111 2 3) 6 "king") ; exception attempt to apply non procedure
 ;((lambda (x y z) (car y)) '(111 2 3) 6 "king") ; exception argument is not a pair
 ;((lambda (x y z) (car z)) '(111 2 3) 6 "king") ; exception argument is not a pair
+;((lambda (x y z) ((lambda (a) (car x)) 5)) '(111 2 3) 6 "king") ; 111
 ;((lambda (x y z) ((lambda (a) (car x)) 5)) '(111 2 3) 6 "king") ; 111
 ;((lambda (x y z) ((lambda (a) (car x y)) 5)) '(111 2 3) 6 "king") ; exception incorrect arg count
 ;((lambda (x y z) ((lambda (a) (car y)) 5)) '(111 2 3) 6 "king") ; exception argument is not a pair
@@ -90,11 +101,12 @@
 ;(cdr 6) ; exception argument is not a pair
 ;(cdr "king") ; exception argument is not a pair
 ;((lambda (x y z) (cdr x)) '(111 2 3) 6 "king") ; (2 3)
+;((lambda (x y z) (cdr x)) '(111 2 3) 6 "king") ; (2 3)
 ;((lambda (x y z) (cdr x y)) '(111 2 3) 6 "king") ; exception incorrect arg count
-;((lambda (x y z) (cdr x) (x y)) '(111 2 3) 6 "king") ; exception incorrect arg count TODO: check this. possibility that the cdr application will 
-;;																						   mess up rbx that holds the closure in which the exception occurs
+;((lambda (x y z) (cdr x) (x y)) '(111 2 3) 6 "king") ; exception attempt to apply non procedure 
 ;((lambda (x y z) (cdr y)) '(111 2 3) 6 "king") ; exception argument is not a pair
 ;((lambda (x y z) (cdr z)) '(111 2 3) 6 "king") ; exception argument is not a pair
+;((lambda (x y z) ((lambda (a) (cdr x)) 5)) '(111 2 3) 6 "king") ; (2 3)
 ;((lambda (x y z) ((lambda (a) (cdr x)) 5)) '(111 2 3) 6 "king") ; (2 3)
 ;((lambda (x y z) ((lambda (a) (cdr x y)) 5)) '(111 2 3) 6 "king") ; exception incorrect arg count
 ;((lambda (x y z) ((lambda (a) (cdr y)) 5)) '(111 2 3) 6 "king") ; exception argument is not a pair
@@ -102,47 +114,54 @@
 
 ;char->integer
 ;(char->integer 7 13) ; exception incorrect arg count
-;(char->integer '#\x) ; #t
-;(char->integer 1/3) ; #f
-;(char->integer '#\y) ; #f
-;(char->integer '#\z) ; #f
-;(char->integer '#\w) ; #f
-;(char->integer '#\r 105) ; #f
-;((lambda (x y z) (char->integer (cdr z))) 10 1/3 '(1 . #\s)) ; #t
-;((lambda (x y z) (char->integer (cdr z))) 7 1/3 '(#\s . 8)) ; #f
-;((lambda (x y z w) (char->integer w)) 7 1/3 '(1 . 8) #\s) ; #f
-;(char->integer '#\newline) ; to test
+;(char->integer '#\x) ; 120
+;(char->integer '#\x) ; 120
+;(char->integer 1/3) ; exception 1/3 is not a char
+;(char->integer '#\y) ; 121
+;(char->integer '#\z) ; 122
+;(char->integer '#\w) ; 119
+;(char->integer '#\a 105) ; exception incorrect arg count
+;((lambda (x y z) (char->integer (cdr z))) 10 1/3 '(1 . #\s)) ; 115
+;((lambda (x y z) (char->integer (cdr z))) 7 1/3 '(#\s . 8)) ; exception 8 is not a char
+;((lambda (x y z w) (char->integer w)) #\a 1/3 '(1 . 8) #\s) ; 115
+;(char->integer '#\newline) ; 10
 
 ;char?
 ;(char? #\d #\f) ; exception incorrect arg count
+;(char? #\f) ; #t
 ;(char? #\f) ; #t
 ;(char? 1/3) ; #f
 ;(char? '(1 . 8)) ; #f
 ;(char? ((lambda () #\z))) ; #t
 ;((lambda (v w x y z) (char? v w)) #\d #\f 1/3 '(1 . 8) ((lambda () #\z))) ; exception incorrect arg count
 ;((lambda (v w x y z) (char? w)) #\d #\f 1/3 '(1 . 8) ((lambda () #\z))) ; #t
+;((lambda (v w x y z) (char? w)) #\d #\f 1/3 '(1 . 8) ((lambda () #\z))) ; #t
 ;((lambda (v w x y z) (char? x)) #\d #\f 1/3 '(1 . 8) ((lambda () #\z))) ; #f
 ;((lambda (v w x y z) (char? y)) #\d #\f 1/3 '(1 . 8) ((lambda () #\z))) ; #f
 ;((lambda (v w x y z) (char? z)) #\d #\f 1/3 '(1 . 8) ((lambda () #\z))) ; #t
 
 ;cons
-;(cons #\d #\f) ; exception incorrect arg count
-;(cons #\f) ; #t
-;(cons 1/3) ; #f
-;(cons '(1 . 8)) ; #f
-;(cons ((lambda () #\z))) ; #t
-;((lambda (v w x y z) (cons v w)) #\d #\f 1/3 '(1 . 8) ((lambda () #\z))) ; exception incorrect arg count
-;((lambda (v w x y z) (cons w z)) #\d #\f 1/3 '(1 . 8) ((lambda () #\z))) ; #t
-;((lambda (v w x y z) (cons x y)) #\d #\f 1/3 '(1 . 8) ((lambda () #\z))) ; #f
-;((lambda (v w x y z) (cons y z)) #\d #\f 1/3 '(1 . 8) ((lambda () #\z))) ; #f
-;((lambda (v w x y z) (cons z z)) #\d #\f 1/3 '(1 . 8) ((lambda () #\z))) ; #t
+;(cons #\d #\f) ; (#\d . #\f)
+;(cons #\d #\f) ; (#\d . #\f)
+;(cons #\f) ; exception incorrecct arg count
+;(cons 1/3) ; exception incorrecct arg count
+;(cons '(1 . 8)) ; exception incorrecct arg count
+;(cons ((lambda () #\z))) ; exception incorrecct arg count
+;((lambda (v w x y z) (cons v w)) #\d #\f 1/3 '(1 . 8) ((lambda () #\z))) ; (#\d . #\f)
+;((lambda (v w x y z) (cons v w)) #\d #\f 1/3 '(1 . 8) ((lambda () #\z))) ; (#\d . #\f)
+;((lambda (v w x y z) (cons w z)) #\d #\f 1/3 '(1 . 8) ((lambda () #\z))) ; (#\d . #\z)
+;((lambda (v w x y z) (cons x y)) #\d #\f 1/3 '(1 . 8) ((lambda () #\z))) ; (1/3 1 . 8)
+;((lambda (v w x y z) (cons y z)) #\d #\f 1/3 '(1 . 8) ((lambda () #\z))) ; ((1 . 8) . #\z)
+;((lambda (v w x y z) (cons z z)) #\d #\f 1/3 '(1 . 8) ((lambda () #\z))) ; (#\z . #\z)
 
 ;denominator
 ;(denominator 2/3 7) ; ecxeption incorrect arg count
 ;(denominator 2/3) ; 3
+;(denominator 2/3) ; 3
 ;(denominator 7) ; 1
 ;(denominator '(1 . 8)) ; exception not a rational number
 ;((lambda (x y z) (denominator x y)) 1/3 7 '(1 . 8)) ; ecxeption incorrect arg count
+;((lambda (x y z) (denominator x)) 1/3 7 '(1 . 8)) ; 3
 ;((lambda (x y z) (denominator x)) 1/3 7 '(1 . 8)) ; 3
 ;((lambda (x y z) (denominator y)) 1/3 7 '(1 . 8)) ; 1
 ;((lambda (x y z) (denominator z)) 1/3 7 '(1 . 8)) ; exception not a rational number
@@ -152,73 +171,56 @@
 ;integer?
 ;(integer? 7 1/3) ; ecxeption incorrect arg count
 ;(integer? 7) ; #t
+;(integer? 7) ; #t
 ;(integer? 1/3) ; #f
 ;(integer? '(1 . 8)) ; #f
 ;((lambda (x y z) (integer? x y)) 7 1/3 '(1 . 8)) ; ecxeption incorrect arg count
+;((lambda (x y z) (integer? x)) 7 1/3 '(1 . 8)) ; #t
 ;((lambda (x y z) (integer? x)) 7 1/3 '(1 . 8)) ; #t
 ;((lambda (x y z) (integer? y)) 7 1/3 '(1 . 8)) ; #f
 ;((lambda (x y z) (integer? z)) 7 1/3 '(1 . 8)) ; #f
 
 ;integer->char
 ;(integer->char 7 1/3) ; exception incorrect arg count
-;(integer->char 7) ; #t
-;(integer->char 1/3) ; #f
-;(integer->char 80) ; #f
-;(integer->char 95) ; #f
-;(integer->char 100) ; #f
-;(integer->char 102) ; #f
-;(integer->char 105) ; #f
-;((lambda (x y z) (integer->char (car z))) 7 1/3 '(1 . 8)) ; exception incorrect arg count
-;((lambda (x y z) (integer->char x)) 10 1/3 '(1 . 8)) ; #t
-;((lambda (x y z) (integer->char (cdr z))) 7 1/3 '(1 . 8)) ; #f
-;((lambda (x y z w) (integer->char w)) 7 1/3 '(1 . 8) 85) ; #f
+;(integer->char 7) ; #\alarm - TODO: to handle this
+;(integer->char 1/3) ; exception not a valid unicode scalar value
+;(integer->char 80) ; #\P
+;(integer->char 80) ; #\P
+;(integer->char 95) ; #\_
+;(integer->char 100) ; #\d
+;(integer->char 102) ; #\f
+;(integer->char 105) ; #\i
+;(integer->char 1) ; #\x1 - TODO: to handle this
+;((lambda (x y z) (integer->char (car z))) 7 1/3 '(1 . 8)) ; #\x1 - TODO: to handle this
+;((lambda (x y z) (integer->char x)) 10 1/3 '(1 . 8)) ; #\newline
+;((lambda (x y z) (integer->char (cdr z))) 7 1/3 '(1 . 8)) ; #\backspace - TODO: to handle this
+;((lambda (x y z w) (integer->char w)) 7 1/3 '(1 . 8) 85) ; #U
 
 ;list
 ;make-string
 
 ;make-vector
-;(make-vector 5 4 7) ; ecxeption incorrect arg count
+;(make-vector 5 4 -7) ; ecxeption incorrect arg count
 ;(make-vector 5) ; #(0 0 0 0 0)
+;(make-vector 5) ; #(0 0 0 0 0)
+;(make-vector -7) ; Exception in make-vector: -7 is not a nonnegative fixnum
 ;(make-vector 5 4) ; #(4 4 4 4 4)
-;(make-vector 1/2) ; exception not a nonnegative fixnum
-;((lambda (w x y z) (make-vector w x y)) 5 4 7 1/2) ; ecxeption incorrect arg count
-;((lambda (w x y z) (make-vector w)) 5 4 7 1/2) ; #(0 0 0 0 0)
-;((lambda (w x y z) (make-vector w x)) 5 4 7 1/2) ; #(4 4 4 4 4)
-;((lambda (w x y z) (make-vector z)) 5 4 7 1/2) ; exception not a nonnegative fixnum
+;(make-vector 1/2) ; Exception in make-vector: 1/2 is not a nonnegative fixnum
+;((lambda (w x y z) (make-vector w x y)) 5 4 -7 1/2) ; ecxeption incorrect arg count
+;((lambda (w x y z) (make-vector w)) 5 4 -7 1/2) ; #(0 0 0 0 0)
+;((lambda (w x y z) (make-vector w)) 5 4 -7 1/2) ; #(0 0 0 0 0)
+;((lambda (w x y z) (make-vector y)) 5 4 -7 1/2) ; Exception in make-vector: -7 is not a nonnegative fixnum
+;((lambda (w x y z) (make-vector w x)) 5 4 -7 1/2) ; #(4 4 4 4 4)
+;((lambda (w x y z) (make-vector z)) 5 4 -7 1/2) ; Exception in make-vector: 1/2 is not a nonnegative fixnum
 
-;(vector 1 2 3)
-;(vector)
-;((lambda (x y z) (vector x 2 y z 7)) 3 8 6)
-
-
-(define v '#(8 9 10 11 12 13))
-v
-(vector-set! v 2 4)
-v
-
-
-
-
-;(define v '#(8 9 10 11 12 13))
-;v
-;(vector-ref v 4)
-
-;(vector-ref '#(2 3 4 5 6) 4)
-;(vector-ref (vector 2 3 4 5 6) 4)
-
-
-;(string-length "")
-;(string-length " ")
-;(string-length 2)
-;(string-length "abc")
 ;map
 
-;not
-;(not 5)
-;(not "super")
-;(not "sukka")
-;(not #f)
-;(not ((lambda (x) (not x)) 5))
+;not ; #f
+;(not 5) ; #f
+;(not "super") ; #f
+;(not "sukka") ; #f
+;(not #f) ; #t
+;(not ((lambda (x) (not x)) 5)) ; #t
 
 ;null?
 ;(null? 69 "snir") ; ecxeption incorrect arg count
@@ -245,10 +247,10 @@ v
 ;(numerator 2/3) ; 2
 ;(numerator 7) ; 7
 ;(numerator '(1 . 8)) ; exception not a rational number
-;((lambda (x y z) (numerator x y)) 1/3 7 '(1 . 8)) ; ecxeption incorrect arg count
-;((lambda (x y z) (numerator x)) 1/3 7 '(1 . 8)) ; 2
-;((lambda (x y z) (numerator y)) 1/3 7 '(1 . 8)) ; 7
-;((lambda (x y z) (numerator z)) 1/3 7 '(1 . 8)) ; exception not a rational number
+;((lambda (x y z) (numerator x y)) 2/3 7 '(1 . 8)) ; ecxeption incorrect arg count
+;((lambda (x y z) (numerator x)) 2/3 7 '(1 . 8)) ; 2
+;((lambda (x y z) (numerator y)) 2/3 7 '(1 . 8)) ; 7
+;((lambda (x y z) (numerator z)) 2/3 7 '(1 . 8)) ; exception not a rational number
 
 ;pair?
 ;(pair? '(1 . 2) '(3 4 5)) ; exception incorrect arg count
@@ -288,6 +290,7 @@ v
 ;(remainder 13 -4) ; 1
 ;(remainder 13 "a") ; exception not an integer
 ;(remainder "b" 4) ; exception not an integer
+;(remainder 13 0) ; exception undefined for 0
 ;((lambda (x y z) (remainder x y z)) 13 4 5) ; exception incorrect arg count
 ;((lambda (x y z) (remainder x y)) 13 4 5) ; 1
 ;((lambda (x y z) (remainder x y)) -13 4 5) ; -1
@@ -295,12 +298,14 @@ v
 ;((lambda (x y z) (remainder x y)) 13 -4 5) ; 1
 ;((lambda (x y z) (remainder x y)) 13 "a" 5) ; exception not an integer
 ;((lambda (x y z) (remainder x y)) "b" 4 5) ; exception not an integer
+;((lambda (x y z) (remainder x y)) 13 0 5)  ; exception undefined for 0
 
 ;set-car!
 ;(define x1 '(1 . 2))
 ;(define x2 '("sukka" . "blyat"))
 ;(define x3 '("huyassa" . "gopnik"))
 ;(set-car! x1 3)
+;x1
 ;(set-car! x2 "nahui")
 ;(set-car! x1 "blyat")
 ;x1
@@ -352,7 +357,7 @@ v
 ;(vector-ref 4 3) ; exception not a vector
 ;(vector-ref '#(10 20 30 40) "f") ; exception not a valid index
 ;(vector-ref '#(10 20 30 40) 4) ; exception not a valid index
-;(vector-ref '#(10 20 30 40) 1) ; 40
+;(vector-ref '#(10 20 30 40) 3) ; 40
 ;((lambda (w x y z) (vector-ref w)) '#(10 20 30 40) 3 4 "f") ; exception incorrect arg count
 ;((lambda (w x y z) (vector-ref x)) '#(10 20 30 40) 3 4 "f") ; exception incorrect arg count
 ;((lambda (w x y z) (vector-ref w x z)) '#(10 20 30 40) 3 4 "f") ; exception incorrect arg count
@@ -360,9 +365,37 @@ v
 ;((lambda (w x y z) (vector-ref w z)) '#(10 20 30 40) 3 4 "f") ; exception not a valid index
 ;((lambda (w x y z) (vector-ref w y)) '#(10 20 30 40) 3 4 "f") ; exception not a valid index
 ;((lambda (w x y z) (vector-ref w x)) '#(10 20 30 40) 3 4 "f") ; 40
+;(define a '#(1 2 3)) ; nothing
+;a ; #(1 2 3)
+;(vector-ref a 2) ; 3
+;a ; #(1 2 3)
 
-;vector-set!
-
+;vector-set! ; closure
+;(define a '#(1 2 3)) ; nothing
+;a ; '#(1 2 3)
+;;(vector-set! a 2) ; Exception: incorrect argument count in call
+;;(vector-set! a 3 10) ; Exception in vector-ref: 3 is not a valid index for #(1 2 3)
+;;(vector-set! a -7 10) ; Exception in vector-ref: -7 is not a valid index for #(1 2 3)
+;(vector-set! a 2 10) ; nothing
+;a ; '#(1 2 10)
+;;(define b '(1 2 3)) ; nothing
+;;b ; '(1 2 3)
+;;(vector-set! b 2 10) ; Exception in vector-ref: (1 2 3) is not a vector
+;(define c '#(1 2 3)) ; nothing
+;c ; '#(1 2 3)
+;;((lambda (v w x y z) (vector-set! v w)) c 2 3 -7 10) ; Exception: incorrect argument count in call
+;;((lambda (v w x y z) (vector-set! v x z)) c 2 3 -7 10) ; Exception in vector-ref: 3 is not a valid index for #(1 2 3)
+;;((lambda (v w x y z) (vector-set! v y z)) c 2 3 -7 10) ; Exception in vector-ref: -7 is not a valid index for #(1 2 3)
+;((lambda (v w x y z) (vector-set! v w z)) c 2 3 -7 10); nothing
+;c ; '#(1 2 10)
+;3
+;10
+""
+;((car '(+ 2 1)) 1 2)
+;(define s "abcde")
+;s
+;(string-set! s 3 #\g)
+;s
 ;vector?
 ;(vector?  '#(1 2 3) '(1 2 3)) ; exception incorrect arg count
 ;(vector? '#(1 2 3)) ; #t
@@ -374,15 +407,15 @@ v
 ;((lambda (x y z) (vector? z)) '#(1 2 3) '(1 2 3) "seagulls") ; #f
 
 ;zero?
-;;(zero? 0 7) ; exception incorrect arg count
+;(zero? 0 7) ; exception incorrect arg count
 ;(zero? 0) ; #t
 ;(zero? 7) ; #f
-;;(zero? "seagulls") ; exception not a number
+;(zero? "seagulls") ; exception not a number
 ;((lambda (x y z) (zero? x y)) 0 7 "seagulls") ; exception incorrect arg count
 ;((lambda (x y z) (zero? x)) 0 7 "seagulls") ; #t
 ;((lambda (x y z) (zero? y)) 0 7 "seagulls") ; #f
-;;((lambda (x y z) (zero? z)) 0 7 "seagulls") ; exception not a number
-;; primitives tests
+;((lambda (x y z) (zero? z)) 0 7 "seagulls") ; exception not a number
+;;; primitives tests
 
 
 ;;; if, or, sequence
@@ -395,10 +428,10 @@ v
 ;(or)			;#f
 ;(begin 1 2 3 4 5 6 7 8 9 10) ;10
 ;(or #f (if #f 2 '("avi" . "king")) 30) ;'( "avi" . "king")
-;; if, or, sequence
+;;; if, or, sequence
 
 
-;; define, fvar
+;;; define, fvar
 ;(define a 9) ; nothing
 ;(define x1 5) ; nothing
 ;a ; 9
@@ -407,7 +440,7 @@ v
 ;;; define, fvar
 
 
-;; lambda-simple, applic
+;;; lambda-simple, applic
 ;(lambda (a) (if #t 4 a)) ; a closure
 ;(lambda (x) (lambda (a) (if #t 4 a))) ; a closure
 ;(lambda (y) (lambda (x) (lambda (a) (if #t 4 a)))) ; a closure
@@ -434,7 +467,7 @@ v
 ;;; lambda-simple, applic
 
 
-; lambda-opt
+;;;; lambda-opt
 ;(lambda (a b . c) (or a b)) ; procedure
 ;((lambda (a b . c) (or a b)) 49 2 3 4) ; 49
 ;((lambda (a b . c) (or a b)) 34) ; exception incorrect arg count
@@ -446,12 +479,15 @@ v
 ;((lambda c c) 1 2 3 4) ; (1 2 3 4)
 ;((lambda (a b . c) ((car c) (car (cdr c)))) 70 71 integer? 69) ; t
 ;((lambda (a b . c) ((car c) (car (cdr c)))) 70 71 (lambda (x) (+ 10 x)) 39) ; 49
-; lambda-opt
+;;;; lambda-opt
 
 ;;; tc-applic
 ;((lambda (x y) ((lambda (a) (remainder a y)) 13)) 6 4)
 ;;; tc-applic
 
+;;; set, box, box-set, box-get
+;(((lambda (x y z) (lambda (a b c) (set! y 7) (or x y a c))) 10 20 30) 100 200 300) ; 10
+;;; set, box, box-set, box-get
 
 ;((lambda (a) (+ 5 a)) 4)
 ;(define adder3
@@ -463,4 +499,4 @@ v
 ;(* #;(/ 5 0) 8 9)
 ;(- 2)
 ;-2
-;(apply + '(1))
+;(+ 1 2)

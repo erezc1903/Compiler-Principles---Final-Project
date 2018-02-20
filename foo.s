@@ -142,9 +142,6 @@ vector?:
 zero?:
 	dq SOB_UNDEFINED
 
-v:
-	dq SOB_UNDEFINED
-
 sobVoid:
 	dq SOB_VOID
 
@@ -156,32 +153,8 @@ sobTrue:
 sobNil:
 	dq SOB_NIL
 
-sobInt8:
-	dq MAKE_LITERAL (T_INTEGER, 8)
-
-sobInt9:
-	dq MAKE_LITERAL (T_INTEGER, 9)
-
-sobInt10:
-	dq MAKE_LITERAL (T_INTEGER, 10)
-
-sobInt11:
-	dq MAKE_LITERAL (T_INTEGER, 11)
-
-sobInt12:
-	dq MAKE_LITERAL (T_INTEGER, 12)
-
-sobInt13:
-	dq MAKE_LITERAL (T_INTEGER, 13)
-
-sobVector1:
-	MAKE_LITERAL_VECTOR sobInt8, sobInt9, sobInt10, sobInt11, sobInt12, sobInt13
-
-sobInt2:
-	dq MAKE_LITERAL (T_INTEGER, 2)
-
-sobInt4:
-	dq MAKE_LITERAL (T_INTEGER, 4)
+sobString0:
+	MAKE_LITERAL_STRING ""
 
 sobUndef:
 	dq SOB_UNDEFINED
@@ -1836,6 +1809,60 @@ end_vector_set_code:
 	mov rax, [rax]
 	mov qword [vectorSet], rax
 
+	mov rbp, rsp
+	mov rdi, 16
+	call malloc
+	mov rbx, 1
+	MAKE_LITERAL_CLOSURE rax, rbx, string_set_code
+	jmp end_string_set_code
+
+
+string_set_code:
+	push rbp
+	mov rbp, rsp
+	mov rax, qword [rbp + 8*3]
+	cmp rax, 3
+	jl .badArgs
+	mov rax, qword [rbp + 8*4]
+	mov r10, [rax]
+	mov rbx, r10
+	TYPE rbx
+	cmp rbx, T_STRING
+	jne .badArgs
+	mov rcx, qword [rbp + 8*5]
+	mov r10, [rcx]
+	TYPE r10
+	cmp r10, T_INTEGER
+	jne .badArgs
+	mov r15, qword [rbp + 8*6]
+	mov r15, [r15]
+	TYPE r15
+	cmp r15, T_CHAR
+	jne .badArgs
+	mov r13, qword [rbp + 8*4] ; rbx holds a pointer to the string
+	mov r13, [r13] ; hold the actual string
+	mov r9, qword [rbp + 8*5]
+	mov r10, [r9] ; r10 hold k - the position in the string
+	DATA r10
+	mov rbx, qword [rbp + 8*6] ; r12 holds a pointer to the char to replace the k-th element of the string 
+	mov rbx, [rbx]
+	DATA rbx
+	STRING_ELEMENTS r13
+	mov byte [r13 + r10*1], bl
+	mov rax, sobVoid
+	jmp .done
+
+.badArgs:
+	mov rax, sobVoid
+.done:
+	mov rsp, rbp
+	pop rbp
+	ret
+
+end_string_set_code:
+	mov rax, [rax]
+	mov qword [stringSet], rax
+
 ; =============================== PRIMITIVE FUNCTIONS =========================
 
 start_of_instructions:
@@ -1845,75 +1872,8 @@ start_of_instructions:
 
 ; start
 	; codegen for const start
-	mov rax, sobVector1
+	mov rax, sobString0
 	;code gen for constant end
-	mov rbx, v
-	mov r10, [rax]
-	mov qword [rbx], r10
-	mov rax, sobVoid
-
-	mov rax, [rax]
-	push rax
-	call write_sob_if_not_void
-	add rsp, 8
-
-; end
-
-; start
-	mov rax, v
-	mov rax, [rax]
-	push rax
-	call write_sob_if_not_void
-	add rsp, 8
-
-; end
-
-; start
-; start of applic of lambda-simple code: 
-
-	; codegen for const start
-	mov rax, sobInt4
-	;code gen for constant end
-	push rax
-	; codegen for const start
-	mov rax, sobInt2
-	;code gen for constant end
-	push rax
-	mov rax, v
-	push rax
-
-	push 3
-	mov rax, vectorSet
-	mov r10, [rax]
-	mov rcx, r10
-	TYPE rcx
-	cmp rcx, T_CLOSURE
-	jne not_a_closure101
-	mov rbx, r10
-	CLOSURE_ENV rbx
-	push rbx
-	CLOSURE_CODE r10
-	call r10
-	add rsp, 8*1
-	jmp done_closure101
-not_a_closure101:
-
-	mov rax, sobVoid
-done_closure101:
-
-	add rsp, 8*4
-
-; end of applic of lambda-simple code: 
-
-	mov rax, [rax]
-	push rax
-	call write_sob_if_not_void
-	add rsp, 8
-
-; end
-
-; start
-	mov rax, v
 	mov rax, [rax]
 	push rax
 	call write_sob_if_not_void

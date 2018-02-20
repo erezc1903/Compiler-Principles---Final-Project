@@ -168,7 +168,8 @@
 				(handle_vector_length) ;V
 				(handle_vector_ref) ;V
 				(handle_vector) ;V
-				(handle_vector_set)
+				(handle_vector_set) ;V
+				(handle_string_set)
 				 "")))
 
 
@@ -215,8 +216,8 @@
 ; we assume that the arg list comes reversed
 (define push-args 
 		(lambda (args numberOfArgs depth const-table global-env)
-			(display "push-args args: ") (display args) (newline)
-			(display "push-args numberOfArgs: ") (display numberOfArgs) (newline) (newline)
+			;(display "push-args args: ") (display args) (newline)
+			;(display "push-args numberOfArgs: ") (display numberOfArgs) (newline) (newline)
 			(if (= numberOfArgs 0)
 				"\n"
 				(string-append (code-gen (car args) depth const-table global-env)
@@ -1039,8 +1040,6 @@
 						"\tjmp " end-label "\n"
 
 
-						
-
 						bad-input-label":\n\n"
 						"\tmov rax, sobVoid\n"
 						
@@ -1128,6 +1127,64 @@
 ;=========================================================================================================================================
 
 
+
+
+;=========================================================================================================================================
+;======================================================= FUNCTIONS FOR STRING-SET EXPRESSION =============================================
+;=========================================================================================================================================
+
+(define handle_string_set
+		(lambda () 
+			(string-append (applic-prolog "string_set_code" "end_string_set_code")
+
+				"\nstring_set_code:\n"
+				"\tpush rbp\n"
+				"\tmov rbp, rsp\n"
+				"\tmov rax, qword [rbp + 8*3]\n"
+				"\tcmp rax, 3\n"
+				"\tjl .badArgs\n"
+				"\tmov rax, qword [rbp + 8*4]\n"
+				"\tmov r10, [rax]\n"
+				"\tmov rbx, r10\n"
+				"\tTYPE rbx\n"
+				"\tcmp rbx, T_STRING\n"
+				"\tjne .badArgs\n"
+				"\tmov rcx, qword [rbp + 8*5]\n"
+				"\tmov r10, [rcx]\n"
+				"\tTYPE r10\n"
+				"\tcmp r10, T_INTEGER\n"
+				"\tjne .badArgs\n"
+				"\tmov r15, qword [rbp + 8*6]\n"
+				"\tmov r15, [r15]\n"
+				"\tTYPE r15\n"
+				"\tcmp r15, T_CHAR\n"
+				"\tjne .badArgs\n"
+				"\tmov r13, qword [rbp + 8*4] ; rbx holds a pointer to the string\n"
+				"\tmov r13, [r13] ; hold the actual string\n"
+				"\tmov r9, qword [rbp + 8*5]\n"
+				"\tmov r10, [r9] ; r10 hold k - the position in the string\n"
+				"\tDATA r10\n"
+				"\tmov rbx, qword [rbp + 8*6] ; r12 holds a pointer to the char to replace the k-th element of the string \n"
+				"\tmov rbx, [rbx]\n"
+				"\tDATA rbx\n"
+				"\tSTRING_ELEMENTS r13\n"
+				"\tmov byte [r13 + r10*1], bl\n"
+				"\tmov rax, sobVoid\n"
+				"\tjmp .done\n\n"
+				".badArgs:\n"
+				"\tmov rax, sobVoid\n"
+				".done:\n"
+				"\tmov rsp, rbp\n" 
+				"\tpop rbp\n"
+				"\tret\n\n"
+
+				"end_string_set_code:\n"
+				"\tmov rax, [rax]\n"
+				"\tmov qword [stringSet], rax\n\n")))
+
+;=========================================================================================================================================
+;======================================================= END OF FUNCTIONS FOR STRING-SET EXPRESSION ======================================
+;=========================================================================================================================================
 
 
 ;=========================================================================================================================================
@@ -2935,6 +2992,7 @@
 
 (define pairs_of_name_and_object
 	(lambda (con num)
+		;(display "pairs_of_name_and_object con : ") (display con) (newline)
 		(cond ((integer? con) (if (negative? con)
 								  (list (string-append "sobNegInt" (number->string (abs con))) con)
 								  (list (string-append "sobInt" (number->string con)) con)))
