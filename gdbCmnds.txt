@@ -1,0 +1,24 @@
+set logging file gdbDump.log
+set logging on
+break twoArgForVector201
+display /i $pc
+display /x $rax
+display /x $rbx
+display /x $rcx
+display /x $rdx
+display /x $rdi
+display /x $rsi
+display /x $rbp
+display /x $rsp
+display $eflags
+display /x $r8
+display /x $r9
+display /x $r10
+display /x $r11
+display /x $r12
+display /x $r13
+display /x $r14
+display /x $r15
+handle SIGTRAP noprint nostop
+run
+x /64x $rsp

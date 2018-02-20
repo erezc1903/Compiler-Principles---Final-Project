@@ -166,7 +166,7 @@
 				(handle_procedure?) ;V
 				;(handle_apply) ;V
 				(handle_vector_length) ;V
-				(handle_vector_ref)
+				(handle_vector_ref) ;V
 				 "")))
 
 
@@ -186,7 +186,7 @@
 				  (not-a-closure-label (make-not-a-closure-label))
 				  (done-closure-label (make-done-closure-label)))
 				  ;(display "app: ") (display app) (newline)
-				  (if (equal? (cadr app) 'apply) (handle_apply app-exp depth const-table global-env)
+				  ;(if (equal? (cadr app) 'apply) (handle_apply app-exp depth const-table global-env)
 					  	(string-append "; start of applic of lambda-simple code: \n\n"
 										(push-args (reverse args) (length args) depth const-table global-env)
 										"\tpush " (number->string (length args)) "\n"
@@ -207,10 +207,8 @@
 										"\tmov rax, sobVoid\n"
 										done-closure-label ":\n\n"
 										"\tadd rsp, 8*" (number->string (+ 1 (length args))) "\n\n"
-										"; end of applic of lambda-simple code: \n\n")))
+										"; end of applic of lambda-simple code: \n\n"))
 					))
-
-
 
 ; we assume that the arg list comes reversed
 (define push-args 
@@ -597,36 +595,36 @@
 
 '((applic (fvar apply) ((lambda-simple (a) (or ((pvar a 0) (pvar a 0)))) (const (2)))))
 
-(define handle_apply
-		(lambda (app-exp depth const-table global-env)
-			(display "handle_apply app: ") (display app-exp) (newline)
-			;(display "handle_applic depth: ") (display depth) (newline) (newline)
-			(let ((app (caaddr app-exp))
-				  (args (cdr (caddr app-exp)))
-				  (not-a-closure-label (make-not-a-closure-label-for-apply))
-				  (done-closure-label (make-done-closure-label-for-apply)))
-				  ;(display "app: ") (display app) (newline)
-					  	(string-append 	"; end of applic of lambda-simple code: \n"
-					  					(push-args (reverse args) (length args) depth const-table global-env)
-										"\tpush " (number->string (length args)) "\n"
-										(code-gen app depth const-table global-env)
-										"\tmov r10, [rax]\n" 
-										"\tmov rcx, r10\n"
-										"\tTYPE rcx\n"
-										"\tcmp rcx, T_CLOSURE\n"
-										"\tjne " not-a-closure-label "\n"
-										"\tmov rbx, r10\n"
-										"\tCLOSURE_ENV rbx\n"
-										"\tpush rbx\n"
-										"\tCLOSURE_CODE r10\n"
-										"\tcall r10\n"
-										"\tadd rsp, 8*1\n"
-										"\tjmp " done-closure-label "\n"
-										not-a-closure-label ":\n\n"
-										"\tmov rax, sobVoid\n"
-										done-closure-label ":\n\n"
-										"\tadd rsp, 8*" (number->string (+ 1 (length args))) "\n\n"
-										"; end of applic of lambda-simple code: \n\n"))))
+;(define handle_apply
+;		(lambda (app-exp depth const-table global-env)
+;			(display "handle_apply app: ") (display app-exp) (newline)
+;			;(display "handle_applic depth: ") (display depth) (newline) (newline)
+;			(let ((app (caaddr app-exp))
+;				  (args (cdr (caddr app-exp)))
+;				  (not-a-closure-label (make-not-a-closure-label-for-apply))
+;				  (done-closure-label (make-done-closure-label-for-apply)))
+;				  ;(display "app: ") (display app) (newline)
+;					  	(string-append 	"; end of applic of lambda-simple code: \n"
+;					  					(push-args (reverse args) (length args) depth const-table global-env)
+;										"\tpush " (number->string (length args)) "\n"
+;										(code-gen app depth const-table global-env)
+;										"\tmov r10, [rax]\n" 
+;										"\tmov rcx, r10\n"
+;										"\tTYPE rcx\n"
+;										"\tcmp rcx, T_CLOSURE\n"
+;										"\tjne " not-a-closure-label "\n"
+;										"\tmov rbx, r10\n"
+;										"\tCLOSURE_ENV rbx\n"
+;										"\tpush rbx\n"
+;										"\tCLOSURE_CODE r10\n"
+;										"\tcall r10\n"
+;										"\tadd rsp, 8*1\n"
+;										"\tjmp " done-closure-label "\n"
+;										not-a-closure-label ":\n\n"
+;										"\tmov rax, sobVoid\n"
+;										done-closure-label ":\n\n"
+;										"\tadd rsp, 8*" (number->string (+ 1 (length args))) "\n\n"
+;										"; end of applic of lambda-simple code: \n\n"))))
 
 (define make-not-a-closure-label-for-apply
 	(let ((num 300))
@@ -852,7 +850,7 @@
 						"\tmov rdi, r11\n"
 						"\tcall malloc\n"
 						"\tmov r11, [r8]\n"
-						"\tDATA r13\n"
+						"\tDATA r11\n"
 						"\tmov qword [rax], r11\n"
 						"\tshl qword [rax], 30\n"
 						"\tlea r11, [rax + 1*8]\n"
@@ -1388,7 +1386,9 @@
 				".checkIfArgsAreNumbers:\n\n"
 				"\tcmp rcx, qword [rbp + 8*3]\n"
 				"\tje .make_addition\n"
-				"\tmov rbx, qword [rbp + 8*(4 + rcx)]\n"
+				"\tmov rax, qword [rbp + 8*(4 + rcx)]\n"
+				"\tmov r10, [rax]\n"
+				"\tmov rbx, r10\n"
 				"\tTYPE rbx\n"
 				"\tcmp rbx, T_INTEGER\n"
 				"\tje .incCounter\n"
@@ -1407,20 +1407,25 @@
 				".addition_loop:\n\n"
 				"\tcmp rcx, qword [rbp + 8*3]\n"
 				"\tje .doneAddition\n\n"
-				"\tmov rbx, qword [rbp + 8*(4 + rcx)]\n"
+				"\tmov rax, qword [rbp + 8*(4 + rcx)]\n"
+				"\tmov r10, [rax]\n"
+				"\tmov rbx, r10\n"
 				"\tDATA rbx\n"
 				"\tadd rdx, rbx\n"
 				"\tinc rcx\n"
 				"\tjmp .addition_loop\n"
 
 				".doneAddition:\n\n"
-				"\tmov rax, rdx\n"
-				"\tshl rax, 4\n"
-				"\tor rax, T_INTEGER\n"
+				"\tmov r10, rdx\n"
+				"\tshl r10, 4\n"
+				"\tor r10, T_INTEGER\n"
+				"\tmov rdi, 8\n"
+				"\tcall malloc\n"
+				"\tmov qword [rax], r10\n"
 				"\tjmp .done\n"
 
 				".badArgs:\n\n"
-				"\tmov rax, SOB_VOID\n"
+				"\tmov rax, sobVoid\n"
 				".done:\n"
 				"\tmov rsp, rbp\n" 
 				"\tpop rbp\n"
