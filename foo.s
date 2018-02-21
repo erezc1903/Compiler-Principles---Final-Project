@@ -608,7 +608,7 @@ not_code:
 	cmp rbx, T_BOOL
 	jne .retFalse
 	mov rbx, r10
-	cmp rbx, SOB_FALSE
+	cmp rbx, sobFalse
 	je .retFalse
 	mov rax, sobTrue
 	jmp .done

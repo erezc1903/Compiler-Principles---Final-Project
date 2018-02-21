@@ -216,21 +216,21 @@
 ;((lambda (w x y z) (make-vector w x)) 5 4 -7 1/2) ; #(4 4 4 4 4)
 ;((lambda (w x y z) (make-vector z)) 5 4 -7 1/2) ; Exception in make-vector: 1/2 is not a nonnegative fixnum
 
-;map
+;;map
 
-(map cons '(1 2 3) '(1 2 3))
-(map + '(1 2 3) '(1 2 3))
-(map remainder '(13 13 -13 -13) '(4 -4 -4 4))
-(map cons '(1 #t #f 3) '(1 2 3 4))
-(map boolean? '(1 #f "a"))
+;(map cons '(1 2 3) '(1 2 3))
+;(map + '(1 2 3) '(1 2 3))
+;(map remainder '(13 13 -13 -13) '(4 -4 -4 4))
+;(map cons '(1 #t #f 3) '(1 2 3 4))
+;(map boolean? '(1 #f "a"))
 
 
-not ; #f
-(not 5) ; #f
-(not "super") ; #f
-(not "sukka") ; #f
-(not #f) ; #t
-(not ((lambda (x) (not x)) 5)) ; #t
+;not ; #f
+;(not 5) ; #f
+;(not "super") ; #f
+;(not "sukka") ; #f
+;(not #f) ; #t
+;(not ((lambda (x) (not x)) 5)) ; #t
 
 ;null?
 ;(null? 69 "snir") ; ecxeption incorrect arg count

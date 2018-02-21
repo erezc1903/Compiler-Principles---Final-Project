@@ -2789,7 +2789,7 @@
 				"\tcmp rbx, T_BOOL\n"
 				"\tjne .retFalse\n"
 				"\tmov rbx, r10\n"
-				"\tcmp rbx, SOB_FALSE\n"
+				"\tcmp rbx, sobFalse\n"
 				"\tje .retFalse\n"
 				"\tmov rax, sobTrue\n"
 				"\tjmp .done\n\n"
