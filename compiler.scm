@@ -82,10 +82,11 @@
 
 			;(display "global-env-as-pairs: ") (display global-env-as-pairs) (newline) (newline)
 			;(display "input: ") (display input) (newline) (newline)
-			(display "const-table-as-list-of-pairs: ") (display const-table-as-list-of-pairs) (newline) (newline)
+			;(display "const-table-as-list-of-pairs: ") (display const-table-as-list-of-pairs) (newline) (newline)
 
 
 			(fprintf out-port "%include \"scheme.s\"\n\n") 
+			(fprintf out-port "%include \"gcd.s\"\n\n") 
 			
 			(fprintf out-port "section .bss\n\n") 
 			
@@ -460,6 +461,7 @@
 				 				"\tjmp " copy-env-label "\n"
 				 				done-copy-env":\n\n"
 				 				"\tmov qword [rbx + 8*r15], 0\n"))
+				  
 				  (new-env (if (= depth 0) (string-append "\tmov rbx, 0\n"
 				  										  "\tmov rdi, 16\n"
 				 										  "\tcall malloc" "; rax now hold a pointer to the target closure\n") extended-env)))
@@ -2137,31 +2139,100 @@
 
 
 				".make_addition:\n\n"
-				"\tmov rcx, 0 ; rcx is a counter for the number of arguments\n"
-				"\tmov rdx, 0 ; rdx is the accumulator \n"
+				"\tmov r12, 0 ; represent the numerator -a- of the sum\n"
+				"\tmov r13, 1 ; represent the denominator -b- of the sum\n"
+
+				"\tmov r8, 0\n"
 
 				".addition_loop:\n\n"
-				"\tcmp rcx, qword [rbp + 8*3]\n"
+				"\tcmp r8, qword [rbp + 8*3]\n"
 				"\tje .doneAddition\n\n"
-				"\tmov rax, qword [rbp + 8*(4 + rcx)]\n"
-				"\tmov r10, [rax]\n"
+				"\tmov r9, qword [rbp + 8*(4 + r8)]\n"
+				"\tmov r10, [r9]\n"
 				"\tmov rbx, r10\n"
-				"\tDATA rbx\n"
-				"\tadd rdx, rbx\n"
-				"\tinc rcx\n"
+				"\tTYPE rbx\n"
+				"\tcmp rbx, T_FRACTION\n"
+				"\tjne .makeFraction\n"
+				"\tmov r11, r10\n"
+				"\tNUMERATOR r10 ; holds the numerator -c- of the number to be added\n"
+				"\tDATA r10\n"
+				"\tDENOMINATOR r11 ; holds the denominator -d- of the number to be added\n"
+				"\tDATA r11\n"
+				".continueSumming:\n"
+				"\tmov rax, r10\n"
+				"\tmul r13\n"
+				"\tmov rcx, rax ; rcx temporeraly hold a*d\n"
+				"\tmov rax, r11\n"
+				"\tmul r12\n"
+				"\tadd rcx, rax ; rcx temporeraly hold a*d + b*c\n"
+				"\tmov r12, rcx ; r12 gets the new numerator\n"
+				"\tmov rax, r11\n"
+				"\tmul r13; rax temporeraly hold a*d\n"
+				"\tmov r13, rax ; r12 gets the new denominator\n"
+				"\tinc r8\n"
 				"\tjmp .addition_loop\n"
 
+				".makeFraction:\n\n"
+				"\tmov r9, qword [rbp + 8*(4 + r8)]\n"
+				"\tmov r10, [r9]\n"
+				"\tDATA r10\n"
+				"\tmov r11, 1\n"
+				"\tjmp .continueSumming\n"
+
 				".doneAddition:\n\n"
-				"\tmov r10, rdx\n"
-				"\tshl r10, 4\n"
-				"\tor r10, T_INTEGER\n"
+				"\tpush r12\n"
+				"\tpush r13\n"
+				"\tmov rax, 0\n"
+				"\tcall gcd\n"
+				"\tmov r10, rax\n"
+				"\tmov rax, r12\n"
+				"\tcqo\n"
+				"\tidiv r10\n"
+				"\tmov r12, rax\n"
+				"\tmov rax, r13\n"
+				"\tcqo\n"
+				"\tidiv r10\n"
+				"\tmov r13, rax\n"
+				"\tcmp r13, 1\n"
+				"\tje .retInt\n"
 				"\tmov rdi, 8\n"
 				"\tcall malloc\n"
-				"\tmov qword [rax], r10\n"
+				"\tmov r14, rax\n"
+				"\tshl r12, TYPE_BITS\n"
+				"\tor r12, T_INTEGER\n"
+				"\tmov qword [r14], r12 ; r14 hold the numerator of the result\n"
+				"\tmov rdi, 8\n"
+				"\tcall malloc\n"
+				"\tmov r15, rax\n"
+				"\tshl r13, TYPE_BITS\n"
+				"\tor r13, T_INTEGER\n"
+				"\tmov qword [r15], r13 ; r15 hold the denominator of the result\n"
+
+				"\tmov r8, r14\n"
+				"\tsub r8, start_of_data\n"
+				"\tshl r8, (((WORD_SIZE - TYPE_BITS) >> 1) + TYPE_BITS)\n"
+				"\tmov r9, r15\n"
+				"\tsub r9, start_of_data\n"
+				"\tshl r9, TYPE_BITS\n"
+				"\tor r8, r9\n"
+				"\tor r8, T_FRACTION\n"
+				"\tmov rdi, 8\n"
+				"\tcall malloc\n"
+				"\tmov qword [rax], r8\n"
 				"\tjmp .done\n"
+
+				".retInt:\n\n"
+				"\tshl r12, TYPE_BITS\n"
+				"\tor r12, T_INTEGER\n"
+				"\tmov rdi, 8\n"
+				"\tcall malloc\n"
+				"\tmov qword [rax], r12\n"
+				"\tjmp .done\n"
+
 
 				".badArgs:\n\n"
 				"\tmov rax, sobVoid\n"
+
 				".done:\n"
 				"\tmov rsp, rbp\n" 
 				"\tpop rbp\n"
@@ -3413,8 +3484,8 @@
 
 (define create_const_for_assembly
 	(lambda (const-table table-in-pairs num)
-		(display "create_const_for_assembly const-table : ") (display const-table) (newline)
-		(display "create_const_for_assembly table-in-pairs: ") (display table-in-pairs) (newline) (newline)
+		;(display "create_const_for_assembly const-table : ") (display const-table) (newline)
+		;(display "create_const_for_assembly table-in-pairs: ") (display table-in-pairs) (newline) (newline)
 		(set! num (+ num 1))
 		(cond ((null? const-table) (string-append "sobUndef:" "\n" "\tdq SOB_UNDEFINED\n\n"))
 			  ((integer? (car const-table)) 

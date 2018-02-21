@@ -224,6 +224,7 @@
 ;(map cons '(1 #t #f 3) '(1 2 3 4))
 ;(map boolean? '(1 #f "a"))
 
+;(append '(1 2) '(3 (4)))
 
 ;not ; #f
 ;(not 5) ; #f
@@ -482,7 +483,9 @@
 
 ;(append '(5 6) '(7 8 (9)))
 
-;(append '(1 2) '(3 4))
+;(append '(1 2) (list 3 '(4)))
+
+(+ 1/2 -1/2 -1/2 -1/2 3 -4 1/4 -1/3 1/7)
 
 ;;;; lambda-opt
 ;(lambda (a b . c) (or a b)) ; procedure
