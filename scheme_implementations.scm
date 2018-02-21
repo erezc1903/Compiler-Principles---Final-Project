@@ -5,10 +5,9 @@
 
 (define mapList
     (lambda (f s)
-      (if (null? (car s))
-          '()
-          (cons (apply f (map1 car s))
-                (mapList f (map1 cdr s))))))
+      (cond ((null? (car s)) '())
+            ((null? (cdr s)) (map1 f (car s)))
+            (else (cons (apply f (map1 car s)) (mapList f (map1 cdr s)))))))
 
 (define map1
     (lambda (f s)

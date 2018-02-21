@@ -28,7 +28,7 @@
 ;(apply) ; Exception: incorrect argument count in call (apply)
 ;(apply +) ; Exception: incorrect argument count in call (apply +)
 ;(apply + 4) ; Exception in apply: 4 is not a proper list
-(apply + '(1 2 3)) ; 6
+;(apply + '(1 2 3)) ; 6
 ;(apply + '(4)) ; 4
 ;(apply 1 '(4)) ; Exception: attempt to apply non-procedure 1
 ;(apply + 1 '(4)) ; 5
@@ -219,13 +219,18 @@
 ;map
 
 (map cons '(1 2 3) '(1 2 3))
-(map not '(#t #t #t))
-;not ; #f
-;(not 5) ; #f
-;(not "super") ; #f
-;(not "sukka") ; #f
-;(not #f) ; #t
-;(not ((lambda (x) (not x)) 5)) ; #t
+(map + '(1 2 3) '(1 2 3))
+(map remainder '(13 13 -13 -13) '(4 -4 -4 4))
+(map cons '(1 #t #f 3) '(1 2 3 4))
+(map boolean? '(1 #f "a"))
+
+
+not ; #f
+(not 5) ; #f
+(not "super") ; #f
+(not "sukka") ; #f
+(not #f) ; #t
+(not ((lambda (x) (not x)) 5)) ; #t
 
 ;null?
 ;(null? 69 "snir") ; ecxeption incorrect arg count

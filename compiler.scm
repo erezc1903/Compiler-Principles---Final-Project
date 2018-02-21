@@ -81,8 +81,8 @@
 			  ;(symbol-table (symbol_table input))
 
 			;(display "global-env-as-pairs: ") (display global-env-as-pairs) (newline) (newline)
-			(display "input: ") (display input) (newline) (newline)
-			;(display "const-table-as-list-of-pairs: ") (display const-table-as-list-of-pairs) (newline) (newline)
+			;(display "input: ") (display input) (newline) (newline)
+			(display "const-table-as-list-of-pairs: ") (display const-table-as-list-of-pairs) (newline) (newline)
 
 
 			(fprintf out-port "%include \"scheme.s\"\n\n") 
@@ -2789,7 +2789,7 @@
 				"\tcmp rbx, T_BOOL\n"
 				"\tjne .retFalse\n"
 				"\tmov rbx, r10\n"
-				"\tcmp rbx, sobTrue\n"
+				"\tcmp rbx, SOB_FALSE\n"
 				"\tje .retFalse\n"
 				"\tmov rax, sobTrue\n"
 				"\tjmp .done\n\n"
@@ -3413,8 +3413,8 @@
 
 (define create_const_for_assembly
 	(lambda (const-table table-in-pairs num)
-		;(display "create_const_for_assembly const-table : ") (display const-table) (newline)
-		;(display "create_const_for_assembly table-in-pairs: ") (display table-in-pairs) (newline) (newline)
+		(display "create_const_for_assembly const-table : ") (display const-table) (newline)
+		(display "create_const_for_assembly table-in-pairs: ") (display table-in-pairs) (newline) (newline)
 		(set! num (+ num 1))
 		(cond ((null? const-table) (string-append "sobUndef:" "\n" "\tdq SOB_UNDEFINED\n\n"))
 			  ((integer? (car const-table)) 
@@ -3422,8 +3422,8 @@
 			  ((number? (car const-table)) 
 			  		(string-append (find-const-in-pairs (car const-table) table-in-pairs) ":" "\n" "\tdq MAKE_LITERAL_FRACTION (" (find-const-in-pairs (numerator (car const-table)) table-in-pairs) ", " (find-const-in-pairs (denominator (car const-table)) table-in-pairs) ")\n\n" (create_const_for_assembly (cdr const-table) table-in-pairs num)))
 			  ((boolean? (car const-table)) (if (equal? (car const-table) #t)
-			  					  (string-append "sobTrue:" "\n" "\tdq SOB_TRUE\n\n" (create_const_for_assembly (cdr const-table) (cdr table-in-pairs) num))
-			  					  (string-append "sobFalse:" "\n" "\tdq SOB_FALSE\n" (create_const_for_assembly (cdr const-table) (cdr table-in-pairs) num))))
+			  					  (string-append "sobTrue:" "\n" "\tdq SOB_TRUE\n\n" (create_const_for_assembly (cdr const-table) table-in-pairs num))
+			  					  (string-append "sobFalse:" "\n" "\tdq SOB_FALSE\n" (create_const_for_assembly (cdr const-table) table-in-pairs num))))
 			  ((char? (car const-table)) 
 			  		(string-append (find-const-in-pairs (car const-table) table-in-pairs) ":\n" "\tdq MAKE_LITERAL(T_CHAR, " (number->string (char->integer (car const-table))) ")\n\n" (create_const_for_assembly (cdr const-table) table-in-pairs num)))
 			  ((symbol? (car const-table)) 
@@ -3448,16 +3448,17 @@
 
 (define find-const-in-pairs
 	(lambda (const table-in-pairs)
-		(display "find-const-in-pairs const : ") (display const) (newline)
-		(display "find-const-in-pairs list: ") (display table-in-pairs) (newline) 
+		;(display "find-const-in-pairs const : ") (display const) (newline)
+		;(display "find-const-in-pairs list: ") (display table-in-pairs) (newline) 
 		;(display "find-const-in-pairs cadar list : ") (display (cadar table-in-pairs)) (newline) (newline)
 		(cond ((equal? const (cadar table-in-pairs)) (caar table-in-pairs))
-			  ((> (length table-in-pairs) 0) (find-const-in-pairs const (cdr table-in-pairs))))))
+			  ((> (length table-in-pairs) 0) (find-const-in-pairs const (cdr table-in-pairs))))
+		))
 
 (define get-components-from-pairs
 	(lambda (vec table-in-pairs)
-		(display "get-components-from-pairs vec: ") (display vec) (newline) 
-		(display "get-components-from-pairs table-in-pairs: ") (display table-in-pairs) (newline) (newline)
+		;(display "get-components-from-pairs vec: ") (display vec) (newline) 
+		;(display "get-components-from-pairs table-in-pairs: ") (display table-in-pairs) (newline) (newline)
 		(cond ((null? table-in-pairs) "")
 			  ((member (cadar table-in-pairs) (vector->list vec)) (string-append (caar table-in-pairs) ", " (get-components-from-pairs vec (cdr table-in-pairs))))
 			  (else (get-components-from-pairs vec (cdr table-in-pairs))))))
