@@ -1,6 +1,6 @@
 set logging file gdbDump.log
 set logging on
-break plus_code.addition_loop
+break subtract_code.make_subtraction
 display /i $pc
 display /x $rax
 display /x $rbx

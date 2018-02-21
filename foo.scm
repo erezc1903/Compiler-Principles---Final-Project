@@ -311,28 +311,28 @@
 ;((lambda (x y z) (remainder x y)) "b" 4 5) ; exception not an integer
 ;((lambda (x y z) (remainder x y)) 13 0 5)  ; exception undefined for 0
 
-set-car!
-(define x1 '(1 . 2))
-(define x2 '("sukka" . "blyat"))
-(define x3 '("huyassa" . "gopnik"))
-(set-car! x1 3)
-x1
-(set-car! x2 "nahui")
-(set-car! x1 "blyat")
-x1
-x2
-x3
+;set-car!
+;(define x1 '(1 . 2))
+;(define x2 '("sukka" . "blyat"))
+;(define x3 '("huyassa" . "gopnik"))
+;(set-car! x1 3)
+;x1
+;(set-car! x2 "nahui")
+;(set-car! x1 "blyat")
+;x1
+;x2
+;x3
 
-set-cdr!
-(define x1 '(1 . 2))
-(define x2 '("sukka" . "blyat"))
-(define x3 '("huyassa" . "gopnik"))
-(set-cdr! x1 3)
-(set-cdr! x2 "nahui")
-(set-cdr! x3 "blyat")
-x1
-x2
-x3
+;set-cdr!
+;(define x1 '(1 . 2))
+;(define x2 '("sukka" . "blyat"))
+;(define x3 '("huyassa" . "gopnik"))
+;(set-cdr! x1 3)
+;(set-cdr! x2 "nahui")
+;(set-cdr! x3 "blyat")
+;x1
+;x2
+;x3
 
 ;string-length
 ;string-ref
@@ -485,7 +485,9 @@ x3
 
 ;(append '(1 2) (list 3 '(4)))
 
-(+ 1/2 -1/2 -1/2 -1/2 3 -4 1/4 -1/3 1/7)
+;(+ 1/2 -1/2 -1/2 -1/2 3 -4 1/4 -1/3 1/7)
+
+(- 1 1/2 3 -4 5 -6/5 2/3)
 
 ;;;; lambda-opt
 ;(lambda (a b . c) (or a b)) ; procedure

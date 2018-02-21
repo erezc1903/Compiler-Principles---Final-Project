@@ -19731,3 +19731,709 @@ Breakpoint 1, 0x0000000000401259 in plus_code.addition_loop ()
 16: /x $r13 = 0x4
 17: /x $r14 = 0x0
 18: /x $r15 = 0x0
+Breakpoint 1 at 0x401cc8
+SIGTRAP is used by the debugger.
+Are you sure you want to change it? (y or n) [answered Y; input not from terminal]
+
+Breakpoint 1, 0x0000000000401cc8 in subtract_code.make_subtraction ()
+1: x/i $pc
+=> 0x401cc8 <subtract_code.make_subtraction>:	mov    $0x0,%r12d
+2: /x $rax = 0x60478b
+3: /x $rbx = 0x3
+4: /x $rcx = 0x3
+5: /x $rdx = 0x605590
+6: /x $rdi = 0x0
+7: /x $rsi = 0x6055a0
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x605000
+12: /x $r9 = 0xd
+13: /x $r10 = 0x13
+14: /x $r11 = 0x0
+15: /x $r12 = 0x4004c0
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x7fffffffdcc8:	0xffffdd00	0x00007fff	0x0040361e	0x00000000
+0x7fffffffdcd8:	0x00000001	0x00000000	0x00000003	0x00000000
+0x7fffffffdce8:	0x0060477b	0x00000000	0x00604783	0x00000000
+0x7fffffffdcf8:	0x0060478b	0x00000000	0xffffdd08	0x00007fff
+0x7fffffffdd08:	0xf7a2d830	0x00007fff	0x00000000	0x00000000
+0x7fffffffdd18:	0xffffdde8	0x00007fff	0xf7ffcca0	0x00000001
+0x7fffffffdd28:	0x00400684	0x00000000	0x00000000	0x00000000
+0x7fffffffdd38:	0x669e2fb9	0xc631b1c1	0x004004c0	0x00000000
+0x7fffffffdd48:	0xffffdde0	0x00007fff	0x00000000	0x00000000
+0x7fffffffdd58:	0x00000000	0x00000000	0xd73e2fb9	0x39ce4ebe
+0x7fffffffdd68:	0xc2ce2fb9	0x39ce5e04	0x00000000	0x00007fff
+0x7fffffffdd78:	0x00000000	0x00000000	0x00000000	0x00000000
+0x7fffffffdd88:	0x00400630	0x00000000	0xf7de7ab0	0x00007fff
+0x7fffffffdd98:	0xf7de77cb	0x00007fff	0x00000000	0x00000000
+0x7fffffffdda8:	0x00000000	0x00000000	0x004004c0	0x00000000
+0x7fffffffddb8:	0xffffdde0	0x00007fff	0x00000000	0x00000000
+0x0000000000401cce in subtract_code.make_subtraction ()
+1: x/i $pc
+=> 0x401cce <subtract_code.make_subtraction+6>:	mov    $0x1,%r13d
+2: /x $rax = 0x60478b
+3: /x $rbx = 0x3
+4: /x $rcx = 0x3
+5: /x $rdx = 0x605590
+6: /x $rdi = 0x0
+7: /x $rsi = 0x6055a0
+8: /x $rbp = 0x7fffffffdcc8
+9: /x $rsp = 0x7fffffffdcc8
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x605000
+12: /x $r9 = 0xd
+13: /x $r10 = 0x13
+14: /x $r11 = 0x0
+15: /x $r12 = 0x0
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+Breakpoint 1 at 0x401cc8
+SIGTRAP is used by the debugger.
+Are you sure you want to change it? (y or n) [answered Y; input not from terminal]
+
+Breakpoint 1, 0x0000000000401cc8 in subtract_code.make_subtraction ()
+1: x/i $pc
+=> 0x401cc8 <subtract_code.make_subtraction>:	mov    0x20(%rbp),%r12
+2: /x $rax = 0x604783
+3: /x $rbx = 0x3
+4: /x $rcx = 0x2
+5: /x $rdx = 0x605590
+6: /x $rdi = 0x0
+7: /x $rsi = 0x6055a0
+8: /x $rbp = 0x7fffffffdcd0
+9: /x $rsp = 0x7fffffffdcd0
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x605000
+12: /x $r9 = 0xd
+13: /x $r10 = 0x23
+14: /x $r11 = 0x0
+15: /x $r12 = 0x4004c0
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x7fffffffdcd0:	0xffffdd00	0x00007fff	0x0040366d	0x00000000
+0x7fffffffdce0:	0x00000001	0x00000000	0x00000002	0x00000000
+0x7fffffffdcf0:	0x0060477b	0x00000000	0x00604783	0x00000000
+0x7fffffffdd00:	0xffffdd08	0x00007fff	0xf7a2d830	0x00007fff
+0x7fffffffdd10:	0x00000000	0x00000000	0xffffdde8	0x00007fff
+0x7fffffffdd20:	0xf7ffcca0	0x00000001	0x00400684	0x00000000
+0x7fffffffdd30:	0x00000000	0x00000000	0x2a8bb64f	0x140d0cb7
+0x7fffffffdd40:	0x004004c0	0x00000000	0xffffdde0	0x00007fff
+0x7fffffffdd50:	0x00000000	0x00000000	0x00000000	0x00000000
+0x7fffffffdd60:	0x9b2bb64f	0xebf2f3c8	0x8edbb64f	0xebf2e372
+0x7fffffffdd70:	0x00000000	0x00007fff	0x00000000	0x00000000
+0x7fffffffdd80:	0x00000000	0x00000000	0x00400630	0x00000000
+0x7fffffffdd90:	0xf7de7ab0	0x00007fff	0xf7de77cb	0x00007fff
+0x7fffffffdda0:	0x00000000	0x00000000	0x00000000	0x00000000
+0x7fffffffddb0:	0x004004c0	0x00000000	0xffffdde0	0x00007fff
+0x7fffffffddc0:	0x00000000	0x00000000	0x004004e9	0x00000000
+0x0000000000401ccc in subtract_code.make_subtraction ()
+1: x/i $pc
+=> 0x401ccc <subtract_code.make_subtraction+4>:	mov    (%r12),%r12
+2: /x $rax = 0x604783
+3: /x $rbx = 0x3
+4: /x $rcx = 0x2
+5: /x $rdx = 0x605590
+6: /x $rdi = 0x0
+7: /x $rsi = 0x6055a0
+8: /x $rbp = 0x7fffffffdcd0
+9: /x $rsp = 0x7fffffffdcd0
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x605000
+12: /x $r9 = 0xd
+13: /x $r10 = 0x23
+14: /x $r11 = 0x0
+15: /x $r12 = 0x60477b
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x0000000000401cd0 in subtract_code.make_subtraction ()
+1: x/i $pc
+=> 0x401cd0 <subtract_code.make_subtraction+8>:	and    $0xf,%r12
+2: /x $rax = 0x604783
+3: /x $rbx = 0x3
+4: /x $rcx = 0x2
+5: /x $rdx = 0x605590
+6: /x $rdi = 0x0
+7: /x $rsi = 0x6055a0
+8: /x $rbp = 0x7fffffffdcd0
+9: /x $rsp = 0x7fffffffdcd0
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x605000
+12: /x $r9 = 0xd
+13: /x $r10 = 0x23
+14: /x $r11 = 0x0
+15: /x $r12 = 0x33
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x0000000000401cd4 in subtract_code.make_subtraction ()
+1: x/i $pc
+=> 0x401cd4 <subtract_code.make_subtraction+12>:	cmp    $0x4,%r12
+2: /x $rax = 0x604783
+3: /x $rbx = 0x3
+4: /x $rcx = 0x2
+5: /x $rdx = 0x605590
+6: /x $rdi = 0x0
+7: /x $rsi = 0x6055a0
+8: /x $rbp = 0x7fffffffdcd0
+9: /x $rsp = 0x7fffffffdcd0
+10: $eflags = [ PF IF ]
+11: /x $r8 = 0x605000
+12: /x $r9 = 0xd
+13: /x $r10 = 0x23
+14: /x $r11 = 0x0
+15: /x $r12 = 0x3
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x0000000000401cd8 in subtract_code.make_subtraction ()
+1: x/i $pc
+=> 0x401cd8 <subtract_code.make_subtraction+16>:	
+    je     0x401d77 <subtract_code.startWithFraction>
+2: /x $rax = 0x604783
+3: /x $rbx = 0x3
+4: /x $rcx = 0x2
+5: /x $rdx = 0x605590
+6: /x $rdi = 0x0
+7: /x $rsi = 0x6055a0
+8: /x $rbp = 0x7fffffffdcd0
+9: /x $rsp = 0x7fffffffdcd0
+10: $eflags = [ CF PF AF SF IF ]
+11: /x $r8 = 0x605000
+12: /x $r9 = 0xd
+13: /x $r10 = 0x23
+14: /x $r11 = 0x0
+15: /x $r12 = 0x3
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x0000000000401cde in subtract_code.make_subtraction ()
+1: x/i $pc
+=> 0x401cde <subtract_code.make_subtraction+22>:	
+    mov    0x20(%rbp),%r12
+2: /x $rax = 0x604783
+3: /x $rbx = 0x3
+4: /x $rcx = 0x2
+5: /x $rdx = 0x605590
+6: /x $rdi = 0x0
+7: /x $rsi = 0x6055a0
+8: /x $rbp = 0x7fffffffdcd0
+9: /x $rsp = 0x7fffffffdcd0
+10: $eflags = [ CF PF AF SF IF ]
+11: /x $r8 = 0x605000
+12: /x $r9 = 0xd
+13: /x $r10 = 0x23
+14: /x $r11 = 0x0
+15: /x $r12 = 0x3
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x0000000000401ce2 in subtract_code.make_subtraction ()
+1: x/i $pc
+=> 0x401ce2 <subtract_code.make_subtraction+26>:	mov    (%r12),%r12
+2: /x $rax = 0x604783
+3: /x $rbx = 0x3
+4: /x $rcx = 0x2
+5: /x $rdx = 0x605590
+6: /x $rdi = 0x0
+7: /x $rsi = 0x6055a0
+8: /x $rbp = 0x7fffffffdcd0
+9: /x $rsp = 0x7fffffffdcd0
+10: $eflags = [ CF PF AF SF IF ]
+11: /x $r8 = 0x605000
+12: /x $r9 = 0xd
+13: /x $r10 = 0x23
+14: /x $r11 = 0x0
+15: /x $r12 = 0x60477b
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x0000000000401ce6 in subtract_code.make_subtraction ()
+1: x/i $pc
+=> 0x401ce6 <subtract_code.make_subtraction+30>:	sar    $0x4,%r12
+2: /x $rax = 0x604783
+3: /x $rbx = 0x3
+4: /x $rcx = 0x2
+5: /x $rdx = 0x605590
+6: /x $rdi = 0x0
+7: /x $rsi = 0x6055a0
+8: /x $rbp = 0x7fffffffdcd0
+9: /x $rsp = 0x7fffffffdcd0
+10: $eflags = [ CF PF AF SF IF ]
+11: /x $r8 = 0x605000
+12: /x $r9 = 0xd
+13: /x $r10 = 0x23
+14: /x $r11 = 0x0
+15: /x $r12 = 0x33
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x0000000000401cea in subtract_code.make_subtraction ()
+1: x/i $pc
+=> 0x401cea <subtract_code.make_subtraction+34>:	mov    $0x1,%r13d
+2: /x $rax = 0x604783
+3: /x $rbx = 0x3
+4: /x $rcx = 0x2
+5: /x $rdx = 0x605590
+6: /x $rdi = 0x0
+7: /x $rsi = 0x6055a0
+8: /x $rbp = 0x7fffffffdcd0
+9: /x $rsp = 0x7fffffffdcd0
+10: $eflags = [ PF IF ]
+11: /x $r8 = 0x605000
+12: /x $r9 = 0xd
+13: /x $r10 = 0x23
+14: /x $r11 = 0x0
+15: /x $r12 = 0x3
+16: /x $r13 = 0x7fffffffdde0
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x0000000000401cf0 in subtract_code.startSubstraction ()
+1: x/i $pc
+=> 0x401cf0 <subtract_code.startSubstraction>:	mov    $0x1,%r8d
+2: /x $rax = 0x604783
+3: /x $rbx = 0x3
+4: /x $rcx = 0x2
+5: /x $rdx = 0x605590
+6: /x $rdi = 0x0
+7: /x $rsi = 0x6055a0
+8: /x $rbp = 0x7fffffffdcd0
+9: /x $rsp = 0x7fffffffdcd0
+10: $eflags = [ PF IF ]
+11: /x $r8 = 0x605000
+12: /x $r9 = 0xd
+13: /x $r10 = 0x23
+14: /x $r11 = 0x0
+15: /x $r12 = 0x3
+16: /x $r13 = 0x1
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x0000000000401cf6 in subtract_code.subtraction_loop ()
+1: x/i $pc
+=> 0x401cf6 <subtract_code.subtraction_loop>:	cmp    0x18(%rbp),%r8
+2: /x $rax = 0x604783
+3: /x $rbx = 0x3
+4: /x $rcx = 0x2
+5: /x $rdx = 0x605590
+6: /x $rdi = 0x0
+7: /x $rsi = 0x6055a0
+8: /x $rbp = 0x7fffffffdcd0
+9: /x $rsp = 0x7fffffffdcd0
+10: $eflags = [ PF IF ]
+11: /x $r8 = 0x1
+12: /x $r9 = 0xd
+13: /x $r10 = 0x23
+14: /x $r11 = 0x0
+15: /x $r12 = 0x3
+16: /x $r13 = 0x1
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x0000000000401cfa in subtract_code.subtraction_loop ()
+1: x/i $pc
+=> 0x401cfa <subtract_code.subtraction_loop+4>:	
+    je     0x401db1 <subtract_code.doneSubtraction>
+2: /x $rax = 0x604783
+3: /x $rbx = 0x3
+4: /x $rcx = 0x2
+5: /x $rdx = 0x605590
+6: /x $rdi = 0x0
+7: /x $rsi = 0x6055a0
+8: /x $rbp = 0x7fffffffdcd0
+9: /x $rsp = 0x7fffffffdcd0
+10: $eflags = [ CF PF AF SF IF ]
+11: /x $r8 = 0x1
+12: /x $r9 = 0xd
+13: /x $r10 = 0x23
+14: /x $r11 = 0x0
+15: /x $r12 = 0x3
+16: /x $r13 = 0x1
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x0000000000401d00 in subtract_code.subtraction_loop ()
+1: x/i $pc
+=> 0x401d00 <subtract_code.subtraction_loop+10>:	
+    mov    0x20(%rbp,%r8,8),%r9
+2: /x $rax = 0x604783
+3: /x $rbx = 0x3
+4: /x $rcx = 0x2
+5: /x $rdx = 0x605590
+6: /x $rdi = 0x0
+7: /x $rsi = 0x6055a0
+8: /x $rbp = 0x7fffffffdcd0
+9: /x $rsp = 0x7fffffffdcd0
+10: $eflags = [ CF PF AF SF IF ]
+11: /x $r8 = 0x1
+12: /x $r9 = 0xd
+13: /x $r10 = 0x23
+14: /x $r11 = 0x0
+15: /x $r12 = 0x3
+16: /x $r13 = 0x1
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x0000000000401d05 in subtract_code.subtraction_loop ()
+1: x/i $pc
+=> 0x401d05 <subtract_code.subtraction_loop+15>:	mov    (%r9),%r10
+2: /x $rax = 0x604783
+3: /x $rbx = 0x3
+4: /x $rcx = 0x2
+5: /x $rdx = 0x605590
+6: /x $rdi = 0x0
+7: /x $rsi = 0x6055a0
+8: /x $rbp = 0x7fffffffdcd0
+9: /x $rsp = 0x7fffffffdcd0
+10: $eflags = [ CF PF AF SF IF ]
+11: /x $r8 = 0x1
+12: /x $r9 = 0x604783
+13: /x $r10 = 0x23
+14: /x $r11 = 0x0
+15: /x $r12 = 0x3
+16: /x $r13 = 0x1
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x0000000000401d08 in subtract_code.subtraction_loop ()
+1: x/i $pc
+=> 0x401d08 <subtract_code.subtraction_loop+18>:	mov    %r10,%rbx
+2: /x $rax = 0x604783
+3: /x $rbx = 0x3
+4: /x $rcx = 0x2
+5: /x $rdx = 0x605590
+6: /x $rdi = 0x0
+7: /x $rsi = 0x6055a0
+8: /x $rbp = 0x7fffffffdcd0
+9: /x $rsp = 0x7fffffffdcd0
+10: $eflags = [ CF PF AF SF IF ]
+11: /x $r8 = 0x1
+12: /x $r9 = 0x604783
+13: /x $r10 = 0x23
+14: /x $r11 = 0x0
+15: /x $r12 = 0x3
+16: /x $r13 = 0x1
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x0000000000401d0b in subtract_code.subtraction_loop ()
+1: x/i $pc
+=> 0x401d0b <subtract_code.subtraction_loop+21>:	and    $0xf,%rbx
+2: /x $rax = 0x604783
+3: /x $rbx = 0x23
+4: /x $rcx = 0x2
+5: /x $rdx = 0x605590
+6: /x $rdi = 0x0
+7: /x $rsi = 0x6055a0
+8: /x $rbp = 0x7fffffffdcd0
+9: /x $rsp = 0x7fffffffdcd0
+10: $eflags = [ CF PF AF SF IF ]
+11: /x $r8 = 0x1
+12: /x $r9 = 0x604783
+13: /x $r10 = 0x23
+14: /x $r11 = 0x0
+15: /x $r12 = 0x3
+16: /x $r13 = 0x1
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x0000000000401d0f in subtract_code.subtraction_loop ()
+1: x/i $pc
+=> 0x401d0f <subtract_code.subtraction_loop+25>:	cmp    $0x4,%rbx
+2: /x $rax = 0x604783
+3: /x $rbx = 0x3
+4: /x $rcx = 0x2
+5: /x $rdx = 0x605590
+6: /x $rdi = 0x0
+7: /x $rsi = 0x6055a0
+8: /x $rbp = 0x7fffffffdcd0
+9: /x $rsp = 0x7fffffffdcd0
+10: $eflags = [ PF IF ]
+11: /x $r8 = 0x1
+12: /x $r9 = 0x604783
+13: /x $r10 = 0x23
+14: /x $r11 = 0x0
+15: /x $r12 = 0x3
+16: /x $r13 = 0x1
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x0000000000401d13 in subtract_code.subtraction_loop ()
+1: x/i $pc
+=> 0x401d13 <subtract_code.subtraction_loop+29>:	
+    jne    0x401d63 <subtract_code.makeFraction>
+2: /x $rax = 0x604783
+3: /x $rbx = 0x3
+4: /x $rcx = 0x2
+5: /x $rdx = 0x605590
+6: /x $rdi = 0x0
+7: /x $rsi = 0x6055a0
+8: /x $rbp = 0x7fffffffdcd0
+9: /x $rsp = 0x7fffffffdcd0
+10: $eflags = [ CF PF AF SF IF ]
+11: /x $r8 = 0x1
+12: /x $r9 = 0x604783
+13: /x $r10 = 0x23
+14: /x $r11 = 0x0
+15: /x $r12 = 0x3
+16: /x $r13 = 0x1
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x0000000000401d63 in subtract_code.makeFraction ()
+1: x/i $pc
+=> 0x401d63 <subtract_code.makeFraction>:	mov    0x20(%rbp,%r8,8),%r9
+2: /x $rax = 0x604783
+3: /x $rbx = 0x3
+4: /x $rcx = 0x2
+5: /x $rdx = 0x605590
+6: /x $rdi = 0x0
+7: /x $rsi = 0x6055a0
+8: /x $rbp = 0x7fffffffdcd0
+9: /x $rsp = 0x7fffffffdcd0
+10: $eflags = [ CF PF AF SF IF ]
+11: /x $r8 = 0x1
+12: /x $r9 = 0x604783
+13: /x $r10 = 0x23
+14: /x $r11 = 0x0
+15: /x $r12 = 0x3
+16: /x $r13 = 0x1
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x0000000000401d68 in subtract_code.makeFraction ()
+1: x/i $pc
+=> 0x401d68 <subtract_code.makeFraction+5>:	mov    (%r9),%r10
+2: /x $rax = 0x604783
+3: /x $rbx = 0x3
+4: /x $rcx = 0x2
+5: /x $rdx = 0x605590
+6: /x $rdi = 0x0
+7: /x $rsi = 0x6055a0
+8: /x $rbp = 0x7fffffffdcd0
+9: /x $rsp = 0x7fffffffdcd0
+10: $eflags = [ CF PF AF SF IF ]
+11: /x $r8 = 0x1
+12: /x $r9 = 0x604783
+13: /x $r10 = 0x23
+14: /x $r11 = 0x0
+15: /x $r12 = 0x3
+16: /x $r13 = 0x1
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x0000000000401d6b in subtract_code.makeFraction ()
+1: x/i $pc
+=> 0x401d6b <subtract_code.makeFraction+8>:	sar    $0x4,%r10
+2: /x $rax = 0x604783
+3: /x $rbx = 0x3
+4: /x $rcx = 0x2
+5: /x $rdx = 0x605590
+6: /x $rdi = 0x0
+7: /x $rsi = 0x6055a0
+8: /x $rbp = 0x7fffffffdcd0
+9: /x $rsp = 0x7fffffffdcd0
+10: $eflags = [ CF PF AF SF IF ]
+11: /x $r8 = 0x1
+12: /x $r9 = 0x604783
+13: /x $r10 = 0x23
+14: /x $r11 = 0x0
+15: /x $r12 = 0x3
+16: /x $r13 = 0x1
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x0000000000401d6f in subtract_code.makeFraction ()
+1: x/i $pc
+=> 0x401d6f <subtract_code.makeFraction+12>:	mov    $0x1,%r11d
+2: /x $rax = 0x604783
+3: /x $rbx = 0x3
+4: /x $rcx = 0x2
+5: /x $rdx = 0x605590
+6: /x $rdi = 0x0
+7: /x $rsi = 0x6055a0
+8: /x $rbp = 0x7fffffffdcd0
+9: /x $rsp = 0x7fffffffdcd0
+10: $eflags = [ IF ]
+11: /x $r8 = 0x1
+12: /x $r9 = 0x604783
+13: /x $r10 = 0x2
+14: /x $r11 = 0x0
+15: /x $r12 = 0x3
+16: /x $r13 = 0x1
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x0000000000401d75 in subtract_code.makeFraction ()
+1: x/i $pc
+=> 0x401d75 <subtract_code.makeFraction+18>:	
+    jmp    0x401d40 <subtract_code.continueSubtracting>
+2: /x $rax = 0x604783
+3: /x $rbx = 0x3
+4: /x $rcx = 0x2
+5: /x $rdx = 0x605590
+6: /x $rdi = 0x0
+7: /x $rsi = 0x6055a0
+8: /x $rbp = 0x7fffffffdcd0
+9: /x $rsp = 0x7fffffffdcd0
+10: $eflags = [ IF ]
+11: /x $r8 = 0x1
+12: /x $r9 = 0x604783
+13: /x $r10 = 0x2
+14: /x $r11 = 0x1
+15: /x $r12 = 0x3
+16: /x $r13 = 0x1
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x0000000000401d40 in subtract_code.continueSubtracting ()
+1: x/i $pc
+=> 0x401d40 <subtract_code.continueSubtracting>:	mov    %r10,%rax
+2: /x $rax = 0x604783
+3: /x $rbx = 0x3
+4: /x $rcx = 0x2
+5: /x $rdx = 0x605590
+6: /x $rdi = 0x0
+7: /x $rsi = 0x6055a0
+8: /x $rbp = 0x7fffffffdcd0
+9: /x $rsp = 0x7fffffffdcd0
+10: $eflags = [ IF ]
+11: /x $r8 = 0x1
+12: /x $r9 = 0x604783
+13: /x $r10 = 0x2
+14: /x $r11 = 0x1
+15: /x $r12 = 0x3
+16: /x $r13 = 0x1
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x0000000000401d43 in subtract_code.continueSubtracting ()
+1: x/i $pc
+=> 0x401d43 <subtract_code.continueSubtracting+3>:	mul    %r13
+2: /x $rax = 0x2
+3: /x $rbx = 0x3
+4: /x $rcx = 0x2
+5: /x $rdx = 0x605590
+6: /x $rdi = 0x0
+7: /x $rsi = 0x6055a0
+8: /x $rbp = 0x7fffffffdcd0
+9: /x $rsp = 0x7fffffffdcd0
+10: $eflags = [ IF ]
+11: /x $r8 = 0x1
+12: /x $r9 = 0x604783
+13: /x $r10 = 0x2
+14: /x $r11 = 0x1
+15: /x $r12 = 0x3
+16: /x $r13 = 0x1
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x0000000000401d46 in subtract_code.continueSubtracting ()
+1: x/i $pc
+=> 0x401d46 <subtract_code.continueSubtracting+6>:	mov    %rax,%rcx
+2: /x $rax = 0x2
+3: /x $rbx = 0x3
+4: /x $rcx = 0x2
+5: /x $rdx = 0x0
+6: /x $rdi = 0x0
+7: /x $rsi = 0x6055a0
+8: /x $rbp = 0x7fffffffdcd0
+9: /x $rsp = 0x7fffffffdcd0
+10: $eflags = [ IF ]
+11: /x $r8 = 0x1
+12: /x $r9 = 0x604783
+13: /x $r10 = 0x2
+14: /x $r11 = 0x1
+15: /x $r12 = 0x3
+16: /x $r13 = 0x1
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x0000000000401d49 in subtract_code.continueSubtracting ()
+1: x/i $pc
+=> 0x401d49 <subtract_code.continueSubtracting+9>:	mov    %r11,%rax
+2: /x $rax = 0x2
+3: /x $rbx = 0x3
+4: /x $rcx = 0x2
+5: /x $rdx = 0x0
+6: /x $rdi = 0x0
+7: /x $rsi = 0x6055a0
+8: /x $rbp = 0x7fffffffdcd0
+9: /x $rsp = 0x7fffffffdcd0
+10: $eflags = [ IF ]
+11: /x $r8 = 0x1
+12: /x $r9 = 0x604783
+13: /x $r10 = 0x2
+14: /x $r11 = 0x1
+15: /x $r12 = 0x3
+16: /x $r13 = 0x1
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x0000000000401d4c in subtract_code.continueSubtracting ()
+1: x/i $pc
+=> 0x401d4c <subtract_code.continueSubtracting+12>:	mul    %r12
+2: /x $rax = 0x1
+3: /x $rbx = 0x3
+4: /x $rcx = 0x2
+5: /x $rdx = 0x0
+6: /x $rdi = 0x0
+7: /x $rsi = 0x6055a0
+8: /x $rbp = 0x7fffffffdcd0
+9: /x $rsp = 0x7fffffffdcd0
+10: $eflags = [ IF ]
+11: /x $r8 = 0x1
+12: /x $r9 = 0x604783
+13: /x $r10 = 0x2
+14: /x $r11 = 0x1
+15: /x $r12 = 0x3
+16: /x $r13 = 0x1
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x0000000000401d4f in subtract_code.continueSubtracting ()
+1: x/i $pc
+=> 0x401d4f <subtract_code.continueSubtracting+15>:	sub    %rax,%rcx
+2: /x $rax = 0x3
+3: /x $rbx = 0x3
+4: /x $rcx = 0x2
+5: /x $rdx = 0x0
+6: /x $rdi = 0x0
+7: /x $rsi = 0x6055a0
+8: /x $rbp = 0x7fffffffdcd0
+9: /x $rsp = 0x7fffffffdcd0
+10: $eflags = [ PF IF ]
+11: /x $r8 = 0x1
+12: /x $r9 = 0x604783
+13: /x $r10 = 0x2
+14: /x $r11 = 0x1
+15: /x $r12 = 0x3
+16: /x $r13 = 0x1
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x0000000000401d52 in subtract_code.continueSubtracting ()
+1: x/i $pc
+=> 0x401d52 <subtract_code.continueSubtracting+18>:	mov    %rcx,%r12
+2: /x $rax = 0x3
+3: /x $rbx = 0x3
+4: /x $rcx = 0xffffffffffffffff
+5: /x $rdx = 0x0
+6: /x $rdi = 0x0
+7: /x $rsi = 0x6055a0
+8: /x $rbp = 0x7fffffffdcd0
+9: /x $rsp = 0x7fffffffdcd0
+10: $eflags = [ CF PF AF SF IF ]
+11: /x $r8 = 0x1
+12: /x $r9 = 0x604783
+13: /x $r10 = 0x2
+14: /x $r11 = 0x1
+15: /x $r12 = 0x3
+16: /x $r13 = 0x1
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x0000000000401d55 in subtract_code.continueSubtracting ()
+1: x/i $pc
+=> 0x401d55 <subtract_code.continueSubtracting+21>:	mov    %r11,%rax
+2: /x $rax = 0x3
+3: /x $rbx = 0x3
+4: /x $rcx = 0xffffffffffffffff
+5: /x $rdx = 0x0
+6: /x $rdi = 0x0
+7: /x $rsi = 0x6055a0
+8: /x $rbp = 0x7fffffffdcd0
+9: /x $rsp = 0x7fffffffdcd0
+10: $eflags = [ CF PF AF SF IF ]
+11: /x $r8 = 0x1
+12: /x $r9 = 0x604783
+13: /x $r10 = 0x2
+14: /x $r11 = 0x1
+15: /x $r12 = 0xffffffffffffffff
+16: /x $r13 = 0x1
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
