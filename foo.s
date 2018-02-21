@@ -167,23 +167,26 @@ sobTrue:
 sobNil:
 	dq SOB_NIL
 
-sobInt1:
-	dq MAKE_LITERAL (T_INTEGER, 1)
+sobNegInt1:
+	dq MAKE_LITERAL (T_INTEGER, -1)
 
 sobFrac1_2:
 	dq MAKE_LITERAL_FRACTION (sobInt1, sobInt2)
 
+sobInt1:
+	dq MAKE_LITERAL (T_INTEGER, 1)
+
 sobInt2:
 	dq MAKE_LITERAL (T_INTEGER, 2)
 
-sobInt3:
-	dq MAKE_LITERAL (T_INTEGER, 3)
+sobNegInt3:
+	dq MAKE_LITERAL (T_INTEGER, -3)
 
 sobNegInt4:
 	dq MAKE_LITERAL (T_INTEGER, -4)
 
-sobInt5:
-	dq MAKE_LITERAL (T_INTEGER, 5)
+sobNegInt5:
+	dq MAKE_LITERAL (T_INTEGER, -5)
 
 sobNegFrac6_5:
 	dq MAKE_LITERAL_FRACTION (sobNegInt6, sobInt5)
@@ -191,8 +194,26 @@ sobNegFrac6_5:
 sobNegInt6:
 	dq MAKE_LITERAL (T_INTEGER, -6)
 
+sobInt5:
+	dq MAKE_LITERAL (T_INTEGER, 5)
+
 sobFrac2_3:
 	dq MAKE_LITERAL_FRACTION (sobInt2, sobInt3)
+
+sobInt3:
+	dq MAKE_LITERAL (T_INTEGER, 3)
+
+sobNegFrac1_2:
+	dq MAKE_LITERAL_FRACTION (sobNegInt1, sobInt2)
+
+sobNegInt2:
+	dq MAKE_LITERAL (T_INTEGER, -2)
+
+sobFrac1_7:
+	dq MAKE_LITERAL_FRACTION (sobInt1, sobInt7)
+
+sobInt7:
+	dq MAKE_LITERAL (T_INTEGER, 7)
 
 sobUndef:
 	dq SOB_UNDEFINED
@@ -1635,9 +1656,10 @@ multiply_code:
 .checkIfArgsAreNumbers:
 
 	cmp rcx, qword [rbp + 8*3]
-	je .make_mul
-	mov rbx, qword [rbp + 8*(4 + rcx)]
-	mov rbx, [rbx]
+	je .make_multiplication
+	mov rax, qword [rbp + 8*(4 + rcx)]
+	mov r10, [rax]
+	mov rbx, r10
 	TYPE rbx
 	cmp rbx, T_INTEGER
 	je .incCounter
@@ -1648,29 +1670,91 @@ multiply_code:
 
 	inc rcx
 	jmp .checkIfArgsAreNumbers
-.make_mul:
+.make_multiplication:
 
-	mov rcx, 0 ; rcx is a counter for the number of arguments
-	mov rax, 1 ; rax is the accumulator 
-.mul_loop:
+	mov r12, 1 ; represent the numerator -a- of the sum
+	mov r13, 1 ; represent the denominator -b- of the sum
+	mov r8, 0
+.multiplication_loop:
 
-	cmp rcx, qword [rbp + 8*3]
-	je .doneMul
+	cmp r8, qword [rbp + 8*3]
+	je .doneMultiplication
 
-	mov rbx, qword [rbp + 8*(4 + rcx)]
-	mov rbx, [rbx]
-	DATA rbx
-	mul rbx
-	inc rcx
-	jmp .mul_loop
-.doneMul:
+	mov r9, qword [rbp + 8*(4 + r8)]
+	mov r10, [r9]
+	mov rbx, r10
+	TYPE rbx
+	cmp rbx, T_FRACTION
+	jne .makeFraction
+	mov r11, r10
+	NUMERATOR r10 ; holds the numerator -c- of the number to be added
+	DATA r10
+	DENOMINATOR r11 ; holds the denominator -d- of the number to be added
+	DATA r11
+.continueMultiplying:
+	mov rax, r10
+	mul r12
+	mov r12, rax ; r12 gets the new numerator
+	mov rax, r11
+	mul r13
+	mov r13, rax ; r13 gets the new denominator
+	inc r8
+	jmp .multiplication_loop
+.makeFraction:
 
+	mov r9, qword [rbp + 8*(4 + r8)]
+	mov r10, [r9]
+	DATA r10
+	mov r11, 1
+	jmp .continueMultiplying
+.doneMultiplication:
+
+	push r12
+	push r13
+	mov rax, 0
+	call gcd
 	mov r10, rax
-	shl r10, 4
-	or r10, T_INTEGER
+	mov rax, r12
+	cqo
+	idiv r10
+	mov r12, rax
+	mov rax, r13
+	cqo
+	idiv r10
+	mov r13, rax
+	cmp r13, 1
+	je .retInt
 	mov rdi, 8
 	call malloc
-	mov qword [rax], r10
+	mov r14, rax
+	shl r12, TYPE_BITS
+	or r12, T_INTEGER
+	mov qword [r14], r12 ; r14 hold the numerator of the result
+	mov rdi, 8
+	call malloc
+	mov r15, rax
+	shl r13, TYPE_BITS
+	or r13, T_INTEGER
+	mov qword [r15], r13 ; r15 hold the denominator of the result
+	mov r8, r14
+	sub r8, start_of_data
+	shl r8, (((WORD_SIZE - TYPE_BITS) >> 1) + TYPE_BITS)
+	mov r9, r15
+	sub r9, start_of_data
+	shl r9, TYPE_BITS
+	or r8, r9
+	or r8, T_FRACTION
+	mov rdi, 8
+	call malloc
+	mov qword [rax], r8
+	jmp .done
+.retInt:
+
+	shl r12, TYPE_BITS
+	or r12, T_INTEGER
+	mov rdi, 8
+	call malloc
+	mov qword [rax], r12
 	jmp .done
 .badArgs:
 
@@ -3624,7 +3708,7 @@ endLabel107:
 	;code gen for constant end
 	push rax
 	; codegen for const start
-	mov rax, sobInt5
+	mov rax, sobNegInt5
 	;code gen for constant end
 	push rax
 	; codegen for const start
@@ -3632,7 +3716,7 @@ endLabel107:
 	;code gen for constant end
 	push rax
 	; codegen for const start
-	mov rax, sobInt3
+	mov rax, sobNegInt3
 	;code gen for constant end
 	push rax
 	; codegen for const start
@@ -3640,7 +3724,7 @@ endLabel107:
 	;code gen for constant end
 	push rax
 	; codegen for const start
-	mov rax, sobInt1
+	mov rax, sobNegInt1
 	;code gen for constant end
 	push rax
 
@@ -3664,6 +3748,64 @@ not_a_closure130:
 done_closure130:
 
 	add rsp, 8*8
+
+; end of applic of lambda-simple code: 
+
+	mov rax, [rax]
+	push rax
+	call write_sob_if_not_void
+	add rsp, 8
+
+; end
+
+; start
+; start of applic of lambda-simple code: 
+
+	; codegen for const start
+	mov rax, sobNegInt5
+	;code gen for constant end
+	push rax
+	; codegen for const start
+	mov rax, sobFrac1_7
+	;code gen for constant end
+	push rax
+	; codegen for const start
+	mov rax, sobNegInt4
+	;code gen for constant end
+	push rax
+	; codegen for const start
+	mov rax, sobNegInt3
+	;code gen for constant end
+	push rax
+	; codegen for const start
+	mov rax, sobNegInt2
+	;code gen for constant end
+	push rax
+	; codegen for const start
+	mov rax, sobNegFrac1_2
+	;code gen for constant end
+	push rax
+
+	push 6
+	mov rax, multiply
+	mov r10, [rax]
+	mov rcx, r10
+	TYPE rcx
+	cmp rcx, T_CLOSURE
+	jne not_a_closure131
+	mov rbx, r10
+	CLOSURE_ENV rbx
+	push rbx
+	CLOSURE_CODE r10
+	call r10
+	add rsp, 8*1
+	jmp done_closure131
+not_a_closure131:
+
+	mov rax, sobVoid
+done_closure131:
+
+	add rsp, 8*7
 
 ; end of applic of lambda-simple code: 
 
