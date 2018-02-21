@@ -154,7 +154,7 @@
 				(handle_denominator) ;V
 				(handle_integer->char) ;V
 				(handle_char->integer) ;V
-				(handle_plus)
+				(handle_plus) ;V
 				(handle_greater_than)
 				(handle_less_than)
 				(handle_equal)
@@ -163,17 +163,18 @@
 				(handle_string_ref) ;V
 				(handle_string_set) ;V
 				(handle_make_string) ;V
-				(handle_multiply)
-				(handle_subtract)
+				(handle_multiply) ;V
+				(handle_subtract) ;V
 				(handle_make_vector) ;V
 				(handle_procedure?) ;V
-				(handle_apply) 
+				(handle_apply) ;V 
 				(handle_vector_length) ;V
 				(handle_vector_ref) ;V
 				(handle_vector) ;V
 				(handle_vector_set) ;V
 				(handle_set_car) ;V
 				(handle_set_cdr) ;V
+				(handle_divide)
 				 "")))
 
 
@@ -2173,6 +2174,175 @@
 ;======================================================= END OF FUNCTIONS FOR MULTIPLY EXPRESSION ========================================
 ;=========================================================================================================================================
 
+
+;=========================================================================================================================================
+;======================================================= FUNCTIONS FOR DIVIDE EXPRESSION =================================================
+;=========================================================================================================================================
+
+(define handle_divide
+		(lambda () 
+
+			(string-append (applic-prolog "divide_code" "end_divide_code")
+
+				"divide_code:\n"
+				"\tpush rbp\n"
+				"\tmov rbp, rsp\n"
+				
+				"\tmov rcx, 0 ; rcx is a counter for the number of arguments\n"
+				".checkIfArgsAreNumbers:\n\n"
+				"\tcmp rcx, qword [rbp + 8*3]\n"
+				"\tje .make_division\n"
+				"\tmov rax, qword [rbp + 8*(4 + rcx)]\n"
+				"\tmov r10, [rax]\n"
+				"\tmov rbx, r10\n"
+				"\tTYPE rbx\n"
+				"\tcmp rbx, T_INTEGER\n"
+				"\tje .incCounter\n"
+				"\tcmp rbx, T_FRACTION\n"
+				"\tje .incCounter\n"
+				"\tjmp .badArgs\n"
+				".incCounter:\n\n"
+				"\tinc rcx\n"
+				"\tjmp .checkIfArgsAreNumbers\n"
+
+
+				".make_division:\n\n"
+				;"\tmov r12, 1 ; represent the numerator -a- of the sum\n"
+				;"\tmov r13, 1 ; represent the denominator -b- of the sum\n"
+
+				"\tmov r12, qword [rbp + 4*8]\n"
+				"\tmov r12, [r12]\n"
+				"\tTYPE r12\n"
+				"\tcmp r12, T_FRACTION\n"
+				"\tje .startWithFraction\n"
+				"\tmov r12, qword [rbp + 4*8]\n"
+				"\tmov r12, [r12]\n"
+				"\tDATA r12 ; represent the numerator -a- of the sum\n"
+				"\tmov r13, 1 ; represent the denominator -b- of the sum\n"
+				
+
+				".startDivision:\n\n"
+
+
+				"\tmov r8, 1\n"
+
+				".division_loop:\n\n"
+				"\tcmp r8, qword [rbp + 8*3]\n"
+				"\tje .doneDivision\n\n"
+				"\tmov r9, qword [rbp + 8*(4 + r8)]\n"
+				"\tmov r10, [r9]\n"
+				"\tmov rbx, r10\n"
+				"\tTYPE rbx\n"
+				"\tcmp rbx, T_FRACTION\n"
+				"\tjne .makeFraction\n"
+				"\tmov r11, r10\n"
+				"\tNUMERATOR r10 ; holds the numerator -c- of the number to be added\n"
+				"\tDATA r10\n"
+				"\tDENOMINATOR r11 ; holds the denominator -d- of the number to be added\n"
+				"\tDATA r11\n"
+				"\txchg r10, r11\n"
+				".continueDividing:\n"
+				"\tmov rax, r10\n"
+				"\tmul r12\n"
+				"\tmov r12, rax ; r12 gets the new numerator\n"
+				"\tmov rax, r11\n"
+				"\tmul r13\n"
+				"\tmov r13, rax ; r13 gets the new denominator\n"
+				"\tinc r8\n"
+				"\tjmp .division_loop\n"
+
+				".startWithFraction:\n\n"
+				"\tmov r12, qword [rbp + 4*8]\n"
+				"\tmov r12, [r12]\n"
+				"\tmov r13, r12\n"
+				"\tNUMERATOR r12 ; holds the numerator -c- of the number to be added\n"
+				"\tDATA r12\n"
+				"\tDENOMINATOR r13 ; holds the denominator -d- of the number to be added\n"
+				"\tDATA r13\n"
+				"\tjmp .startDivision\n"
+
+				".makeFraction:\n\n"
+				"\tmov r9, qword [rbp + 8*(4 + r8)]\n"
+				"\tmov r11, [r9]\n"
+				"\tDATA r11\n"
+				"\tmov r10, 1\n"
+				"\tjmp .continueDividing\n"
+
+				".doneDivision:\n\n"
+				"\tcmp r13, 0\n"
+				"\tjl .negFrac\n"
+				".createFrac:\n"
+				"\tpush r12\n"
+				"\tpush r13\n"
+				"\tmov rax, 0\n"
+				"\tcall gcd\n"
+				"\tmov r10, rax\n"
+				"\tmov rax, r12\n"
+				"\tcqo\n"
+				"\tidiv r10\n"
+				"\tmov r12, rax\n"
+				"\tmov rax, r13\n"
+				"\tcqo\n"
+				"\tidiv r10\n"
+				"\tmov r13, rax\n"
+				"\tcmp r13, 1\n"
+				"\tje .retInt\n"
+				"\tmov rdi, 8\n"
+				"\tcall malloc\n"
+				"\tmov r14, rax\n"
+				"\tshl r12, TYPE_BITS\n"
+				"\tor r12, T_INTEGER\n"
+				"\tmov qword [r14], r12 ; r14 hold the numerator of the result\n"
+				"\tmov rdi, 8\n"
+				"\tcall malloc\n"
+				"\tmov r15, rax\n"
+				"\tshl r13, TYPE_BITS\n"
+				"\tor r13, T_INTEGER\n"
+				"\tmov qword [r15], r13 ; r15 hold the denominator of the result\n"
+
+				"\tmov r8, r14\n"
+				"\tsub r8, start_of_data\n"
+				"\tshl r8, (((WORD_SIZE - TYPE_BITS) >> 1) + TYPE_BITS)\n"
+				"\tmov r9, r15\n"
+				"\tsub r9, start_of_data\n"
+				"\tshl r9, TYPE_BITS\n"
+				"\tor r8, r9\n"
+				"\tor r8, T_FRACTION\n"
+				"\tmov rdi, 8\n"
+				"\tcall malloc\n"
+				"\tmov qword [rax], r8\n"
+				"\tjmp .done\n"
+
+				".retInt:\n\n"
+				"\tshl r12, TYPE_BITS\n"
+				"\tor r12, T_INTEGER\n"
+				"\tmov rdi, 8\n"
+				"\tcall malloc\n"
+				"\tmov qword [rax], r12\n"
+				"\tjmp .done\n"
+
+				".negFrac:\n\n"
+				"\tneg r12\n"
+				"\tneg r13\n"
+				"\tjmp .createFrac\n"
+
+				".badArgs:\n\n"
+				"\tmov rax, sobVoid\n"
+
+				".done:\n"
+				"\tmov rsp, rbp\n" 
+				"\tpop rbp\n"
+				"\tret\n\n"
+
+				"end_divide_code:\n"
+				"\tmov rax, [rax]\n"
+				"\tmov qword [divide], rax\n\n")))
+
+
+
+;=========================================================================================================================================
+;======================================================= END OF FUNCTIONS FOR DIVIDE EXPRESSION ==========================================
+;=========================================================================================================================================
 
 ;=========================================================================================================================================
 ;======================================================= FUNCTIONS FOR PLUS EXPRESSION ===================================================
