@@ -311,28 +311,28 @@
 ;((lambda (x y z) (remainder x y)) "b" 4 5) ; exception not an integer
 ;((lambda (x y z) (remainder x y)) 13 0 5)  ; exception undefined for 0
 
-;set-car!
-;(define x1 '(1 . 2))
-;(define x2 '("sukka" . "blyat"))
-;(define x3 '("huyassa" . "gopnik"))
-;(set-car! x1 3)
-;x1
-;(set-car! x2 "nahui")
-;(set-car! x1 "blyat")
-;x1
-;x2
-;x3
+set-car!
+(define x1 '(1 . 2))
+(define x2 '("sukka" . "blyat"))
+(define x3 '("huyassa" . "gopnik"))
+(set-car! x1 3)
+x1
+(set-car! x2 "nahui")
+(set-car! x1 "blyat")
+x1
+x2
+x3
 
-;set-cdr!
-;(define x1 '(1 . 2))
-;(define x2 '("sukka" . "blyat"))
-;(define x3 '("huyassa" . "gopnik"))
-;(set-cdr! x1 3)
-;(set-cdr! x2 "nahui")
-;(set-cdr! x3 "blyat")
-;x1
-;x2
-;x3
+set-cdr!
+(define x1 '(1 . 2))
+(define x2 '("sukka" . "blyat"))
+(define x3 '("huyassa" . "gopnik"))
+(set-cdr! x1 3)
+(set-cdr! x2 "nahui")
+(set-cdr! x3 "blyat")
+x1
+x2
+x3
 
 ;string-length
 ;string-ref

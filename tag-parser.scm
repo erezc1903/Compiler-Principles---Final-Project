@@ -120,10 +120,10 @@
 	(lambda (exp) (let ((params (cadr exp))
 					    (body (cddr exp)))
 						(if (= (length body) 1)
-					    	(cond ((pair? params) (list 'def (list 'var (car params)) (make_lambda (append (list 'lambda) (list (cdr params)) body))))
-					   		  	(else (list 'def (list 'var params) (parse (car body)))))
-					    	(cond ((pair? params) (list 'def (list 'var (car params)) (make_lambda (append (list 'lambda) (list (cdr params)) body))))
-					   		  	(else (list 'def (list 'var params) (list 'seq (map parse body)))))))))                              
+					    	(cond ((pair? params) (list 'define (list 'var (car params)) (make_lambda (append (list 'lambda) (list (cdr params)) body))))
+					   		  	(else (list 'define (list 'var params) (parse (car body)))))
+					    	(cond ((pair? params) (list 'define (list 'var (car params)) (make_lambda (append (list 'lambda) (list (cdr params)) body))))
+					   		  	(else (list 'define (list 'var params) (list 'seq (map parse body)))))))))                              
 
 
 (define make_set

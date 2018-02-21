@@ -40,7 +40,7 @@
 			       ((tagged-by? pe 'if3) (handle_if pe depth const-table global-env))
 			       ((tagged-by? pe 'seq) (handle_seq pe depth const-table global-env))
 			       ((tagged-by? pe 'or) (handle_or (cadr pe) depth (make-end-label-for-or) const-table global-env))
-			       ((tagged-by? pe 'def) (handle_define (cdr pe) depth const-table global-env))
+			       ((tagged-by? pe 'define) (handle_define (cdr pe) depth const-table global-env))
 			       ((tagged-by? pe 'applic) (handle_applic pe depth const-table global-env))
 			       ((tagged-by? pe 'lambda-simple) (handle_lambda_simple (cadr pe) (caddr pe) depth const-table global-env))
 			       ((tagged-by? pe 'tc-applic) (handle_applic pe depth const-table global-env))
