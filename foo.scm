@@ -198,10 +198,10 @@
 
 ;list
 ;make-string
-(integer->char 1)
-(make-string 4)
-(make-string 4 #\b)
-#\d
+;(integer->char 1)
+;(make-string 4)
+;(make-string 4 #\b)
+;#\d
 ;make-vector
 ;(make-vector 5 4 -7) ; ecxeption incorrect arg count
 ;(make-vector 5) ; #(0 0 0 0 0)
@@ -475,6 +475,8 @@
 
 ;(append '(5 6) '(7 8 (9)))
 
+;(append '(1 2) '(3 4))
+
 ;;;; lambda-opt
 ;(lambda (a b . c) (or a b)) ; procedure
 ;((lambda (a b . c) (or a b)) 49 2 3 4) ; 49
@@ -489,6 +491,9 @@
 ;((lambda (a b . c) ((car c) (car (cdr c)))) 70 71 (lambda (x) (+ 10 x)) 39) ; 49
 ;;;; lambda-opt
 
+(list 1 2 3)
+
+(list 1 2 3 '(4 5))
 ;;; tc-applic
 ;((lambda (x y) ((lambda (a) (remainder a y)) 13)) 6 4)
 ;;; tc-applic

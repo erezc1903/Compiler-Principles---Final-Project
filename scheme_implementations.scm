@@ -1,23 +1,23 @@
-(define map
-  (lambda (func first . rest)
-    (if (null? rest)
-        (not_var_map func first)
-        (var_map func first rest))))
+;(define map
+;  (lambda (func first . rest)
+;    (if (null? rest)
+;        (not_var_map func first)
+;        (var_map func first rest))))
 
 
-(define not_var_map
-    (lambda (func lst)
-      (if (null? lst)
-          '()
-          (cons (func (car lst)) (not_var_map func (cdr lst))))))
+;(define not_var_map
+;    (lambda (func lst)
+;      (if (null? lst)
+;          '()
+;          (cons (func (car lst)) (not_var_map func (cdr lst))))))
 
-(define var_map
-    (lambda (func first rest)
-        (if (null? first)
-            '()
-            (cons (apply func (car first) (map car rest))
-                  (var_map func (cdr first)
-                            (map cdr rest))))))
+;(define var_map
+;    (lambda (func first rest)
+;        (if (null? first)
+;            '()
+;            (cons (apply func (car first) (map car rest))
+;                  (var_map func (cdr first)
+;                            (map cdr rest))))))
 
 (define append
     (lambda args
@@ -34,6 +34,9 @@
           (if (null? ls)
               (append_base_case (car args) (cdr args))
               (cons (car ls) (append_helper (cdr ls) args)))))
+
+
+(define list (lambda x x))
 
 ;(define list
 ;    (lambda args
