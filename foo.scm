@@ -28,7 +28,7 @@
 ;(apply) ; Exception: incorrect argument count in call (apply)
 ;(apply +) ; Exception: incorrect argument count in call (apply +)
 ;(apply + 4) ; Exception in apply: 4 is not a proper list
-;(apply + '(1 2 3)) ; 6
+(apply + '(1 2 3)) ; 6
 ;(apply + '(4)) ; 4
 ;(apply 1 '(4)) ; Exception: attempt to apply non-procedure 1
 ;(apply + 1 '(4)) ; 5
@@ -218,6 +218,8 @@
 
 ;map
 
+(map cons '(1 2 3) '(1 2 3))
+(map not '(#t #t #t))
 ;not ; #f
 ;(not 5) ; #f
 ;(not "super") ; #f
@@ -491,9 +493,23 @@
 ;((lambda (a b . c) ((car c) (car (cdr c)))) 70 71 (lambda (x) (+ 10 x)) 39) ; 49
 ;;;; lambda-opt
 
-(list 1 2 3)
+;(list 1 2 3)
 
-(list 1 2 3 '(4 5))
+;(list 1 2 3 '(4 5))
+
+;(+ 1)
+;(+ 1 2 3)
+;(- 1 2 3)
+;(- (+ 1 2 3) 5)
+;(> 3 2 1)
+;(> 1 2 3)
+;(< 3 2 1)
+;(< 1 2 3)
+;(* 1 2 3)
+;(* (+ 4 5) (- 2 6))
+;(* 1)
+;(= 1 1 1 1)
+;(= 1 1 1 2)
 ;;; tc-applic
 ;((lambda (x y) ((lambda (a) (remainder a y)) 13)) 6 4)
 ;;; tc-applic

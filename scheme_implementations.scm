@@ -1,23 +1,22 @@
-;(define map
-;  (lambda (func first . rest)
-;    (if (null? rest)
-;        (not_var_map func first)
-;        (var_map func first rest))))
+(define map
+  (lambda (f . s)
+    (mapList f s)))
 
 
-;(define not_var_map
-;    (lambda (func lst)
-;      (if (null? lst)
-;          '()
-;          (cons (func (car lst)) (not_var_map func (cdr lst))))))
+(define mapList
+    (lambda (f s)
+      (if (null? (car s))
+          '()
+          (cons (apply f (map1 car s))
+                (mapList f (map1 cdr s))))))
 
-;(define var_map
-;    (lambda (func first rest)
-;        (if (null? first)
-;            '()
-;            (cons (apply func (car first) (map car rest))
-;                  (var_map func (cdr first)
-;                            (map cdr rest))))))
+(define map1
+    (lambda (f s)
+        (if (null? s)
+          '()
+          (cons (f (car s))
+                (map1 f (cdr s))))))
+
 
 (define append
     (lambda args

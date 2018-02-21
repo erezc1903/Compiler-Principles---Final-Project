@@ -164,9 +164,9 @@
 				(handle_make_string) ;V
 				(handle_multiply)
 				(handle_subtract)
-				(handle_make_vector)
+				(handle_make_vector) ;V
 				(handle_procedure?) ;V
-				;(handle_apply) ;V
+				(handle_apply) 
 				(handle_vector_length) ;V
 				(handle_vector_ref) ;V
 				(handle_vector) ;V
@@ -612,7 +612,7 @@
 
 ;(define handle_apply
 ;		(lambda (app-exp depth const-table global-env)
-;			(display "handle_apply app: ") (display app-exp) (newline)
+;			;(display "handle_apply app: ") (display app-exp) (newline)
 ;			;(display "handle_applic depth: ") (display depth) (newline) (newline)
 ;			(let ((app (caaddr app-exp))
 ;				  (args (cdr (caddr app-exp)))
@@ -641,81 +641,178 @@
 ;										"\tadd rsp, 8*" (number->string (+ 1 (length args))) "\n\n"
 ;										"; end of applic of lambda-simple code: \n\n"))))
 
-(define make-not-a-closure-label-for-apply
-	(let ((num 300))
-			(lambda ()
-				(set! num (+ num 1))
-				(string-append "not_a_closure" (number->string num)))))
+;(define make-not-a-closure-label-for-apply
+;	(let ((num 300))
+;			(lambda ()
+;				(set! num (+ num 1))
+;				(string-append "not_a_closure" (number->string num)))))
 
-(define make-done-closure-label-for-apply
-	(let ((num 300))
-			(lambda ()
-				(set! num (+ num 1))
-				(string-append "done_closure" (number->string num)))))
+;(define make-done-closure-label-for-apply
+;	(let ((num 300))
+;			(lambda ()
+;				(set! num (+ num 1))
+;				(string-append "done_closure" (number->string num)))))
+
+
 
 ;=========================================================================================================================================
-;======================================================= FUNCTIONS FOR MAP EXPRESSION ====================================================
+;======================================================= FUNCTIONS FOR APPLY EXPRESSION ==================================================
 ;=========================================================================================================================================
 
 
-;(define handle_map
-;  (lambda (f ls . more)
-;    (if (null? more)
-;        (let map1 ((ls ls))
-;          (if (null? ls)
-;              '()
-;              (cons (f (car ls))
-;                    (map1 (cdr ls)))))
-;        (let map-more ((ls ls) (more more))
-;          (if (null? ls)
-;              '()
-;              (cons (apply f (car ls) (map car more))
-;                    (map-more (cdr ls)
-;                              (map cdr more))))))))
+(define handle_apply
+		(lambda ()
+			(let* ((count-args-label (make-count-args-label))
+				  (end-count-args-label (make-end-count-args-label))
+				  (copy-args-label (make-copy-args-label))
+				  (done-copy-args-label (make-done-copy-args-label))
+				  (bad-input-label (make-bad-input-label))
+				  (end-label (make-end-label)))
 
-;(define handle_map
-;		(lambda ()
+			(string-append (applic-prolog "apply_code" "end_apply_code")
+			
 
-;			(let* ((end-label (make-end-label-for-vector))		  
-;				  (bad-input-label (make-bad-input-for-vector))
-;				  (insert-args-loop-label (make-insert-args-loop-input-for-vector))
-;				  (insert-args-loop-end-label (make-insert-args-loop-input-end-for-vector)))
-;			(string-append (applic-prolog "map_code" "end_map_code")
-;				"\nvector_length_code:\n"
-;				"\tpush rbp\n"
-;				"\tmov rbp, rsp\n"
-;				"\tmov rax, qword [rbp + 8*3]\n"
-;				"\tcmp rax, 2\n"
-;				"\tjl .badArgs\n"
+				"\napply_code:\n"
+				"\tpush rbp\n"
+				"\tmov rbp, rsp\n"
+				"\tmov rax, qword [rbp + 8*3]\n"
+				"\tcmp rax, 2\n"
+				"\tjne " bad-input-label "\n"
+				"\tmov r10, qword [rbp + 8*4]\n"
+				"\tmov r10, [r10]\n"
+				"\tmov rbx, r10\n"
+				"\tTYPE rbx\n"
+				"\tcmp rbx, T_CLOSURE\n"
+				"\tjne " bad-input-label"\n"
+				"\tmov r10, qword [rbp + 8*5]\n"
+				"\tmov r10, [r10]\n"
+				"\tmov rbx, r10\n"
+				"\tTYPE rbx\n"
+				"\tcmp rbx, T_PAIR\n"
+				"\tjne " bad-input-label "\n"
+
+				"; calculate list length\n"
+				"\tmov r10, qword [rbp + 5*8]\n"
+				"\tmov r13, 0\n"
+
+				count-args-label":\n\n"
+				"\tmov r10, [r10] ; r10 holds the head of the list\n"
+				"\tmov r12, r10\n"
+				"\tTYPE r12\n"
+				"\tcmp r12, T_NIL\n"
+				"\tje " end-count-args-label "\n"
+				"\tDATA_LOWER r10\n"
+				"\tadd r10, start_of_data\n"
+				"\tinc r13\n"
+				"\tjmp " count-args-label "\n"
+
+				end-count-args-label":\n\n"
+
+				"\tmov r10, qword [rbp + 8*4] ; holds a pointer to f on the stack\n"
+				"\tmov r10, [r10] ; holds the actual f on the stack\n"
+				"\tlea r12, [rbp + 8*5] ; holds a pointer to the list of arguments on the stack\n"
+				"; r13 holds the number of arguments. calculated before\n"
+				"\tmov r14, r13 ; r14 is the new number of arguments\n"
+				"\tlea r15, [rbp + 2*8]\n"
+				"\tshl r13, 3\n"
+				"\tsub r15, r13 ; r15 holds the address of where to we should copy the old rbp\n"
+				"\tmov r11, r15 ; r11 holds a backup of the address of where to we should copy the old rbp\n"
+				"\tmov r8, qword [rbp + 1*8] ; r8 hold the return address\n"
+				"\tmov rbx, qword [rbp]\n"
+				"\tmov qword [r15], rbx ; r15 hold the old rbp\n"
+				"\tadd r15, 8\n"
+				"\tmov qword [r15], r8\n"
+				"\tCLOSURE_ENV rcx ; rcx now hold the environment of f\n"
+				"\tadd r15, 8\n"
+				"\tmov qword [r15], rcx\n"
+				"\tadd r15, 8\n"
+				"\tmov qword [r15], r14\n"
+				"\tadd r15, 8\n"
+
+				"\tmov r12, [r12]\n"
+
+				copy-args-label":\n\n"
+
+				"\tmov rdx, r12\n"
+				"\tmov rdx, [rdx]\n"
+				"\tTYPE rdx\n"
+				"\tcmp rdx, T_NIL\n"
+				"\tje " done-copy-args-label "\n"
+
+				"\tmov rdx, r12\n"
+				"\tmov rdx, [rdx]\n"
+				"\tDATA_UPPER rdx\n"
+				"\tadd rdx, start_of_data\n"
+				"\tmov qword [r15], rdx\n"
+				"\tadd r15, 8\n"
+				"\tmov rdx, r12\n"
+				"\tmov rdx, [rdx]\n"
+				"\tDATA_LOWER rdx\n"
+				"\tadd rdx, start_of_data\n"
+				"\tmov r12, rdx\n"
+				"\tjmp " copy-args-label "\n"
+
+				done-copy-args-label":\n\n"
+				"\tjmp " end-label "\n"
 				
 
-;				"\tmov r10, qword [rbp + 8*3]\n"
-;				"\tmov r12, qword [rbp + 8*4]\n"
-;				"\tmov r12, [r12]\n"
-;				"\tCLOSURE_CODE r12\n"
-;				"\tdec r10\n"
-;				"\tmov r11, 0 ; counter that goes over the lists\n"
+				bad-input-label":\n\n"
+				"\tmov rax, sobVoid\n"
+				"\tmov rsp, rbp\n" 
+				"\tpop rbp\n"
+				"\tret\n\n"
+
+				end-label":\n"
+				"\tmov rsp, r11\n"
+				"\tpop rbp\n"
+				"\tmov rdx, r10\n"
+				"\tCLOSURE_CODE rdx\n"
+				"\tjmp rdx\n"
 
 
+				"end_apply_code:\n"
+				"\tmov rax, [rax]\n"
+				"\tmov qword [apply], rax\n\n"))))
+
+(define make-count-args-label
+	(let ((num 100))
+			(lambda ()
+				(set! num (+ num 1))
+				(string-append "countArgs" (number->string num)))))
+
+(define make-end-count-args-label
+	(let ((num 100))
+			(lambda ()
+				(set! num (+ num 1))
+				(string-append "endCountArgs" (number->string num)))))
+
+(define make-copy-args-label
+	(let ((num 100))
+			(lambda ()
+				(set! num (+ num 1))
+				(string-append "copyArgs" (number->string num)))))
+
+(define make-done-copy-args-label
+	(let ((num 100))
+			(lambda ()
+				(set! num (+ num 1))
+				(string-append "doneCopyArgs" (number->string num)))))
+
+(define make-bad-input-label
+	(let ((num 100))
+			(lambda ()
+				(set! num (+ num 1))
+				(string-append "badInput" (number->string num)))))
+
+(define make-end-label
+	(let ((num 100))
+			(lambda ()
+				(set! num (+ num 1))
+				(string-append "end" (number->string num)))))
 
 
-
-
-
-;				"\tjmp .done\n\n"
-;				".badArgs:\n"
-;				"\tmov rax, sobVoid\n"
-;				".done:\n"
-;				"\tmov rsp, rbp\n" 
-;				"\tpop rbp\n"
-;				"\tret\n\n"
-
-
-;				"end_map_code:\n"
-;				"\tmov rax, [rax]\n"
-;				"\tmov qword [map], rax\n\n"))))
 ;=========================================================================================================================================
-;======================================================= END OF FUNCTIONS FOR MAP EXPRESSION =============================================
+;======================================================= END OF FUNCTIONS FOR APPLY EXPRESSION ===========================================
 ;=========================================================================================================================================
 
 
@@ -1712,6 +1809,7 @@
 				"\tcmp rcx, qword [rbp + 8*3]\n"
 				"\tje .check_equal\n"
 				"\tmov rbx, qword [rbp + 8*(4 + rcx)]\n"
+				"\tmov rbx, [rbx]\n"
 				"\tTYPE rbx\n"
 				"\tcmp rbx, T_INTEGER\n"
 				"\tje .incCounter\n"
@@ -1737,8 +1835,10 @@
 				"\tcmp rcx,r9\n"
 				"\tje .doneCheckEQ\n\n"
 				"\tmov rbx, qword [rbp + 8*(4 + rcx)]\n"
+				"\tmov rbx, [rbx]\n"
 				"\tDATA rbx\n"
 				"\tmov rdx, qword [rbp + 8*(5 + rcx)]\n"
+				"\tmov rdx, [rdx]\n"
 				"\tDATA rdx\n"
 				"\tcmp rbx, rdx\n"
 				"\tjne .retFalse\n"
@@ -1746,15 +1846,15 @@
 				"\tjmp .check_equal_loop\n"
 
 				".retFalse:\n\n"
-				"\tmov rax, SOB_FALSE\n"
+				"\tmov rax, sobFalse\n"
 				"\tjmp .done\n"
 
 				".doneCheckEQ:\n\n"
-				"\tmov rax, SOB_TRUE\n"
+				"\tmov rax, sobTrue\n"
 				"\tjmp .done\n"
 
 				".badArgs:\n\n"
-				"\tmov rax, SOB_VOID\n"
+				"\tmov rax, sobVoid\n"
 				".done:\n"
 				"\tmov rsp, rbp\n" 
 				"\tpop rbp\n"
@@ -1790,6 +1890,7 @@
 				"\tcmp rcx, qword [rbp + 8*3]\n"
 				"\tje .check_greater_than\n"
 				"\tmov rbx, qword [rbp + 8*(4 + rcx)]\n"
+				"\tmov rbx, [rbx]\n"
 				"\tTYPE rbx\n"
 				"\tcmp rbx, T_INTEGER\n"
 				"\tje .incCounter\n"
@@ -1815,8 +1916,10 @@
 				"\tcmp rcx,r9\n"
 				"\tje .doneCheckGT\n\n"
 				"\tmov rbx, qword [rbp + 8*(4 + rcx)]\n"
+				"\tmov rbx, [rbx]\n"
 				"\tDATA rbx\n"
 				"\tmov rdx, qword [rbp + 8*(5 + rcx)]\n"
+				"\tmov rdx, [rdx]\n"
 				"\tDATA rdx\n"
 				"\tcmp rbx, rdx\n"
 				"\tjle .retFalse\n"
@@ -1824,15 +1927,15 @@
 				"\tjmp .check_greater_than_loop\n"
 
 				".retFalse:\n\n"
-				"\tmov rax, SOB_FALSE\n"
+				"\tmov rax, sobFalse\n"
 				"\tjmp .done\n"
 
 				".doneCheckGT:\n\n"
-				"\tmov rax, SOB_TRUE\n"
+				"\tmov rax, sobTrue\n"
 				"\tjmp .done\n"
 
 				".badArgs:\n\n"
-				"\tmov rax, SOB_VOID\n"
+				"\tmov rax, sobVoid\n"
 				".done:\n"
 				"\tmov rsp, rbp\n" 
 				"\tpop rbp\n"
@@ -1865,6 +1968,7 @@
 				"\tcmp rcx, qword [rbp + 8*3]\n"
 				"\tje .check_less_than\n"
 				"\tmov rbx, qword [rbp + 8*(4 + rcx)]\n"
+				"\tmov rbx, [rbx]\n"
 				"\tTYPE rbx\n"
 				"\tcmp rbx, T_INTEGER\n"
 				"\tje .incCounter\n"
@@ -1890,8 +1994,10 @@
 				"\tcmp rcx,r9\n"
 				"\tje .doneCheckLT\n\n"
 				"\tmov rbx, qword [rbp + 8*(4 + rcx)]\n"
+				"\tmov rbx, [rbx]\n"
 				"\tDATA rbx\n"
 				"\tmov rdx, qword [rbp + 8*(5 + rcx)]\n"
+				"\tmov rdx, [rdx]\n"
 				"\tDATA rdx\n"
 				"\tcmp rbx, rdx\n"
 				"\tjge .retFalse\n"
@@ -1899,15 +2005,15 @@
 				"\tjmp .check_less_than_loop\n"
 
 				".retFalse:\n\n"
-				"\tmov rax, SOB_FALSE\n"
+				"\tmov rax, sobFalse\n"
 				"\tjmp .done\n"
 
 				".doneCheckLT:\n\n"
-				"\tmov rax, SOB_TRUE\n"
+				"\tmov rax, sobTrue\n"
 				"\tjmp .done\n"
 
 				".badArgs:\n\n"
-				"\tmov rax, SOB_VOID\n"
+				"\tmov rax, sobVoid\n"
 				".done:\n"
 				"\tmov rsp, rbp\n" 
 				"\tpop rbp\n"
@@ -1946,6 +2052,7 @@
 				"\tcmp rcx, qword [rbp + 8*3]\n"
 				"\tje .make_mul\n"
 				"\tmov rbx, qword [rbp + 8*(4 + rcx)]\n"
+				"\tmov rbx, [rbx]\n"
 				"\tTYPE rbx\n"
 				"\tcmp rbx, T_INTEGER\n"
 				"\tje .incCounter\n"
@@ -1965,18 +2072,23 @@
 				"\tcmp rcx, qword [rbp + 8*3]\n"
 				"\tje .doneMul\n\n"
 				"\tmov rbx, qword [rbp + 8*(4 + rcx)]\n"
+				"\tmov rbx, [rbx]\n"
 				"\tDATA rbx\n"
 				"\tmul rbx\n"
 				"\tinc rcx\n"
 				"\tjmp .mul_loop\n"
 
 				".doneMul:\n\n"
-				"\tshl rax, 4\n"
-				"\tor rax, T_INTEGER\n"
+				"\tmov r10, rax\n"
+				"\tshl r10, 4\n"
+				"\tor r10, T_INTEGER\n"
+				"\tmov rdi, 8\n"
+				"\tcall malloc\n"
+				"\tmov qword [rax], r10\n"
 				"\tjmp .done\n"
 
 				".badArgs:\n\n"
-				"\tmov rax, SOB_VOID\n"
+				"\tmov rax, sobVoid\n"
 				".done:\n"
 				"\tmov rsp, rbp\n" 
 				"\tpop rbp\n"
@@ -2084,10 +2196,11 @@
 				"\tcmp rcx, qword [rbp + 8*3]\n"
 				"\tje .make_subtraction\n"
 				"\tmov rbx, qword [rbp + 8*(4 + rcx)]\n"
-				"\tTYPE rbx\n"
-				"\tcmp rbx, T_INTEGER\n"
+				"\tmov r10, [rbx]\n"
+				"\tTYPE r10\n"
+				"\tcmp r10, T_INTEGER\n"
 				"\tje .incCounter\n"
-				"\tcmp rbx, T_FRACTION\n"
+				"\tcmp r10, T_FRACTION\n"
 				"\tje .incCounter\n"
 				"\tjmp .badArgs\n"
 				".incCounter:\n\n"
@@ -2098,12 +2211,14 @@
 				".make_subtraction:\n\n"
 				"\tmov rcx, 1 ; rcx is a counter for the number of arguments\n"
 				"\tmov rdx, qword [rbp + 8*4]\n" ; rdx is the accumulator \n"
+				"\tmov rdx, [rdx]\n"
 				"\tDATA rdx\n"
 
 				".subtraction_loop:\n\n"
 				"\tcmp rcx, qword [rbp + 8*3]\n"
 				"\tje .doneSubtraction\n\n"
 				"\tmov rbx, qword [rbp + 8*(4 + rcx)]\n"
+				"\tmov rbx, [rbx]\n"
 				"\tDATA rbx\n"
 				"\tcmp rbx, 0\n"
 				"\tjl .numberIsNeg\n"
@@ -2119,13 +2234,16 @@
 				"\tjmp .subtraction_loop\n"
 
 				".doneSubtraction:\n\n"
-				"\tmov rax, rdx\n"
-				"\tshl rax, 4\n"
-				"\tor rax, T_INTEGER\n"
+				"\tmov r10, rdx\n"
+				"\tshl r10, 4\n"
+				"\tor r10, T_INTEGER\n"
+				"\tmov rdi, 8\n"
+				"\tcall malloc\n"
+				"\tmov qword [rax], r10\n"
 				"\tjmp .done\n"
 
 				".badArgs:\n\n"
-				"\tmov rax, SOB_VOID\n"
+				"\tmov rax, sobVoid\n"
 				".done:\n"
 				"\tmov rsp, rbp\n" 
 				"\tpop rbp\n"
@@ -3330,16 +3448,16 @@
 
 (define find-const-in-pairs
 	(lambda (const table-in-pairs)
-		;(display "find-const-in-pairs const : ") (display const) (newline)
-		;(display "find-const-in-pairs list: ") (display table-in-pairs) (newline) 
+		(display "find-const-in-pairs const : ") (display const) (newline)
+		(display "find-const-in-pairs list: ") (display table-in-pairs) (newline) 
 		;(display "find-const-in-pairs cadar list : ") (display (cadar table-in-pairs)) (newline) (newline)
 		(cond ((equal? const (cadar table-in-pairs)) (caar table-in-pairs))
 			  ((> (length table-in-pairs) 0) (find-const-in-pairs const (cdr table-in-pairs))))))
 
 (define get-components-from-pairs
 	(lambda (vec table-in-pairs)
-		;(display "get-components-from-pairs vec: ") (display vec) (newline) 
-		;(display "get-components-from-pairs table-in-pairs: ") (display table-in-pairs) (newline) (newline)
+		(display "get-components-from-pairs vec: ") (display vec) (newline) 
+		(display "get-components-from-pairs table-in-pairs: ") (display table-in-pairs) (newline) (newline)
 		(cond ((null? table-in-pairs) "")
 			  ((member (cadar table-in-pairs) (vector->list vec)) (string-append (caar table-in-pairs) ", " (get-components-from-pairs vec (cdr table-in-pairs))))
 			  (else (get-components-from-pairs vec (cdr table-in-pairs))))))
@@ -3410,7 +3528,7 @@
 
 (define create_global_env_for_assembly
 		(lambda (global-env-table-as-pairs)
-			;(display "create_global_env_for_assembly: ") (display (cadar global-env-table-as-pairs)) (newline) (newline)
+			;(display "create_global_env_for_assembly: ") (display global-env-table-as-pairs) (newline) (newline)
 			(cond  ((null? global-env-table-as-pairs) "") 
 				   ((in-primitive-procedures? (cadar global-env-table-as-pairs)) (create_global_env_for_assembly (cdr global-env-table-as-pairs)))
 				   (else (string-append (caar global-env-table-as-pairs) ":\n" "\tdq SOB_UNDEFINED\n\n" (create_global_env_for_assembly (cdr global-env-table-as-pairs)))))))
@@ -3504,7 +3622,7 @@
 (define in-primitive-procedures?
 	(lambda (exp)
 		(member exp '(append apply < = > + / * - boolean? car cdr char->integer char? cons denominator
-			eq? integer? integer->char list make-string make-vector map not
+			eq? integer? integer->char list make-string make-vector map not 
 			null? number? numerator pair? procedure? rational? remainder set-car! set-cdr!
 			string-length string-ref string-set! string->symbol string? symbol? symbol->string
 			vector vector-length vector-ref vector-set! vector? zero?))))

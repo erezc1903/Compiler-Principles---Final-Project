@@ -1,6 +1,6 @@
 set logging file gdbDump.log
 set logging on
-break start_of_instructions
+break endCountArgs101
 display /i $pc
 display /x $rax
 display /x $rbx
