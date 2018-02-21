@@ -167,41 +167,23 @@ sobTrue:
 sobNil:
 	dq SOB_NIL
 
-sobFrac1_4:
-	dq MAKE_LITERAL_FRACTION (sobInt1, sobInt4)
-
-sobInt1:
-	dq MAKE_LITERAL (T_INTEGER, 1)
-
-sobInt4:
-	dq MAKE_LITERAL (T_INTEGER, 4)
-
-sobFrac1_2:
-	dq MAKE_LITERAL_FRACTION (sobInt1, sobInt2)
+sobNegInt1:
+	dq MAKE_LITERAL (T_INTEGER, -1)
 
 sobInt2:
 	dq MAKE_LITERAL (T_INTEGER, 2)
 
-sobNegInt3:
-	dq MAKE_LITERAL (T_INTEGER, -3)
+sobInt3:
+	dq MAKE_LITERAL (T_INTEGER, 3)
 
-sobFrac2_5:
-	dq MAKE_LITERAL_FRACTION (sobInt2, sobInt5)
+sobFrac1_2:
+	dq MAKE_LITERAL_FRACTION (sobInt1, sobInt2)
 
-sobInt5:
-	dq MAKE_LITERAL (T_INTEGER, 5)
+sobInt1:
+	dq MAKE_LITERAL (T_INTEGER, 1)
 
-sobInt7:
-	dq MAKE_LITERAL (T_INTEGER, 7)
-
-sobNegFrac1_21:
-	dq MAKE_LITERAL_FRACTION (sobNegInt1, sobInt21)
-
-sobNegInt1:
-	dq MAKE_LITERAL (T_INTEGER, -1)
-
-sobInt21:
-	dq MAKE_LITERAL (T_INTEGER, 21)
+sobNegInt2:
+	dq MAKE_LITERAL (T_INTEGER, -2)
 
 sobUndef:
 	dq SOB_UNDEFINED
@@ -1100,32 +1082,72 @@ greater_than_code:
 
 	mov rcx, qword [rbp + 8*3]
 	cmp rcx, 1
-	je .doneCheckGT
+	je .retTrue
 .check_greater_than:
 
-	mov rcx, 0 ; rcx is a counter for the number of arguments
+	mov r8, 0 ; r8 is a counter for the number of arguments
 	mov r9, qword [rbp + 8*3]
 	dec r9
 .check_greater_than_loop:
 
-	cmp rcx,r9
-	je .doneCheckGT
+	cmp r8,r9
+	je .retTrue
 
-	mov rbx, qword [rbp + 8*(4 + rcx)]
-	mov rbx, [rbx]
-	DATA rbx
-	mov rdx, qword [rbp + 8*(5 + rcx)]
-	mov rdx, [rdx]
-	DATA rdx
-	cmp rbx, rdx
+	mov r10, qword [rbp + 8*(4 + r8)]
+	mov r10, [r10]
+	mov r11, r10
+	TYPE r10
+	cmp r10, T_FRACTION
+	jne .makeFirstFraction
+	mov r10, r11
+	NUMERATOR r10 ; holds the numerator -a- of the first number
+	DATA r10
+	DENOMINATOR r11 ; holds the denominator -b- of the second number
+	DATA r11
+.continueComparingAfterFirst:
+
+	mov r12, qword [rbp + 8*(5 + r8)]
+	mov r12, [r12]
+	mov r13, r12
+	TYPE r12
+	cmp r12, T_FRACTION
+	jne .makeSecondFraction
+	mov r12, r13
+	NUMERATOR r12 ; holds the numerator -c- of the number to be added
+	DATA r12
+	DENOMINATOR r13 ; holds the denominator -d- of the number to be added
+	DATA r13
+.continueComparingAfterSecond:
+
+	mov rax, r10
+	mul r13
+	mov r10, rax
+	mov rax, r11
+	mul r12
+	mov r12, rax
+	cmp r10, r12
 	jle .retFalse
-	inc rcx
+	inc r8
 	jmp .check_greater_than_loop
+.makeFirstFraction:
+
+	mov r10, qword [rbp + 8*(4 + r8)]
+	mov r10, [r10]
+	DATA r10
+	mov r11, 1
+	jmp .continueComparingAfterFirst
+.makeSecondFraction:
+
+	mov r12, qword [rbp + 8*(5 + r8)]
+	mov r12, [r12]
+	DATA r12
+	mov r13, 1
+	jmp .continueComparingAfterSecond
 .retFalse:
 
 	mov rax, sobFalse
 	jmp .done
-.doneCheckGT:
+.retTrue:
 
 	mov rax, sobTrue
 	jmp .done
@@ -1172,32 +1194,72 @@ less_than_code:
 
 	mov rcx, qword [rbp + 8*3]
 	cmp rcx, 1
-	je .doneCheckLT
+	je .retTrue
 .check_less_than:
 
-	mov rcx, 0 ; rcx is a counter for the number of arguments
+	mov r8, 0 ; r8 is a counter for the number of arguments
 	mov r9, qword [rbp + 8*3]
 	dec r9
 .check_less_than_loop:
 
-	cmp rcx,r9
-	je .doneCheckLT
+	cmp r8,r9
+	je .retTrue
 
-	mov rbx, qword [rbp + 8*(4 + rcx)]
-	mov rbx, [rbx]
-	DATA rbx
-	mov rdx, qword [rbp + 8*(5 + rcx)]
-	mov rdx, [rdx]
-	DATA rdx
-	cmp rbx, rdx
-	jge .retFalse
-	inc rcx
+	mov r10, qword [rbp + 8*(4 + r8)]
+	mov r10, [r10]
+	mov r11, r10
+	TYPE r10
+	cmp r10, T_FRACTION
+	jne .makeFirstFraction
+	mov r10, r11
+	NUMERATOR r10 ; holds the numerator -a- of the first number
+	DATA r10
+	DENOMINATOR r11 ; holds the denominator -b- of the second number
+	DATA r11
+.continueComparingAfterFirst:
+
+	mov r12, qword [rbp + 8*(5 + r8)]
+	mov r12, [r12]
+	mov r13, r12
+	TYPE r12
+	cmp r12, T_FRACTION
+	jne .makeSecondFraction
+	mov r12, r13
+	NUMERATOR r12 ; holds the numerator -c- of the number to be added
+	DATA r12
+	DENOMINATOR r13 ; holds the denominator -d- of the number to be added
+	DATA r13
+.continueComparingAfterSecond:
+
+	mov rax, r10
+	mul r13
+	mov r10, rax
+	mov rax, r11
+	mul r12
+	mov r12, rax
+	cmp r12, r10
+	jle .retFalse
+	inc r8
 	jmp .check_less_than_loop
+.makeFirstFraction:
+
+	mov r10, qword [rbp + 8*(4 + r8)]
+	mov r10, [r10]
+	DATA r10
+	mov r11, 1
+	jmp .continueComparingAfterFirst
+.makeSecondFraction:
+
+	mov r12, qword [rbp + 8*(5 + r8)]
+	mov r12, [r12]
+	DATA r12
+	mov r13, 1
+	jmp .continueComparingAfterSecond
 .retFalse:
 
 	mov rax, sobFalse
 	jmp .done
-.doneCheckLT:
+.retTrue:
 
 	mov rax, sobTrue
 	jmp .done
@@ -1244,32 +1306,72 @@ equal_code:
 
 	mov rcx, qword [rbp + 8*3]
 	cmp rcx, 1
-	je .doneCheckEQ
+	je .retTrue
 .check_equal:
 
-	mov rcx, 0 ; rcx is a counter for the number of arguments
+	mov r8, 0 ; r8 is a counter for the number of arguments
 	mov r9, qword [rbp + 8*3]
 	dec r9
 .check_equal_loop:
 
-	cmp rcx,r9
-	je .doneCheckEQ
+	cmp r8,r9
+	je .retTrue
 
-	mov rbx, qword [rbp + 8*(4 + rcx)]
-	mov rbx, [rbx]
-	DATA rbx
-	mov rdx, qword [rbp + 8*(5 + rcx)]
-	mov rdx, [rdx]
-	DATA rdx
-	cmp rbx, rdx
+	mov r10, qword [rbp + 8*(4 + r8)]
+	mov r10, [r10]
+	mov r11, r10
+	TYPE r10
+	cmp r10, T_FRACTION
+	jne .makeFirstFraction
+	mov r10, r11
+	NUMERATOR r10 ; holds the numerator -a- of the first number
+	DATA r10
+	DENOMINATOR r11 ; holds the denominator -b- of the second number
+	DATA r11
+.continueComparingAfterFirst:
+
+	mov r12, qword [rbp + 8*(5 + r8)]
+	mov r12, [r12]
+	mov r13, r12
+	TYPE r12
+	cmp r12, T_FRACTION
+	jne .makeSecondFraction
+	mov r12, r13
+	NUMERATOR r12 ; holds the numerator -c- of the number to be added
+	DATA r12
+	DENOMINATOR r13 ; holds the denominator -d- of the number to be added
+	DATA r13
+.continueComparingAfterSecond:
+
+	mov rax, r10
+	mul r13
+	mov r10, rax
+	mov rax, r11
+	mul r12
+	mov r12, rax
+	cmp r10, r12
 	jne .retFalse
-	inc rcx
+	inc r8
 	jmp .check_equal_loop
+.makeFirstFraction:
+
+	mov r10, qword [rbp + 8*(4 + r8)]
+	mov r10, [r10]
+	DATA r10
+	mov r11, 1
+	jmp .continueComparingAfterFirst
+.makeSecondFraction:
+
+	mov r12, qword [rbp + 8*(5 + r8)]
+	mov r12, [r12]
+	DATA r12
+	mov r13, 1
+	jmp .continueComparingAfterSecond
 .retFalse:
 
 	mov rax, sobFalse
 	jmp .done
-.doneCheckEQ:
+.retTrue:
 
 	mov rax, sobTrue
 	jmp .done
@@ -3842,32 +3944,90 @@ endLabel107:
 ; start of applic of lambda-simple code: 
 
 	; codegen for const start
-	mov rax, sobNegFrac1_21
+	mov rax, sobNegInt1
 	;code gen for constant end
 	push rax
+; start of applic of lambda-simple code: 
+
 	; codegen for const start
-	mov rax, sobInt7
-	;code gen for constant end
-	push rax
-	; codegen for const start
-	mov rax, sobFrac2_5
-	;code gen for constant end
-	push rax
-	; codegen for const start
-	mov rax, sobNegInt3
+	mov rax, sobNegInt2
 	;code gen for constant end
 	push rax
 	; codegen for const start
 	mov rax, sobFrac1_2
 	;code gen for constant end
 	push rax
+
+	push 2
+	mov rax, multiply
+	mov r10, [rax]
+	mov rcx, r10
+	TYPE rcx
+	cmp rcx, T_CLOSURE
+	jne not_a_closure132
+	mov rbx, r10
+	CLOSURE_ENV rbx
+	push rbx
+	CLOSURE_CODE r10
+	call r10
+	add rsp, 8*1
+	jmp done_closure132
+not_a_closure132:
+
+	mov rax, sobVoid
+done_closure132:
+
+	add rsp, 8*3
+
+; end of applic of lambda-simple code: 
+
+	push rax
+; start of applic of lambda-simple code: 
+
 	; codegen for const start
-	mov rax, sobFrac1_4
+	mov rax, sobInt3
+	;code gen for constant end
+	push rax
+	; codegen for const start
+	mov rax, sobInt2
 	;code gen for constant end
 	push rax
 
-	push 6
-	mov rax, divide
+	push 2
+	mov rax, subtract
+	mov r10, [rax]
+	mov rcx, r10
+	TYPE rcx
+	cmp rcx, T_CLOSURE
+	jne not_a_closure131
+	mov rbx, r10
+	CLOSURE_ENV rbx
+	push rbx
+	CLOSURE_CODE r10
+	call r10
+	add rsp, 8*1
+	jmp done_closure131
+not_a_closure131:
+
+	mov rax, sobVoid
+done_closure131:
+
+	add rsp, 8*3
+
+; end of applic of lambda-simple code: 
+
+	push rax
+	; codegen for const start
+	mov rax, sobNegInt1
+	;code gen for constant end
+	push rax
+	; codegen for const start
+	mov rax, sobNegInt1
+	;code gen for constant end
+	push rax
+
+	push 5
+	mov rax, equal
 	mov r10, [rax]
 	mov rcx, r10
 	TYPE rcx
@@ -3885,7 +4045,7 @@ not_a_closure130:
 	mov rax, sobVoid
 done_closure130:
 
-	add rsp, 8*7
+	add rsp, 8*6
 
 ; end of applic of lambda-simple code: 
 
