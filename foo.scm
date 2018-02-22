@@ -6,10 +6,11 @@
 ;#t
 ;#f
 ;#\k
-;#\newline
+#\newline
+#\tab
 ;'()
 ;"av"
-;"at\nme"
+"at\nme"
 ;'(1 . 2)
 ;'(1 . (2 3))
 ;'#(1 "at" 2 4 "ag")

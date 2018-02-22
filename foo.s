@@ -167,23 +167,14 @@ sobTrue:
 sobNil:
 	dq SOB_NIL
 
-sobNegInt1:
-	dq MAKE_LITERAL (T_INTEGER, -1)
+sobChar1:
+	dq MAKE_LITERAL(T_CHAR, 10)
 
-sobInt2:
-	dq MAKE_LITERAL (T_INTEGER, 2)
+sobChar2:
+	dq MAKE_LITERAL(T_CHAR, 9)
 
-sobInt3:
-	dq MAKE_LITERAL (T_INTEGER, 3)
-
-sobFrac1_2:
-	dq MAKE_LITERAL_FRACTION (sobInt1, sobInt2)
-
-sobInt1:
-	dq MAKE_LITERAL (T_INTEGER, 1)
-
-sobNegInt2:
-	dq MAKE_LITERAL (T_INTEGER, -2)
+sobString0:
+	MAKE_LITERAL_STRING "at", CHAR_NEWLINE, "me"
 
 sobUndef:
 	dq SOB_UNDEFINED
@@ -3941,114 +3932,31 @@ endLabel107:
 ; end
 
 ; start
-; start of applic of lambda-simple code: 
-
 	; codegen for const start
-	mov rax, sobNegInt1
+	mov rax, sobChar1
 	;code gen for constant end
+	mov rax, [rax]
 	push rax
-; start of applic of lambda-simple code: 
+	call write_sob_if_not_void
+	add rsp, 8
 
+; end
+
+; start
 	; codegen for const start
-	mov rax, sobNegInt2
+	mov rax, sobChar2
 	;code gen for constant end
+	mov rax, [rax]
 	push rax
+	call write_sob_if_not_void
+	add rsp, 8
+
+; end
+
+; start
 	; codegen for const start
-	mov rax, sobFrac1_2
+	mov rax, sobString0
 	;code gen for constant end
-	push rax
-
-	push 2
-	mov rax, multiply
-	mov r10, [rax]
-	mov rcx, r10
-	TYPE rcx
-	cmp rcx, T_CLOSURE
-	jne not_a_closure132
-	mov rbx, r10
-	CLOSURE_ENV rbx
-	push rbx
-	CLOSURE_CODE r10
-	call r10
-	add rsp, 8*1
-	jmp done_closure132
-not_a_closure132:
-
-	mov rax, sobVoid
-done_closure132:
-
-	add rsp, 8*3
-
-; end of applic of lambda-simple code: 
-
-	push rax
-; start of applic of lambda-simple code: 
-
-	; codegen for const start
-	mov rax, sobInt3
-	;code gen for constant end
-	push rax
-	; codegen for const start
-	mov rax, sobInt2
-	;code gen for constant end
-	push rax
-
-	push 2
-	mov rax, subtract
-	mov r10, [rax]
-	mov rcx, r10
-	TYPE rcx
-	cmp rcx, T_CLOSURE
-	jne not_a_closure131
-	mov rbx, r10
-	CLOSURE_ENV rbx
-	push rbx
-	CLOSURE_CODE r10
-	call r10
-	add rsp, 8*1
-	jmp done_closure131
-not_a_closure131:
-
-	mov rax, sobVoid
-done_closure131:
-
-	add rsp, 8*3
-
-; end of applic of lambda-simple code: 
-
-	push rax
-	; codegen for const start
-	mov rax, sobNegInt1
-	;code gen for constant end
-	push rax
-	; codegen for const start
-	mov rax, sobNegInt1
-	;code gen for constant end
-	push rax
-
-	push 5
-	mov rax, equal
-	mov r10, [rax]
-	mov rcx, r10
-	TYPE rcx
-	cmp rcx, T_CLOSURE
-	jne not_a_closure130
-	mov rbx, r10
-	CLOSURE_ENV rbx
-	push rbx
-	CLOSURE_CODE r10
-	call r10
-	add rsp, 8*1
-	jmp done_closure130
-not_a_closure130:
-
-	mov rax, sobVoid
-done_closure130:
-
-	add rsp, 8*6
-
-; end of applic of lambda-simple code: 
-
 	mov rax, [rax]
 	push rax
 	call write_sob_if_not_void

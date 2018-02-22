@@ -155,9 +155,9 @@
 				(handle_integer->char) ;V
 				(handle_char->integer) ;V
 				(handle_plus) ;V
-				(handle_greater_than)
-				(handle_less_than)
-				(handle_equal)
+				(handle_greater_than) ;V
+				(handle_less_than) ;V
+				(handle_equal) ;V
 				(handle_remainder) ;V
 				(handle_string_length); V
 				(handle_string_ref) ;V
@@ -174,7 +174,7 @@
 				(handle_vector_set) ;V
 				(handle_set_car) ;V
 				(handle_set_cdr) ;V
-				(handle_divide)
+				(handle_divide) ;V
 				 "")))
 
 
@@ -3936,7 +3936,7 @@
 			  ((symbol? (car const-table)) 
 			  		(string-append (find-const-in-pairs (car const-table) table-in-pairs) ":" "\n" "\tdq MAKE_LITERAL(T_SYMBOL, " (symbol->string (car const-table)) ")\n\n" (create_const_for_assembly (cdr const-table) table-in-pairs num)))
 			  ((string? (car const-table)) 
-			  		(string-append (find-const-in-pairs (car const-table) table-in-pairs) ":" "\n" "\tMAKE_LITERAL_STRING \"" (car const-table) "\"\n\n" (create_const_for_assembly (cdr const-table) table-in-pairs num)))
+			  		(string-append (find-const-in-pairs (car const-table) table-in-pairs) ":" "\n" "\tMAKE_LITERAL_STRING " (check_for_special_chars (map char->integer (string->list (car const-table)))) "\n\n" (create_const_for_assembly (cdr const-table) table-in-pairs num)))
 			  ((null? (car const-table)) 
 			  		(string-append "sobNil:" "\n" "\tdq SOB_NIL\n\n" (create_const_for_assembly (cdr const-table) table-in-pairs num)))
 			  ((vector? (car const-table)) 
@@ -3991,6 +3991,36 @@
 			  ((or (list? con) (pair? con)) (list (string-append "sobPair" (number->string num)) con))
 			  (else (list "sobVoid" con))
 			  )))
+
+
+(define check_for_special_chars
+	(lambda (char_list)
+		(fold-left
+			(lambda (acc charAsNum)
+				(cond
+					((= charAsNum 0) (if (null? (string->list acc))
+										 (string-append acc "CHAR_NUL")
+										 (string-append acc ", CHAR_NUL")))
+					((= charAsNum 9) (if (null? (string->list acc))
+										 (string-append acc "CHAR_TAB")
+										 (string-append acc ", CHAR_TAB")))
+					((= charAsNum 10) (if (null? (string->list acc))
+										 (string-append acc "CHAR_NEWLINE")
+										 (string-append acc ", CHAR_NEWLINE")))
+					((= charAsNum 12) (if (null? (string->list acc))
+										 (string-append acc "CHAR_PAGE")
+										 (string-append acc ", CHAR_PAGE")))
+					((= charAsNum 13) (if (null? (string->list acc))
+										 (string-append acc "CHAR_RETURN")
+										 (string-append acc ", CHAR_RETURN")))
+					((= charAsNum 32) (if (null? (string->list acc))
+										  (string-append acc "CHAR_SPACE")
+										  (string-append acc ", CHAR_SPACE")))
+					(else (cond ((null? (string->list acc)) (string-append acc "\"" (string (integer->char charAsNum)) "\""))
+							    ((= (char->integer (car (reverse (string->list acc)))) 34) (string-append (list->string (reverse (cdr (reverse (string->list acc))))) (string (integer->char charAsNum)) "\""))
+								(else (string-append acc ", \"" (string (integer->char charAsNum)) "\""))))))
+			"\"\""
+			char_list)))
 
 ;=========================================================================================================================================
 ;======================================================= END OF FUNCTIONS FOR CONSTANT TABLE =============================================
