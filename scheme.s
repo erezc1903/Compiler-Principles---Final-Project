@@ -143,6 +143,14 @@
 	%%LstrEnd:
 %endmacro
 
+%macro MAKE_LITERAL_SYMBOL 1
+	dq (((((%%LstrEnd - %%Lstr) << ((WORD_SIZE - TYPE_BITS) >> 1)) | (%%Lstr - start_of_data)) << TYPE_BITS) | T_SYMBOL)
+	%%Lstr:
+	db %1
+	%%LstrEnd:
+%endmacro
+
+
 %macro STRING_LENGTH 1
 	DATA_UPPER %1
 %endmacro
@@ -678,8 +686,86 @@ write_sob_symbol:
 	push rbp
 	mov rbp, rsp
 
+	mov rax, qword [rbp + 8 + 1*8]
+	mov rcx, rax
+	STRING_LENGTH rcx
+	STRING_ELEMENTS rax
+
+.loop:
+	cmp rcx, 0
+	je .done
+	mov bl, byte [rax]
+	and rbx, 0xff
+
+	cmp rbx, CHAR_TAB
+	je .ch_tab
+	cmp rbx, CHAR_NEWLINE
+	je .ch_newline
+	cmp rbx, CHAR_PAGE
+	je .ch_page
+	cmp rbx, CHAR_RETURN
+	je .ch_return
+	cmp rbx, CHAR_SPACE
+	jl .ch_hex
+	
+	mov rdi, .fs_simple_char_for_symbol
+	mov rsi, rbx
+	jmp .printf
+	
+.ch_hex:
+	mov rdi, .fs_hex_char_for_symbol
+	mov rsi, rbx
+	jmp .printf
+	
+.ch_tab:
+	mov rdi, .fs_tab_for_symbol
+	mov rsi, rbx
+	jmp .printf
+	
+.ch_page:
+	mov rdi, .fs_page_for_symbol
+	mov rsi, rbx
+	jmp .printf
+	
+.ch_return:
+	mov rdi, .fs_return_for_symbol
+	mov rsi, rbx
+	jmp .printf
+
+.ch_newline:
+	mov rdi, .fs_newline_for_symbol
+	mov rsi, rbx
+
+.printf:
+	push rax
+	push rcx
+	mov rax, 0
+	call printf
+	pop rcx
+	pop rax
+
+	dec rcx
+	inc rax
+	jmp .loop
+
+.done:
 	leave
 	ret
+
+section .data
+.fs_simple_char_for_symbol:
+	db "%c", 0
+.fs_hex_char_for_symbol:
+	db "\x%02x;", 0	
+.fs_tab_for_symbol:
+	db "\t", 0
+.fs_page_for_symbol:
+	db "\f", 0
+.fs_return_for_symbol:
+	db "\r", 0
+.fs_newline_for_symbol:
+	db "\n", 0
+
 	
 write_sob_fraction:
 	push rbp
@@ -756,5 +842,4 @@ write_sob_if_not_void:
 section .data
 .newline:
 	db CHAR_NEWLINE, 0
-	
 	

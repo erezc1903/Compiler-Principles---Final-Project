@@ -6,11 +6,10 @@
 ;#t
 ;#f
 ;#\k
-#\newline
-#\tab
+;#\newline
 ;'()
 ;"av"
-"at\nme"
+;"at\nme"
 ;'(1 . 2)
 ;'(1 . (2 3))
 ;'#(1 "at" 2 4 "ag")
@@ -18,7 +17,9 @@
 ;'(1 2 3 (4 (5 6 7) 8 9))
 ;'(4 5 6 . #(4 8 16 (#\a #\b #\c)))
 ;'(4 5 6 . #(4 8 16 (1 2 3)))
-;;'a ;; to figure out how to handle symbol type const
+;'a ;; to figure out how to handle symbol type cons
+;'b
+;'c
 ;;; Constants
 
 
@@ -219,13 +220,77 @@
 
 ;;map
 
-;(map cons '(1 2 3) '(1 2 3))
-;(map + '(1 2 3) '(1 2 3))
+;(map boolean? '(#t #t #f "bla"))
+
+;;(apply list (cons (car (car '((1 2) (1 2) (1 2)))) (cons (car (car (cdr '((1 2) (1 2) (1 2))))) (cons (car (car (cdr (cdr '((1 2) (1 2) (1 2)))))) '()))))
+
+;((lambda (x y) (list)) 1 '(2))
+
+;(map list '(1 2) '(1 2) '(1 2))
+
+;(map + '(1 2) '(1 2))
+
+
+; test 139
+;(map number? '(1 2 3))
+
+;; test 140
+;(map boolean? '(#t #t #f "bla"))
+
+;; test 141
+;(map (lambda (x) (if (integer? x) (char->integer (integer->char x)) 0)) '(1 2 3 #f))
+
+;; test 142
+;(map (lambda (x) (if (string? x) (string->symbol x) 0)) '("a1" "b2" 3 "cf"))
+
+;(map number? '(1 2))
+
+;(mapList list ('(1 2) '(1 2) '(1 2)))
+
+;(cons (apply list (map1 car '((1 2) (1 2) (1 2)))) (mapList list (map1 cdr '((1 2) (1 2) (1 2)))))
+
+;(cons '(1 1 1) '((2 2 2)))
+
+;(map1 car ((1 2) (1 2) (1 2))) = (cons (car (1 2)) (map1 car ((1 2) (1 2)))) = (cons (car (1 2)) (cons (car (1 2)) (cons (car (1 2)) '())))
+
+;(map1 car ((1 2) (1 2))) = (cons (car (1 2)) (map1 car ((1 2)))) = (cons (car (1 2)) (cons (car (1 2)) '()))
+
+;(map1 car ((1 2))) = (cons (car (1 2)) (map1 car ())) = (cons (car (1 2)) '())
+
+;(map1 car ()) = '()
+
+
+
+;(mapList list (map1 cdr ((1 2) (1 2) (1 2))))
+
+;(map1 cdr ((1 2) (1 2) (1 2))) = (cons (cdr (1 2)) (map1 cdr ((1 2) (1 2)))) = 
+;(cons (cdr '(1 2)) (cons (cdr '(1 2)) (cons (cdr '(1 2)) '())))
+
+;(map1 cdr ((1 2) (1 2))) = (cons (cdr (1 2)) (map1 cdr ((1 2)))) = 
+;(cons (cdr '(1 2)) (cons (cdr '(1 2)) '()))
+
+;(map1 cdr ((1 2))) = (cons (cdr (1 2)) (map1 cdr ())) = 
+;(cons (cdr '(1 2)) '())
+
+;(map1 cdr ()) = '()
+
+;(cons (cons (car '(1 2)) (cons (car '(1 2)) (cons (car '(1 2)) '()))) (cons (cdr '(1 2)) (cons (cdr '(1 2)) (cons (cdr '(1 2)) '()))))
+
+
+;(map list '(1 2 3) '(1 2 3) '(1 2 3))
+;(map + '(1 2 3) '(1 2 3) '(1 2 3) '(1 2 3))
 ;(map remainder '(13 13 -13 -13) '(4 -4 -4 4))
 ;(map cons '(1 #t #f 3) '(1 2 3 4))
 ;(map boolean? '(1 #f "a"))
 
+;(cons (+ 1 2) (apply + '(3 3)))
+;(cons (+ 1 2) (- 2 5))
 ;(append '(1 2) '(3 (4)))
+;(apply boolean? '(3 #t #\a))
+;(car '((1 2) (3 (4))))
+;(cdr '((1 2) (3 (4))))
+;(cdr '((1 2) (3 ((4)))))
+
 
 ;not ; #f
 ;(not 5) ; #f
@@ -243,6 +308,8 @@
 ;((lambda (x y z) (null? x)) 69 "snir" '()) ; #f
 ;((lambda (x y z) (null? y)) 69 "snir" '()) ; #f
 ;((lambda (x y z) (null? z)) 69 "snir" '()) ; #t
+
+;(null? '((1 2 3) (1 2 3) (1 2 3)))
 
 ;number?
 ;(number? 48 4/8) ; exception incorrect arg count

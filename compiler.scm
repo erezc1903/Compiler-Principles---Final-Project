@@ -32,37 +32,43 @@
 
 
 (define code-gen
-	  (lambda (pe depth const-table global-env)
+	  (lambda (pe depth symbol-table const-table global-env)
 	  	;(display "const-table in code-gen: ") (display const-table) (newline)
 	  	;(display "pe in code-gen: ") (display pe) (newline) (newline)
 	      (string-append  
-	      	(cond ((tagged-by? pe 'const) (string-append "\t; codegen for const start\n\tmov rax, " (find-const-in-pairs (cadr pe) const-table) "\n\t;code gen for constant end\n"))
-			       ((tagged-by? pe 'if3) (handle_if pe depth const-table global-env))
-			       ((tagged-by? pe 'seq) (handle_seq pe depth const-table global-env))
-			       ((tagged-by? pe 'or) (handle_or (cadr pe) depth (make-end-label-for-or) const-table global-env))
-			       ((tagged-by? pe 'define) (handle_define (cdr pe) depth const-table global-env))
-			       ((tagged-by? pe 'applic) (handle_applic pe depth const-table global-env))
-			       ((tagged-by? pe 'lambda-simple) (handle_lambda_simple (cadr pe) (caddr pe) depth const-table global-env))
-			       ((tagged-by? pe 'tc-applic) (handle_applic pe depth const-table global-env))
-			       ((tagged-by? pe 'lambda-opt) (handle_lambda_opt (cadr pe) (cadddr pe) depth const-table global-env))
+	      	(cond ((and (tagged-by? pe 'const) (not (symbol? (cadr pe)))) (string-append "\t; codegen for const start\n\tmov rax, " (find-const-in-pairs (cadr pe) const-table) "\n\t;code gen for constant end\n"))
+	      		   ((and (tagged-by? pe 'const) (symbol? (cadr pe))) (string-append "codegen_for_symbol_start_for" (find-const-in-pairs (cadr pe) symbol-table) ":\n\n"
+	      		   																								"\tmov rax, " (find-const-in-pairs (cadr pe) symbol-table) "\n"
+	      		   																								"\tpush rax\n"
+	      		   																								"\tpush SymbolTable\n"
+	      		   																								"\tcall findSymbol\n" 
+	      		   																								"\n\t;code gen for symbol end\n"))
+			       ((tagged-by? pe 'if3) (handle_if pe depth symbol-table const-table global-env))
+			       ((tagged-by? pe 'seq) (handle_seq pe depth symbol-table const-table global-env))
+			       ((tagged-by? pe 'or) (handle_or (cadr pe) depth (make-end-label-for-or) symbol-table const-table global-env))
+			       ((tagged-by? pe 'define) (handle_define (cdr pe) depth symbol-table const-table global-env))
+			       ((tagged-by? pe 'applic) (handle_applic pe depth symbol-table const-table global-env))
+			       ((tagged-by? pe 'lambda-simple) (handle_lambda_simple (cadr pe) (caddr pe) depth symbol-table const-table global-env))
+			       ((tagged-by? pe 'tc-applic) (handle_applic pe depth symbol-table const-table global-env))
+			       ((tagged-by? pe 'lambda-opt) (handle_lambda_opt (cadr pe) (cadddr pe) depth symbol-table const-table global-env))
 			       ((tagged-by? pe 'pvar) (handle_pvar pe))
 			       ((tagged-by? pe 'bvar) (handle_bvar pe))
-			       ((tagged-by? pe 'fvar) (handle_fvar (cadr pe) depth const-table global-env))
-			       ((tagged-by? pe 'set) (string-append (code-gen (caddr pe) depth const-table global-env)
+			       ((tagged-by? pe 'fvar) (handle_fvar (cadr pe) depth symbol-table const-table global-env))
+			       ((tagged-by? pe 'set) (string-append (code-gen (caddr pe) symbol-table depth const-table global-env)
 			       											"\tmov r10, rax\n"
-			       											(code-gen (cadr pe) depth const-table global-env)
+			       											(code-gen (cadr pe) depth symbol-table const-table global-env)
 			       											"\tmov qword [rax], r10\n"
 			       											"\tmov rax, sobVoid\n"))
-			       ((tagged-by? pe 'box) (string-append (code-gen (cadr pe) depth const-table global-env)
+			       ((tagged-by? pe 'box) (string-append (code-gen (cadr pe) symbol-table depth const-table global-env)
 			      									   "\tmov r10, rax\n"
 			      									   "\tmov rdi, 8\n"
 			      									   "\tcall malloc\n"
 			      									   "\tmov qword [rax], r10\n"))
-			       ((tagged-by? pe 'box-get) (string-append (code-gen (cadr pe) depth const-table global-env)
+			       ((tagged-by? pe 'box-get) (string-append (code-gen (cadr pe) depth symbol-table const-table global-env)
 															"\tmov rax, [rax]\n"))
-			       ((tagged-by? pe 'box-set) (string-append (code-gen (caddr pe) depth const-table global-env)
+			       ((tagged-by? pe 'box-set) (string-append (code-gen (caddr pe) depth symbol-table const-table global-env)
 			       											"\tmov r10, rax\n"
-			       											(code-gen (cadr pe) depth const-table global-env)
+			       											(code-gen (cadr pe) depth symbol-table const-table global-env)
 			       											"\tmov qword [rax], r10\n"
 			       											"\tmov rax, sobVoid\n"))
 			       (else ""))))
@@ -77,20 +83,32 @@
 			  (const-table (const_table input))
 			  (const-table-as-list-of-pairs (map (lambda (e) (set! index (+ index 1)) (pairs_of_name_and_object e index)) const-table))
 			  (global-env (append primitive-procedures (global_env input)))
-			  (global-env-as-pairs (map pairs_of_label_and_name global-env)))
-			  ;(symbol-table (symbol_table input))
+			  (global-env-as-pairs (map pairs_of_label_and_name global-env))
+			  (symbol-table (create-symbol-table input)))
 
 			;(display "global-env-as-pairs: ") (display global-env-as-pairs) (newline) (newline)
 			;(display "input: ") (display input) (newline) (newline)
-			;(display "const-table-as-list-of-pairs: ") (display const-table-as-list-of-pairs) (newline) (newline)
+			(display "const-table: ") (display const-table) (newline) (newline)
+			(display "const-table-as-list-of-pairs: ") (display const-table-as-list-of-pairs) (newline) (newline)
+			(display "symbol-table: ") (display symbol-table) (newline) (newline)
 
 
 			(fprintf out-port "%include \"scheme.s\"\n\n") 
 			(fprintf out-port "%include \"gcd.s\"\n\n") 
 			
 			(fprintf out-port "section .bss\n\n") 
+
+			(fprintf out-port "\tSymbolTable: resq  1\n\n")
+
+
 			
 			(fprintf out-port "section .data\n\n") 
+
+			(fprintf out-port (string-append  "size_i:  ; Used to determine the size of the structure\n"
+											  "\tstruc node\n"
+											  "\t\tsymbol: resq  1\n"
+											  "\t\tnext: resq  1\n"
+											  "\tendstruc\n\n"))
 
 			;(fprintf out-port "globel_env:\n\n")
 
@@ -100,15 +118,79 @@
 
 			(fprintf out-port (create_const_for_assembly const-table const-table-as-list-of-pairs 0))
 
+			(fprintf out-port (create-string-of-symbols symbol-table))
+
 			(fprintf out-port "\n\nsection .text\n\n")
 			(fprintf out-port "\textern exit, printf, scanf, malloc\n\n")
 			(fprintf out-port "\tglobal main\n\n")
+
+			(fprintf out-port 
+							(string-append "addSymbol:\n"
+											"\t\tpush rbp            ; Save the stack\n"
+											"\t\tmov rbp, rsp\n"
+											"\t\tmov rdi, 16            ; 8 bytes for the symbol and 8 bytes for the next link\n"
+											"\t\tcall malloc         ; Call the malloc function - now eax has the address of the allocated memory\n"
+											"\t\tmov rbx, [rbp + 3*8]\n"
+											"\t\tmov [rax + symbol], rbx    ; Add the element to the node data field\n"
+											"\t\tmov qword [rax + next], sobNil   ; Address of the next element is NULL, because it is the last element in the list\n"
+											"\t\tmov rbx, [rbp + 2*8]  ; Retrieve the address to the Symbol Table\n"
+											"\t\tcmp qword [rbx], 0\n"
+											"\t\tje firstElement\n"
+											"\t\tmov rbx, [rbx]      ; This parameter was the address of the address\n"
+											"\t\t                     ; Now it is the address of the first element, in this case, not null\n"
+											"\t\t; If it is not NULL, find the address of the last element\n"
+																							
+											"next_element:\n\n"
+											"\t\tcmp qword [rbx + next], sobNil\n"
+											"\t\tje found_last\n"
+											"\t\tmov rbx, [rbx + next]\n"
+											"\t\tjmp next_element\n"
+
+											"found_last:\n\n"
+											"\t\tmov [rbx + next], rax   ; Last element is this one from the newly allocated memory block\n"
+											"\t\tjmp doneAdding\n"
+
+											"firstElement:\n\n"
+											"\t\tmov [rbx], rax ; Point the address of the first element to the allocated memory\n"
+
+											"doneAdding:\n\n"
+
+											"\t\tmov rsp, rbp\n"
+											"\t\tpop rbp\n"
+											"\t\tret               ; Return to the caller function and cleaning the stack\n\n"
+											
+											"findSymbol:\n\n"
+											    "\t\tpush rbp\n"
+											    "\t\tmov rbp, rsp\n"
+
+											    "\t\tmov r11, [rbp + 2*8]       ;the head of the symbol table\n"
+											    "\tsearch_loop:\n\n"
+											    "\t\tmov r13, r11\n"
+											    "\t\tmov r12, [rbp + 3*8]          ; Address of the address of the first element\n"
+											    "\t\tmov rax, [r12]              ; Address of the first element\n"
+											    "\t\tmov r11, [r11 + symbol]\n"
+											    "\t\tmov r11, [r11]\n"
+											    "\t\tmov r11, [r11]\n"
+											    "\t\tcmp r11, r12\n"
+											    "\t\tje done                  ; Don't do anything if the list is empty\n"
+											    "\t\tmov r11, r13\n"
+											    "\t\tmov r11, [r11 + next]       ; The next element in the list\n"
+											    "\t\tjmp search_loop\n"
+
+											"\tdone:\n\n"   
+												"\t\tmov rax, r11\n"
+											    "\t\tmov rsp, rbp\n"
+											    "\t\tpop rbp\n"
+											    "\t\tret\n"))
 
 			(fprintf out-port "main:\n\n")
 
 			(fprintf out-port "; =============================== PRIMITIVE FUNCTIONS =========================\n")
 			(fprintf out-port (creat-primitive-procedures global-env-as-pairs))
 			(fprintf out-port "; =============================== PRIMITIVE FUNCTIONS =========================\n")
+
+			(fprintf out-port "start_of_creation_of_symbol_table:\n\n")
+			(fprintf out-port (create-symbol-table-for-assembly symbol-table))
 
 			(fprintf out-port "\nstart_of_instructions:\n\n")
 			(fprintf out-port "\tpush rbp\n") 
@@ -117,7 +199,7 @@
 
 			(for-each (lambda (pe) 
 					(fprintf out-port 
-						(string-append "\n; start\n" (code-gen pe 0 const-table-as-list-of-pairs global-env-as-pairs)
+						(string-append "\n; start\n" (code-gen pe 0 symbol-table const-table-as-list-of-pairs global-env-as-pairs)
 							"\tmov rax, [rax]\n"
 							"\tpush rax\n"
 							"\tcall write_sob_if_not_void\n"
@@ -175,6 +257,7 @@
 				(handle_set_car) ;V
 				(handle_set_cdr) ;V
 				(handle_divide) ;V
+				;(handle_append)
 				 "")))
 
 
@@ -185,7 +268,7 @@
 ;=========================================================================================================================================
 
 (define handle_applic
-		(lambda (app-exp depth const-table global-env)
+		(lambda (app-exp depth symbol-table const-table global-env)
 			;(display "handle_applic app: ") (display app-exp) (newline)
 			;(display "handle_applic depth: ") (display depth) (newline) (newline)
 			
@@ -196,9 +279,9 @@
 				  ;(display "app: ") (display app) (newline)
 				  ;(if (equal? (cadr app) 'apply) (handle_apply app-exp depth const-table global-env)
 					  	(string-append "; start of applic of lambda-simple code: \n\n"
-										(push-args (reverse args) (length args) depth const-table global-env)
+										(push-args (reverse args) (length args) depth symbol-table const-table global-env)
 										"\tpush " (number->string (length args)) "\n"
-										(code-gen app depth const-table global-env)
+										(code-gen app depth symbol-table const-table global-env)
 										"\tmov r10, [rax]\n" 
 										"\tmov rcx, r10\n"
 										"\tTYPE rcx\n"
@@ -214,20 +297,22 @@
 										not-a-closure-label ":\n\n"
 										"\tmov rax, sobVoid\n"
 										done-closure-label ":\n\n"
-										"\tadd rsp, 8*" (number->string (+ 1 (length args))) "\n\n"
+										"\tpop r15\n"
+										"\tshl r15, 3\n"
+										"\tadd rsp, r15\n\n"
 										"; end of applic of lambda-simple code: \n\n"))
 					))
 
 ; we assume that the arg list comes reversed
 (define push-args 
-		(lambda (args numberOfArgs depth const-table global-env)
+		(lambda (args numberOfArgs depth symbol-table const-table global-env)
 			;(display "push-args args: ") (display args) (newline)
 			;(display "push-args numberOfArgs: ") (display numberOfArgs) (newline) (newline)
 			(if (= numberOfArgs 0)
 				"\n"
-				(string-append (code-gen (car args) depth const-table global-env)
+				(string-append (code-gen (car args) depth symbol-table const-table global-env)
 								"\tpush rax\n"
-								(push-args (cdr args) (length (cdr args)) depth const-table global-env)))))
+								(push-args (cdr args) (length (cdr args)) symbol-table depth const-table global-env)))))
 
 (define make-not-a-closure-label
 	(let ((num 100))
@@ -250,7 +335,7 @@
 ;=========================================================================================================================================
 
 (define handle_fvar
-		(lambda (var depth const-table global-env)
+		(lambda (var depth symbol-table const-table global-env)
 			(string-append  "\tmov rax, " (find-var-in-global-env var global-env) "\n")))
 
 
@@ -280,7 +365,7 @@
 
 
 (define handle_lambda_simple
-		(lambda (params body depth const-table global-env)
+		(lambda (params body depth symbol-table const-table global-env)
 			;(display "handle_lambda_simple params: ") (display params) (newline)
 			;(display "handle_lambda_simple body: ") (display body) (newline)
 			;(display "handle_lambda_simple depth: ") (display depth) (newline)
@@ -366,7 +451,7 @@
 				 				"\tmov r10, qword [rbp +3*8]\n"
 				 				"\tcmp r10, " (number->string (length params)) "\n"
 				 				"\tjne " bad-args-label "\n"
-							    (code-gen body (+ depth 1) const-table global-env)
+							    (code-gen body (+ depth 1) symbol-table const-table global-env)
 							    ;"\tmov rsp, rbp\n"
 							    "\tmov rsp, rbp\n"
 								"\tpop rbp\n"
@@ -393,7 +478,7 @@
 
 
 (define handle_lambda_opt
-		(lambda (params body depth const-table global-env)
+		(lambda (params body depth symbol-table const-table global-env)
 			;(display "handle_lambda_simple params: ") (display params) (newline)
 			;(display "handle_lambda_simple body: ") (display body) (newline)
 			;(display "handle_lambda_simple depth: ") (display depth) (newline)
@@ -513,7 +598,7 @@
 			 				   opt-args-loop-end ":\n\n"
 			 				   "\tmov qword [rbp + 4*8 + (r15 + 1)*8], r13\n"
 								
-							   (code-gen body (+ depth 1) const-table global-env)
+							   (code-gen body (+ depth 1) symbol-table const-table global-env)
 
 							   "\tmov rsp, rbp\n"
 							   "\tpop rbp\n"
@@ -610,51 +695,6 @@
 						   "\tmov rbx, 1\n"
 						   "\tMAKE_LITERAL_CLOSURE rax, rbx, " app-label "\n"
 						   "\tjmp " end-app-label "\n\n")))
-
-'((applic (fvar apply) ((lambda-simple (a) (or ((pvar a 0) (pvar a 0)))) (const (2)))))
-
-;(define handle_apply
-;		(lambda (app-exp depth const-table global-env)
-;			;(display "handle_apply app: ") (display app-exp) (newline)
-;			;(display "handle_applic depth: ") (display depth) (newline) (newline)
-;			(let ((app (caaddr app-exp))
-;				  (args (cdr (caddr app-exp)))
-;				  (not-a-closure-label (make-not-a-closure-label-for-apply))
-;				  (done-closure-label (make-done-closure-label-for-apply)))
-;				  ;(display "app: ") (display app) (newline)
-;					  	(string-append 	"; end of applic of lambda-simple code: \n"
-;					  					(push-args (reverse args) (length args) depth const-table global-env)
-;										"\tpush " (number->string (length args)) "\n"
-;										(code-gen app depth const-table global-env)
-;										"\tmov r10, [rax]\n" 
-;										"\tmov rcx, r10\n"
-;										"\tTYPE rcx\n"
-;										"\tcmp rcx, T_CLOSURE\n"
-;										"\tjne " not-a-closure-label "\n"
-;										"\tmov rbx, r10\n"
-;										"\tCLOSURE_ENV rbx\n"
-;										"\tpush rbx\n"
-;										"\tCLOSURE_CODE r10\n"
-;										"\tcall r10\n"
-;										"\tadd rsp, 8*1\n"
-;										"\tjmp " done-closure-label "\n"
-;										not-a-closure-label ":\n\n"
-;										"\tmov rax, sobVoid\n"
-;										done-closure-label ":\n\n"
-;										"\tadd rsp, 8*" (number->string (+ 1 (length args))) "\n\n"
-;										"; end of applic of lambda-simple code: \n\n"))))
-
-;(define make-not-a-closure-label-for-apply
-;	(let ((num 300))
-;			(lambda ()
-;				(set! num (+ num 1))
-;				(string-append "not_a_closure" (number->string num)))))
-
-;(define make-done-closure-label-for-apply
-;	(let ((num 300))
-;			(lambda ()
-;				(set! num (+ num 1))
-;				(string-append "done_closure" (number->string num)))))
 
 
 
@@ -816,6 +856,120 @@
 
 ;=========================================================================================================================================
 ;======================================================= END OF FUNCTIONS FOR APPLY EXPRESSION ===========================================
+;=========================================================================================================================================
+
+
+
+;=========================================================================================================================================
+;======================================================= FUNCTIONS FOR APPEND EXPRESSION =================================================
+;=========================================================================================================================================
+
+
+;(define handle_append
+;		(lambda ()
+;			(string-append (applic-prolog "append_code" "end_append_code")
+
+;				"\nappend_code:\n"
+;				"\tpush rbp\n"
+;				"\tmov rbp, rsp\n"
+				
+;				"\tmov rcx, 0 ; rcx is a counter for the number of arguments\n"
+;				".checkIfArgsArePairs:\n\n"
+;				"\tcmp rcx, qword [rbp + 8*3]\n"
+;				"\tje .create_new_list\n"
+;				"\tmov rbx, qword [rbp + 8*(4 + rcx)]\n"
+;				"\tmov rbx, [rbx]\n"
+;				"\tTYPE rbx\n"
+;				"\tcmp rbx, T_PAIR\n"
+;				"\tjne .badArgs\n"
+;				"\tinc rcx\n"
+;				"\tjmp .checkIfArgsArePairs\n"
+
+
+;				;"\tmov r15, sobNil ; r9 hold the last pair - '() of the new list\n"
+
+;				;".create_new_list_loop:\n\n"
+;				;"\tcmp r8, 0\n"
+;				;"\tje .done_create_new_list_loop\n"
+;				;;"\tmov rdi, 8\n"
+;				;;"\tcall malloc\n"
+;				;;"\tmov r10, rax ; r10 hold the address of the new pair\n"
+;				;;"\tmov r11, qword [rbp + (4 + r8)*8] ; r11 hold the current pair which will be the car of the new pair\n"
+;				;;"\tmov r11, [r11]\n"
+;				;"\tmov rdi, 8\n"
+;				;"\tcall malloc\n"
+;				;"\tmov r13, rax\n"
+;				;"\tmov r14, [rbp + (4 + r8)*8] ; r14 hold the pointer to the car of the new pair\n"
+;				;"\tsub r14, start_of_data\n"
+;				;"\tshl r14, 30\n"
+;				;"\tsub r15, start_of_data\n"
+;				;"\tor r14, r15\n"
+;				;"\tshl r14, 4\n"
+;				;"\tor r14, T_PAIR\n"
+;				;"\tmov r15, r14 ; r15 hold the accumulated pair\n"
+;				;"\tmov [r13], r14\n"
+;				;;"\tMAKE_MALLOC_LITERAL_PAIR r10, r11, r9\n"
+;				;;"\tmov r9, r10 ; r9 hold the last pair of the new list\n"
+;				;"\tdec r8\n"
+;				;"\tjmp .create_new_list_loop\n"
+
+
+;				;"\tmov r15, " (number->string (- (length params) 1)) "\n"
+;			    ;"\tmov r14, qword [rbp + 3*8]\n"
+;			    ;"\tdec r14\n"
+;			    ".create_new_list:\n\n"
+
+;				"\tmov r8, qword [rbp + 8*3]\n"
+;				;"\tmov r11, qword [rbp + 8*3]\n"
+;				"\tsub r8, 1\n"
+;			    "\tmov r13, sobNil\n\n"
+
+
+;			    ".create_new_list_loop:\n\n"
+;			    "\tcmp r8, -1\n"
+;			    "\tje .done_create_new_list_loop\n"
+
+;			    "\tmov rdi, 8\n"
+;			    "\tcall malloc\n"
+;			    "\tmov r10, qword [rbp + 4*8 + r8*8]\n"
+;			    "\tmov r12, r10\n"
+;			    "\tsub r12, start_of_data\n"
+;			    "\tshl r12, 30\n"
+;			    "\tmov r9, r13\n"
+;			    "\tsub r9, start_of_data\n"
+;			    "\tor r12, r9\n"
+;			    "\tshl r12, 4\n"
+;			    "\tor r12, T_PAIR\n"
+;			    "\tmov  qword [rax], r12\n"
+;			    "\tmov r13, rax\n"
+;			    "\tdec r8\n"
+;			    "\tjmp .create_new_list_loop\n"
+
+;				".done_create_new_list_loop:\n\n"
+;				"\tmov rsp, rbp\n" 
+;				"\tpop rbp\n"
+;				"\tret\n\n"
+;				;"\tmov rdi, 8\n"
+;				;"\tcall malloc\n"
+;				;"\tmov qword [rax], r9\n"
+;				;"\tmov rax, r9\n"
+;				;"\tjmp .done\n"
+
+;				".badArgs:\n"
+;				"\tmov rax, sobVoid\n"
+
+;				;".done:\n"
+;				;"\tmov rsp, rbp\n" 
+;				;"\tpop rbp\n"
+;				;"\tret\n\n"
+
+;				"end_append_code:\n"
+;				"\tmov rax, [rax]\n"
+;				"\tmov qword [append], rax\n\n")))
+
+
+;=========================================================================================================================================
+;======================================================= END OF FUNCTIONS FOR APPEND EXPRESSION ==========================================
 ;=========================================================================================================================================
 
 
@@ -1524,6 +1678,57 @@
 ;=========================================================================================================================================
 ;======================================================= END OF FUNCTIONS FOR MAKE-STRING EXPRESSION =====================================
 ;=========================================================================================================================================
+
+
+;=========================================================================================================================================
+;======================================================= FUNCTIONS FOR SET-CAR EXPRESSION ================================================
+;=========================================================================================================================================
+
+
+(define handle_eq?
+		(lambda ()
+			(string-append (applic-prolog "eq?_code" "end_eq?code")
+
+				"\neq?_code:\n"
+				"\tpush rbp\n"
+				"\tmov rbp, rsp\n"
+				"\tmov rax, qword [rbp + 8*3]\n"
+				"\tcmp rax, 2\n"
+				"\tjne .badArgs\n"
+				"\tmov rax, qword [rbp + 8*4]\n"
+				"\tmov r10, [rax]\n"
+				"\tmov rbx, r10\n"
+				"\tTYPE rbx\n"
+				"\tcmp rbx, T_SYMBOL\n"
+				"\tjne .badArgs\n"
+
+				"\tmov rax, qword [rbp + 8*5]\n"
+				"\tmov r10, [rax]\n"
+				"\tmov rbx, r10\n"
+				"\tTYPE rbx\n"
+				"\tcmp rbx, T_SYMBOL\n"
+				"\tjne .badArgs\n"
+
+
+				"\tjmp .done\n\n"
+				".badArgs:\n"
+				"\tmov rax, sobVoid\n"
+				".done:\n"
+				"\tmov rsp, rbp\n" 
+				"\tpop rbp\n"
+				"\tret\n\n"
+
+				"end_eq?_code:\n"
+				"\tmov rax, [rax]\n"
+				"\tmov qword [eq?], rax\n\n")))
+
+
+
+
+;=========================================================================================================================================
+;======================================================= END OF FUNCTIONS FOR SET-CAR EXPRESSION =========================================
+;=========================================================================================================================================
+
 
 
 ;=========================================================================================================================================
@@ -3761,13 +3966,13 @@
 ;=========================================================================================================================================
 
 (define handle_define
-	(lambda (def-exp depth const-table global-env)
+	(lambda (def-exp depth symbol-table const-table global-env)
 		;(display "def-exp handle_define: ") (display def-exp) (newline)
 		;(display "global-env handle_define: ") (display global-env) (newline) 
 		(let ((free-var (find-var-in-global-env (cadar def-exp) global-env)))
 			;(display "free-var handle_define: ") (display free-var) (newline)
 				(string-append 
-					(code-gen (cadr def-exp) depth const-table global-env)
+					(code-gen (cadr def-exp) depth symbol-table const-table global-env)
 					"\tmov rbx, " free-var "\n" 
 					"\tmov r10, [rax]\n" 
 					"\tmov qword [rbx], r10\n"
@@ -3785,8 +3990,8 @@
 ;=========================================================================================================================================
 
 (define handle_seq
-  (lambda (seq-exp depth const-table global-env)
-    (fold-left (lambda (res exp) (string-append res (code-gen exp depth const-table global-env))) "" (cadr seq-exp))
+  (lambda (seq-exp depth symbol-table const-table global-env)
+    (fold-left (lambda (res exp) (string-append res (code-gen exp depth symbol-table const-table global-env))) "" (cadr seq-exp))
     ))
 
 
@@ -3802,17 +4007,17 @@
 
 
 (define handle_or
-		(lambda (or-exp depth end-label const-table global-env)	
+		(lambda (or-exp depth end-label symbol-table const-table global-env)	
 				(if (null? or-exp) 
 					(string-append end-label ":\n\n")
 					(string-append 
-						(code-gen (car or-exp) depth const-table global-env)
+						(code-gen (car or-exp) depth symbol-table const-table global-env)
 						"\tmov r10, [rax]\n" 
 						"\tmov rbx, r10\n"
 						"\tTYPE rbx\n"
 						"\tcmp rbx, SOB_FALSE\n" 
 						"\tjne " end-label "\n"
-						(handle_or (cdr or-exp) depth end-label const-table global-env)))))
+						(handle_or (cdr or-exp) depth end-label symbol-table const-table global-env)))))
 
 (define make-end-label-for-or
 	(let ((num 100))
@@ -3831,7 +4036,7 @@
 ;=========================================================================================================================================
 
 (define handle_if
-		(lambda (if-exp depth const-table global-env)
+		(lambda (if-exp depth symbol-table const-table global-env)
 			;(display "if-exp in handle_if: ") (display if-exp) (newline) 
 			;(display "cadr if-exp in handle_if: ") (display (code-gen (cadr if-exp) const-table)) (newline)
 			;(display "caddr if-exp in handle_if: ") (display (code-gen (caddr if-exp) const-table)) (newline)
@@ -3839,14 +4044,14 @@
 			(let ((dif-label (make-dif-label))
 				  (end-label (make-end-label)))
 				 (string-append 
-					(code-gen (cadr if-exp) depth const-table global-env)
+					(code-gen (cadr if-exp) depth symbol-table const-table global-env)
 					"\tmov r10, [rax]\n" 
 					"\tcmp r10, SOB_FALSE\n" 
 					"\tje " dif-label "\n"
-					(code-gen (caddr if-exp) depth const-table global-env) "\n"
+					(code-gen (caddr if-exp) depth symbol-table const-table global-env) "\n"
 					"\tjmp " end-label "\n"
 					dif-label ":\n"
-					"\t" (code-gen (cadddr if-exp) depth const-table global-env) "\n"
+					"\t" (code-gen (cadddr if-exp) depth symbol-table const-table global-env) "\n"
 					end-label ":\n\n")
 					)))
 
@@ -3907,7 +4112,7 @@
 (define make_const_table
 	(lambda (exp)
 		(cond ((and (list? exp) (null? exp)) exp)
-			  ((and (list? exp) (= (length exp) 2) (equal? (car exp) 'const)) (list (cadr exp)))
+			  ((and (list? exp) (= (length exp) 2) (equal? (car exp) 'const) (not (symbol? (cadr exp)))) (list (cadr exp)))
 			  ((and (list? exp) (list? (car exp))) (append (make_const_table (car exp)) (make_const_table (cdr exp))))
 			  ((and (list? exp) (> (length exp) 0) (not (list? (car exp)))) (make_const_table (cdr exp))))))
 
@@ -3933,8 +4138,8 @@
 			  					  (string-append "sobFalse:" "\n" "\tdq SOB_FALSE\n" (create_const_for_assembly (cdr const-table) table-in-pairs num))))
 			  ((char? (car const-table)) 
 			  		(string-append (find-const-in-pairs (car const-table) table-in-pairs) ":\n" "\tdq MAKE_LITERAL(T_CHAR, " (number->string (char->integer (car const-table))) ")\n\n" (create_const_for_assembly (cdr const-table) table-in-pairs num)))
-			  ((symbol? (car const-table)) 
-			  		(string-append (find-const-in-pairs (car const-table) table-in-pairs) ":" "\n" "\tdq MAKE_LITERAL(T_SYMBOL, " (symbol->string (car const-table)) ")\n\n" (create_const_for_assembly (cdr const-table) table-in-pairs num)))
+			  ;((symbol? (car const-table)) 
+			  ;		(string-append (find-const-in-pairs (car const-table) table-in-pairs) ":" "\n" "\tdq MAKE_LITERAL(T_SYMBOL, " (symbol->string (car const-table)) ")\n\n" (create_const_for_assembly (cdr const-table) table-in-pairs num)))
 			  ((string? (car const-table)) 
 			  		(string-append (find-const-in-pairs (car const-table) table-in-pairs) ":" "\n" "\tMAKE_LITERAL_STRING " (check_for_special_chars (map char->integer (string->list (car const-table)))) "\n\n" (create_const_for_assembly (cdr const-table) table-in-pairs num)))
 			  ((null? (car const-table)) 
@@ -4032,16 +4237,38 @@
 ;======================================================= FUNCTIONS FOR SYMBOL TABLE ======================================================
 ;=========================================================================================================================================
 
-;(define make_symbol_table
-;	(lambda (exp)
-;		(cond ((and (list? exp) (null? exp)) exp)
-;			  ((and (list? exp) (or (equal? (car exp) 'bvar) (equal? (car exp) 'pvar))) (list (cadr exp)))
-;			  ((and (list? exp) (list? (car exp))) (append (make_symbol_table (car exp)) (make_symbol_table (cdr exp))))
-;			  ((and (list? exp) (> (length exp) 0) (not (list? (car exp)))) (make_symbol_table (cdr exp))))))
+(define get_symbols
+	(lambda (exp)
+		(cond ((and (list? exp) (null? exp)) exp)
+			  ((and (list? exp) (equal? (car exp) 'const) (symbol? (cadr exp))) (list (cadr exp)))
+			  ((and (list? exp) (list? (car exp))) (append (get_symbols (car exp)) (get_symbols (cdr exp))))
+			  ((and (list? exp) (> (length exp) 0) (not (list? (car exp)))) (get_symbols (cdr exp)))
+			  ((and (list? exp) (vector? (car exp))) (append (get_symbols (vector->list (car exp))) (get_symbols (cdr exp)))))))
 
-;(define symbol_table
-;	(lambda (input-file)
-;		(remove-duplicates (make_symbol_table input-file))))
+(define create-symbol-table
+	(lambda (input-file)
+		(map (lambda (sym) (list (string-append "sobSymbol_" (symbol->string sym)) sym)) (remove-duplicates (get_symbols input-file)))))
+
+(define create-string-of-symbols
+		(lambda (sym-table)
+			(if (null? sym-table) 
+				""
+				(string-append (caar sym-table) ":" "\n" "\tMAKE_LITERAL_SYMBOL \""  (symbol->string (cadar sym-table)) "\"\n\n" (create-string-of-symbols (cdr sym-table))))))
+
+
+(define create-symbol-table-for-assembly
+		(lambda (sym-table)
+			(if (null? sym-table) 
+				""
+				(string-append "\tmov rdi, 8\n"
+							   "\tcall malloc\n"
+							   "\tmov r8, " (caar sym-table) "\n"
+							   "\tmov qword [rax], r8\n"
+							   "\tpush rax\n"
+							   "\tpush SymbolTable\n"
+							   "\tcall addSymbol\n"
+							   (create-symbol-table-for-assembly (cdr sym-table))))))
+
 
 
 
@@ -4081,46 +4308,37 @@
 			(find-var-in-global-env var (cdr global-env)))))
 
 (define pairs_of_label_and_name
-	(lambda (fvar)
-		(let ((name (symbol->string fvar)))
-			(cond ((equal? ">" name) (list "greaterThan" fvar))
-				  ((equal? "<" name) (list "lessThan" fvar))
-				  ((equal? "=" name) (list "equal" fvar))
-				  ((equal? "+" name) (list "plus" fvar))
-				  ((equal? "/" name) (list "divide" fvar))
-				  ((equal? "*" name) (list "multiply" fvar))
-				  ((equal? "-" name) (list "subtract" fvar))
+	(lambda (var)
+		;(display "var pairs_of_label_and_name: ") (display var) (newline)
+		(let ((name (symbol->string var)))
+			(cond ((equal? ">" name) (list "greaterThan" var))
+				  ((equal? "<" name) (list "lessThan" var))
+				  ((equal? "=" name) (list "equal" var))
+				  ((equal? "+" name) (list "plus" var))
+				  ((equal? "/" name) (list "divide" var))
+				  ((equal? "*" name) (list "multiply" var))
+				  ((equal? "-" name) (list "subtract" var))
 
 
-				  ((equal? "char->integer" name) (list "charToInteger" fvar))
-				  ((equal? "integer->char" name) (list "integerToChar" fvar))
-				  ((equal? "make-string" name) (list "makeString" fvar))
-				  ((equal? "make-vector" name) (list "makeVector" fvar))
-				  ((equal? "set-car!" name) (list "setCar" fvar))
-				  ((equal? "set-cdr!" name) (list "setCdr" fvar))
+				  ((equal? "char->integer" name) (list "charToInteger" var))
+				  ((equal? "integer->char" name) (list "integerToChar" var))
+				  ((equal? "make-string" name) (list "makeString" var))
+				  ((equal? "make-vector" name) (list "makeVector" var))
+				  ((equal? "set-car!" name) (list "setCar" var))
+				  ((equal? "set-cdr!" name) (list "setCdr" var))
 
-				  ((equal? "string-ref" name) (list "stringRef" fvar))
-				  ((equal? "string-set!" name) (list "stringSet" fvar))
-				  ((equal? "string-length" name) (list "stringLength" fvar))
-				  ((equal? "make-string" name) (list "makeString" fvar))
-				  ((equal? "make-vector" name) (list "makeVector" fvar))
-				  ((equal? "string->symbol" name) (list "stringToSymbol" fvar))
-				  ((equal? "symbol->string" name) (list "symbolToString" fvar))
+				  ((equal? "string-ref" name) (list "stringRef" var))
+				  ((equal? "string-set!" name) (list "stringSet" var))
+				  ((equal? "string-length" name) (list "stringLength" var))
+				  ((equal? "make-string" name) (list "makeString" var))
+				  ((equal? "make-vector" name) (list "makeVector" var))
+				  ((equal? "string->symbol" name) (list "stringToSymbol" var))
+				  ((equal? "symbol->string" name) (list "symbolToString" var))
 
-				  ((equal? "vector-length" name) (list "vectorLength" fvar))
-				  ((equal? "vector-ref" name) (list "vectorRef" fvar))
-				  ((equal? "vector-set!" name) (list "vectorSet" fvar))
-
-
-				  ;((member #\! (string->list name)) (list (string-replace name '! 'B) fvar))
-				  ;((member #\< (string->list name)) (list (string-replace name '< 'L) fvar))
-				  ;((member #\> (string->list name)) (list (string-replace name '> 'G) fvar))
-				  ;((member #\= (string->list name)) (list (string-replace name '= 'E) fvar))
-				  ;((member #\+ (string->list name)) (list (string-replace name '+ 'P) fvar))
-				  ;((member #\/ (string->list name)) (list (string-replace name '/ 'D) fvar))
-				  ;((member #\* (string->list name)) (list (string-replace name '* 'M) fvar))
-				  ;((member #\- (string->list name)) (list (string-replace name '- 'S) fvar))
-				  (else (list name fvar))))))
+				  ((equal? "vector-length" name) (list "vectorLength" var))
+				  ((equal? "vector-ref" name) (list "vectorRef" var))
+				  ((equal? "vector-set!" name) (list "vectorSet" var))
+				  (else (list name var))))))
 
 (define init-primitives
 	(lambda (primitive-procedures global-env-as-pairs)
