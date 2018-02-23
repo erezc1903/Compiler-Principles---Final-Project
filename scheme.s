@@ -143,12 +143,12 @@
 	%%LstrEnd:
 %endmacro
 
-%macro MAKE_LITERAL_SYMBOL 1
-	dq (((((%%LstrEnd - %%Lstr) << ((WORD_SIZE - TYPE_BITS) >> 1)) | (%%Lstr - start_of_data)) << TYPE_BITS) | T_SYMBOL)
-	%%Lstr:
-	db %1
-	%%LstrEnd:
-%endmacro
+; %macro MAKE_LITERAL_SYMBOL 1
+; 	dq (((((%%LstrEnd - %%Lstr) << ((WORD_SIZE - TYPE_BITS) >> 1)) | (%%Lstr - start_of_data)) << TYPE_BITS) | T_SYMBOL)
+; 	%%Lstr:
+; 	db %1
+; 	%%LstrEnd:
+; %endmacro
 
 
 %macro STRING_LENGTH 1
@@ -688,6 +688,10 @@ write_sob_symbol:
 
 	mov rax, qword [rbp + 8 + 1*8]
 	mov rcx, rax
+	DATA rcx
+	DATA rax
+	mov rax, [rax]
+	mov rcx, [rcx]
 	STRING_LENGTH rcx
 	STRING_ELEMENTS rax
 

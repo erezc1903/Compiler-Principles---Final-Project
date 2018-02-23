@@ -20,14 +20,16 @@
 'a ;; to figure out how to handle symbol type cons
 'b
 'c
-;'!
-;'+
-;'-
-;'*
-;'/
-;'>
-;'<
-;;; Constants
+'!
+'+
+'-
+'*
+'/
+'>
+'<
+;; Constants
+
+"+"
 
 
 ;;; primitives tests

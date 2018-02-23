@@ -175,17 +175,41 @@ sobTrue:
 sobNil:
 	dq SOB_NIL
 
+sobString9:
+	MAKE_LITERAL_STRING "a"
+
+sobString10:
+	MAKE_LITERAL_STRING "b"
+
+sobString7:
+	MAKE_LITERAL_STRING "c"
+
+sobString8:
+	MAKE_LITERAL_STRING "!"
+
+sobString5:
+	MAKE_LITERAL_STRING "+"
+
+sobString6:
+	MAKE_LITERAL_STRING "-"
+
+sobString3:
+	MAKE_LITERAL_STRING "*"
+
+sobString4:
+	MAKE_LITERAL_STRING "/"
+
+sobString1:
+	MAKE_LITERAL_STRING ">"
+
+sobString2:
+	MAKE_LITERAL_STRING "<"
+
+sobString0:
+	MAKE_LITERAL_STRING "+"
+
 sobUndef:
 	dq SOB_UNDEFINED
-
-sobSymbol_a:
-	MAKE_LITERAL_SYMBOL "a"
-
-sobSymbol_b:
-	MAKE_LITERAL_SYMBOL "b"
-
-sobSymbol_c:
-	MAKE_LITERAL_SYMBOL "c"
 
 
 
@@ -239,14 +263,16 @@ findSymbol:
 
 		mov r13, r11
 		mov r11, [r11 + symbol]
-		cmp [r11], r12
+		mov r15, [r11]
+		DATA r15
+		cmp r15, r12
 		je done                  ; Don't do anything if the list is empty
 		mov r11, r13
 		mov r11, [r11 + next]       ; The next element in the list
 		jmp search_loop
 	done:
 
-		mov rax, [r11]
+		mov rax, r11
 		mov rsp, rbp
 		pop rbp
 		ret
@@ -2738,7 +2764,9 @@ start_of_creation_of_symbol_table:
 
 	mov rdi, 8
 	call malloc
-	mov r8, sobSymbol_a
+	mov r8, sobString9
+	shl r8, 4
+	or r8, T_SYMBOL
 	mov qword [rax], r8
 	push rax
 	push SymbolTable
@@ -2746,7 +2774,9 @@ start_of_creation_of_symbol_table:
 	add rsp, 2*8
 	mov rdi, 8
 	call malloc
-	mov r8, sobSymbol_b
+	mov r8, sobString10
+	shl r8, 4
+	or r8, T_SYMBOL
 	mov qword [rax], r8
 	push rax
 	push SymbolTable
@@ -2754,7 +2784,79 @@ start_of_creation_of_symbol_table:
 	add rsp, 2*8
 	mov rdi, 8
 	call malloc
-	mov r8, sobSymbol_c
+	mov r8, sobString7
+	shl r8, 4
+	or r8, T_SYMBOL
+	mov qword [rax], r8
+	push rax
+	push SymbolTable
+	call addSymbol
+	add rsp, 2*8
+	mov rdi, 8
+	call malloc
+	mov r8, sobString8
+	shl r8, 4
+	or r8, T_SYMBOL
+	mov qword [rax], r8
+	push rax
+	push SymbolTable
+	call addSymbol
+	add rsp, 2*8
+	mov rdi, 8
+	call malloc
+	mov r8, sobString5
+	shl r8, 4
+	or r8, T_SYMBOL
+	mov qword [rax], r8
+	push rax
+	push SymbolTable
+	call addSymbol
+	add rsp, 2*8
+	mov rdi, 8
+	call malloc
+	mov r8, sobString6
+	shl r8, 4
+	or r8, T_SYMBOL
+	mov qword [rax], r8
+	push rax
+	push SymbolTable
+	call addSymbol
+	add rsp, 2*8
+	mov rdi, 8
+	call malloc
+	mov r8, sobString3
+	shl r8, 4
+	or r8, T_SYMBOL
+	mov qword [rax], r8
+	push rax
+	push SymbolTable
+	call addSymbol
+	add rsp, 2*8
+	mov rdi, 8
+	call malloc
+	mov r8, sobString4
+	shl r8, 4
+	or r8, T_SYMBOL
+	mov qword [rax], r8
+	push rax
+	push SymbolTable
+	call addSymbol
+	add rsp, 2*8
+	mov rdi, 8
+	call malloc
+	mov r8, sobString1
+	shl r8, 4
+	or r8, T_SYMBOL
+	mov qword [rax], r8
+	push rax
+	push SymbolTable
+	call addSymbol
+	add rsp, 2*8
+	mov rdi, 8
+	call malloc
+	mov r8, sobString2
+	shl r8, 4
+	or r8, T_SYMBOL
 	mov qword [rax], r8
 	push rax
 	push SymbolTable
@@ -3950,9 +4052,9 @@ endLabel107:
 ; end
 
 ; start
-codegen_for_symbol_start_for_sobSymbol_a:
+codegen_for_symbol_start_for_sobString9:
 
-	mov rax, sobSymbol_a
+	mov rax, sobString9
 	push rax
 	push SymbolTable
 	call findSymbol
@@ -3967,9 +4069,9 @@ codegen_for_symbol_start_for_sobSymbol_a:
 ; end
 
 ; start
-codegen_for_symbol_start_for_sobSymbol_b:
+codegen_for_symbol_start_for_sobString10:
 
-	mov rax, sobSymbol_b
+	mov rax, sobString10
 	push rax
 	push SymbolTable
 	call findSymbol
@@ -3984,15 +4086,145 @@ codegen_for_symbol_start_for_sobSymbol_b:
 ; end
 
 ; start
-codegen_for_symbol_start_for_sobSymbol_c:
+codegen_for_symbol_start_for_sobString7:
 
-	mov rax, sobSymbol_c
+	mov rax, sobString7
 	push rax
 	push SymbolTable
 	call findSymbol
 	add rsp, 2*8
 
 	;code gen for symbol end
+	mov rax, [rax]
+	push rax
+	call write_sob_if_not_void
+	add rsp, 8
+
+; end
+
+; start
+codegen_for_symbol_start_for_sobString8:
+
+	mov rax, sobString8
+	push rax
+	push SymbolTable
+	call findSymbol
+	add rsp, 2*8
+
+	;code gen for symbol end
+	mov rax, [rax]
+	push rax
+	call write_sob_if_not_void
+	add rsp, 8
+
+; end
+
+; start
+codegen_for_symbol_start_for_sobString5:
+
+	mov rax, sobString5
+	push rax
+	push SymbolTable
+	call findSymbol
+	add rsp, 2*8
+
+	;code gen for symbol end
+	mov rax, [rax]
+	push rax
+	call write_sob_if_not_void
+	add rsp, 8
+
+; end
+
+; start
+codegen_for_symbol_start_for_sobString6:
+
+	mov rax, sobString6
+	push rax
+	push SymbolTable
+	call findSymbol
+	add rsp, 2*8
+
+	;code gen for symbol end
+	mov rax, [rax]
+	push rax
+	call write_sob_if_not_void
+	add rsp, 8
+
+; end
+
+; start
+codegen_for_symbol_start_for_sobString3:
+
+	mov rax, sobString3
+	push rax
+	push SymbolTable
+	call findSymbol
+	add rsp, 2*8
+
+	;code gen for symbol end
+	mov rax, [rax]
+	push rax
+	call write_sob_if_not_void
+	add rsp, 8
+
+; end
+
+; start
+codegen_for_symbol_start_for_sobString4:
+
+	mov rax, sobString4
+	push rax
+	push SymbolTable
+	call findSymbol
+	add rsp, 2*8
+
+	;code gen for symbol end
+	mov rax, [rax]
+	push rax
+	call write_sob_if_not_void
+	add rsp, 8
+
+; end
+
+; start
+codegen_for_symbol_start_for_sobString1:
+
+	mov rax, sobString1
+	push rax
+	push SymbolTable
+	call findSymbol
+	add rsp, 2*8
+
+	;code gen for symbol end
+	mov rax, [rax]
+	push rax
+	call write_sob_if_not_void
+	add rsp, 8
+
+; end
+
+; start
+codegen_for_symbol_start_for_sobString2:
+
+	mov rax, sobString2
+	push rax
+	push SymbolTable
+	call findSymbol
+	add rsp, 2*8
+
+	;code gen for symbol end
+	mov rax, [rax]
+	push rax
+	call write_sob_if_not_void
+	add rsp, 8
+
+; end
+
+; start
+	; codegen for const start
+	mov rax, sobString0
+	;code gen for constant end
 	mov rax, [rax]
 	push rax
 	call write_sob_if_not_void

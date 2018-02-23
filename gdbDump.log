@@ -54791,3 +54791,2245 @@ Program received signal SIGSEGV, Segmentation fault.
 16: /x $r13 = 0x606750
 17: /x $r14 = 0x0
 18: /x $r15 = 0x0
+Breakpoint 1 at 0x402c2c
+SIGTRAP is used by the debugger.
+Are you sure you want to change it? (y or n) [answered Y; input not from terminal]
+
+Breakpoint 1, 0x0000000000402c2c in start_of_creation_of_symbol_table ()
+1: x/i $pc
+=> 0x402c2c <start_of_creation_of_symbol_table>:	mov    $0x8,%edi
+2: /x $rax = 0xfe7eff0400014989
+3: /x $rbx = 0x1
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x6054d0
+6: /x $rdi = 0x0
+7: /x $rsi = 0x6054e0
+8: /x $rbp = 0x7fffffffdc98
+9: /x $rsp = 0x7fffffffdc98
+10: $eflags = [ SF IF ]
+11: /x $r8 = 0x605000
+12: /x $r9 = 0xd
+13: /x $r10 = 0x7ffff7dd1b78
+14: /x $r11 = 0x0
+15: /x $r12 = 0x4004c0
+16: /x $r13 = 0x7fffffffdd70
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x7fffffffdc98:	0xf7a2d830	0x00007fff	0x00000000	0x00000000
+0x7fffffffdca8:	0xffffdd78	0x00007fff	0x00000000	0x00000001
+0x7fffffffdcb8:	0x004006fe	0x00000000	0x00000000	0x00000000
+0x7fffffffdcc8:	0x3ee4e52a	0x248cb5a8	0x004004c0	0x00000000
+0x7fffffffdcd8:	0xffffdd70	0x00007fff	0x00000000	0x00000000
+0x7fffffffdce8:	0x00000000	0x00000000	0x8c24e52a	0xdb734ad7
+0x7fffffffdcf8:	0x9ab4e52a	0xdb735a6d	0x00000000	0x00000000
+0x7fffffffdd08:	0x00000000	0x00000000	0x00000000	0x00000000
+0x7fffffffdd18:	0x00000001	0x00000000	0x004006fe	0x00000000
+0x7fffffffdd28:	0x00400630	0x00000000	0x00000000	0x00000000
+0x7fffffffdd38:	0x00000000	0x00000000	0x004004c0	0x00000000
+0x7fffffffdd48:	0xffffdd70	0x00007fff	0x00000000	0x00000000
+0x7fffffffdd58:	0x004004e9	0x00000000	0xffffdd68	0x00007fff
+0x7fffffffdd68:	0x0000001c	0x00000000	0x00000001	0x00000000
+0x7fffffffdd78:	0xffffe156	0x00007fff	0x00000000	0x00000000
+0x7fffffffdd88:	0xffffe172	0x00007fff	0xffffe187	0x00007fff
+0x0000000000402c31 in start_of_creation_of_symbol_table ()
+1: x/i $pc
+=> 0x402c31 <start_of_creation_of_symbol_table+5>:	
+    callq  0x4004a0 <malloc@plt>
+2: /x $rax = 0xfe7eff0400014989
+3: /x $rbx = 0x1
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x6054d0
+6: /x $rdi = 0x8
+7: /x $rsi = 0x6054e0
+8: /x $rbp = 0x7fffffffdc98
+9: /x $rsp = 0x7fffffffdc98
+10: $eflags = [ SF IF ]
+11: /x $r8 = 0x605000
+12: /x $r9 = 0xd
+13: /x $r10 = 0x7ffff7dd1b78
+14: /x $r11 = 0x0
+15: /x $r12 = 0x4004c0
+16: /x $r13 = 0x7fffffffdd70
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x0000000000402c36 in start_of_creation_of_symbol_table ()
+1: x/i $pc
+=> 0x402c36 <start_of_creation_of_symbol_table+10>:	movabs $0x60485d,%r8
+2: /x $rax = 0x6054f0
+3: /x $rbx = 0x1
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x6054f0
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605500
+8: /x $rbp = 0x7fffffffdc98
+9: /x $rsp = 0x7fffffffdc98
+10: $eflags = [ AF IF ]
+11: /x $r8 = 0x605000
+12: /x $r9 = 0xd
+13: /x $r10 = 0x7ffff7dd1b78
+14: /x $r11 = 0x0
+15: /x $r12 = 0x4004c0
+16: /x $r13 = 0x7fffffffdd70
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x0000000000402c40 in start_of_creation_of_symbol_table ()
+1: x/i $pc
+=> 0x402c40 <start_of_creation_of_symbol_table+20>:	shl    $0x4,%r8
+2: /x $rax = 0x6054f0
+3: /x $rbx = 0x1
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x6054f0
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605500
+8: /x $rbp = 0x7fffffffdc98
+9: /x $rsp = 0x7fffffffdc98
+10: $eflags = [ AF IF ]
+11: /x $r8 = 0x60485d
+12: /x $r9 = 0xd
+13: /x $r10 = 0x7ffff7dd1b78
+14: /x $r11 = 0x0
+15: /x $r12 = 0x4004c0
+16: /x $r13 = 0x7fffffffdd70
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x60485d:	0x00008257	0x00000004	0x0082e761	0x00000400
+0x60486d:	0x83776200	0x00040000	0x07630000	0x04000084
+0x60487d:	0x2b000000	0x00000000	0x00000000	0x00000000
+0x60488d:	0x00000000	0x00000000	0x00000000	0x00000000
+0x60489d:	0x00000000	0x00000000	0x00000000	0x00000000
+0x6048ad:	0x00000000	0x00000000	0x00000000	0x00000000
+0x6048bd:	0x00000000	0x00000000	0x00000000	0x00000000
+0x6048cd:	0x00000000	0x00000000	0x00000000	0x00000000
+0x0000000000402c44 in start_of_creation_of_symbol_table ()
+1: x/i $pc
+=> 0x402c44 <start_of_creation_of_symbol_table+24>:	or     $0x8,%r8
+2: /x $rax = 0x6054f0
+3: /x $rbx = 0x1
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x6054f0
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605500
+8: /x $rbp = 0x7fffffffdc98
+9: /x $rsp = 0x7fffffffdc98
+10: $eflags = [ IF ]
+11: /x $r8 = 0x60485d0
+12: /x $r9 = 0xd
+13: /x $r10 = 0x7ffff7dd1b78
+14: /x $r11 = 0x0
+15: /x $r12 = 0x4004c0
+16: /x $r13 = 0x7fffffffdd70
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x0000000000402c48 in start_of_creation_of_symbol_table ()
+1: x/i $pc
+=> 0x402c48 <start_of_creation_of_symbol_table+28>:	mov    %r8,(%rax)
+2: /x $rax = 0x6054f0
+3: /x $rbx = 0x1
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x6054f0
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605500
+8: /x $rbp = 0x7fffffffdc98
+9: /x $rsp = 0x7fffffffdc98
+10: $eflags = [ PF IF ]
+11: /x $r8 = 0x60485d8
+12: /x $r9 = 0xd
+13: /x $r10 = 0x7ffff7dd1b78
+14: /x $r11 = 0x0
+15: /x $r12 = 0x4004c0
+16: /x $r13 = 0x7fffffffdd70
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x0000000000402c4b in start_of_creation_of_symbol_table ()
+1: x/i $pc
+=> 0x402c4b <start_of_creation_of_symbol_table+31>:	push   %rax
+2: /x $rax = 0x6054f0
+3: /x $rbx = 0x1
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x6054f0
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605500
+8: /x $rbp = 0x7fffffffdc98
+9: /x $rsp = 0x7fffffffdc98
+10: $eflags = [ PF IF ]
+11: /x $r8 = 0x60485d8
+12: /x $r9 = 0xd
+13: /x $r10 = 0x7ffff7dd1b78
+14: /x $r11 = 0x0
+15: /x $r12 = 0x4004c0
+16: /x $r13 = 0x7fffffffdd70
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x0000000000402c4c in start_of_creation_of_symbol_table ()
+1: x/i $pc
+=> 0x402c4c <start_of_creation_of_symbol_table+32>:	pushq  $0x604890
+2: /x $rax = 0x6054f0
+3: /x $rbx = 0x1
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x6054f0
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605500
+8: /x $rbp = 0x7fffffffdc98
+9: /x $rsp = 0x7fffffffdc90
+10: $eflags = [ PF IF ]
+11: /x $r8 = 0x60485d8
+12: /x $r9 = 0xd
+13: /x $r10 = 0x7ffff7dd1b78
+14: /x $r11 = 0x0
+15: /x $r12 = 0x4004c0
+16: /x $r13 = 0x7fffffffdd70
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x0000000000402c51 in start_of_creation_of_symbol_table ()
+1: x/i $pc
+=> 0x402c51 <start_of_creation_of_symbol_table+37>:	
+    callq  0x400684 <addSymbol>
+2: /x $rax = 0x6054f0
+3: /x $rbx = 0x1
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x6054f0
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605500
+8: /x $rbp = 0x7fffffffdc98
+9: /x $rsp = 0x7fffffffdc88
+10: $eflags = [ PF IF ]
+11: /x $r8 = 0x60485d8
+12: /x $r9 = 0xd
+13: /x $r10 = 0x7ffff7dd1b78
+14: /x $r11 = 0x0
+15: /x $r12 = 0x4004c0
+16: /x $r13 = 0x7fffffffdd70
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x0000000000400684 in addSymbol ()
+1: x/i $pc
+=> 0x400684 <addSymbol>:	push   %rbp
+2: /x $rax = 0x6054f0
+3: /x $rbx = 0x1
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x6054f0
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605500
+8: /x $rbp = 0x7fffffffdc98
+9: /x $rsp = 0x7fffffffdc80
+10: $eflags = [ PF IF ]
+11: /x $r8 = 0x60485d8
+12: /x $r9 = 0xd
+13: /x $r10 = 0x7ffff7dd1b78
+14: /x $r11 = 0x0
+15: /x $r12 = 0x4004c0
+16: /x $r13 = 0x7fffffffdd70
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x0000000000400685 in addSymbol ()
+1: x/i $pc
+=> 0x400685 <addSymbol+1>:	mov    %rsp,%rbp
+2: /x $rax = 0x6054f0
+3: /x $rbx = 0x1
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x6054f0
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605500
+8: /x $rbp = 0x7fffffffdc98
+9: /x $rsp = 0x7fffffffdc78
+10: $eflags = [ PF IF ]
+11: /x $r8 = 0x60485d8
+12: /x $r9 = 0xd
+13: /x $r10 = 0x7ffff7dd1b78
+14: /x $r11 = 0x0
+15: /x $r12 = 0x4004c0
+16: /x $r13 = 0x7fffffffdd70
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x0000000000400688 in addSymbol ()
+1: x/i $pc
+=> 0x400688 <addSymbol+4>:	mov    $0x10,%edi
+2: /x $rax = 0x6054f0
+3: /x $rbx = 0x1
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x6054f0
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605500
+8: /x $rbp = 0x7fffffffdc78
+9: /x $rsp = 0x7fffffffdc78
+10: $eflags = [ PF IF ]
+11: /x $r8 = 0x60485d8
+12: /x $r9 = 0xd
+13: /x $r10 = 0x7ffff7dd1b78
+14: /x $r11 = 0x0
+15: /x $r12 = 0x4004c0
+16: /x $r13 = 0x7fffffffdd70
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x000000000040068d in addSymbol ()
+1: x/i $pc
+=> 0x40068d <addSymbol+9>:	callq  0x4004a0 <malloc@plt>
+2: /x $rax = 0x6054f0
+3: /x $rbx = 0x1
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x6054f0
+6: /x $rdi = 0x10
+7: /x $rsi = 0x605500
+8: /x $rbp = 0x7fffffffdc78
+9: /x $rsp = 0x7fffffffdc78
+10: $eflags = [ PF IF ]
+11: /x $r8 = 0x60485d8
+12: /x $r9 = 0xd
+13: /x $r10 = 0x7ffff7dd1b78
+14: /x $r11 = 0x0
+15: /x $r12 = 0x4004c0
+16: /x $r13 = 0x7fffffffdd70
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x0000000000400692 in addSymbol ()
+1: x/i $pc
+=> 0x400692 <addSymbol+14>:	mov    0x18(%rbp),%rbx
+2: /x $rax = 0x605510
+3: /x $rbx = 0x1
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605510
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605520
+8: /x $rbp = 0x7fffffffdc78
+9: /x $rsp = 0x7fffffffdc78
+10: $eflags = [ PF AF IF ]
+11: /x $r8 = 0x60485d8
+12: /x $r9 = 0xd
+13: /x $r10 = 0x7ffff7dd1b78
+14: /x $r11 = 0x0
+15: /x $r12 = 0x4004c0
+16: /x $r13 = 0x7fffffffdd70
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x0000000000400696 in addSymbol ()
+1: x/i $pc
+=> 0x400696 <addSymbol+18>:	mov    %rbx,(%rax)
+2: /x $rax = 0x605510
+3: /x $rbx = 0x6054f0
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605510
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605520
+8: /x $rbp = 0x7fffffffdc78
+9: /x $rsp = 0x7fffffffdc78
+10: $eflags = [ PF AF IF ]
+11: /x $r8 = 0x60485d8
+12: /x $r9 = 0xd
+13: /x $r10 = 0x7ffff7dd1b78
+14: /x $r11 = 0x0
+15: /x $r12 = 0x4004c0
+16: /x $r13 = 0x7fffffffdd70
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x0000000000400699 in addSymbol ()
+1: x/i $pc
+=> 0x400699 <addSymbol+21>:	movq   $0x604855,0x8(%rax)
+2: /x $rax = 0x605510
+3: /x $rbx = 0x6054f0
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605510
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605520
+8: /x $rbp = 0x7fffffffdc78
+9: /x $rsp = 0x7fffffffdc78
+10: $eflags = [ PF AF IF ]
+11: /x $r8 = 0x60485d8
+12: /x $r9 = 0xd
+13: /x $r10 = 0x7ffff7dd1b78
+14: /x $r11 = 0x0
+15: /x $r12 = 0x4004c0
+16: /x $r13 = 0x7fffffffdd70
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x00000000004006a1 in addSymbol ()
+1: x/i $pc
+=> 0x4006a1 <addSymbol+29>:	mov    0x10(%rbp),%rbx
+2: /x $rax = 0x605510
+3: /x $rbx = 0x6054f0
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605510
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605520
+8: /x $rbp = 0x7fffffffdc78
+9: /x $rsp = 0x7fffffffdc78
+10: $eflags = [ PF AF IF ]
+11: /x $r8 = 0x60485d8
+12: /x $r9 = 0xd
+13: /x $r10 = 0x7ffff7dd1b78
+14: /x $r11 = 0x0
+15: /x $r12 = 0x4004c0
+16: /x $r13 = 0x7fffffffdd70
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x00000000004006a5 in addSymbol ()
+1: x/i $pc
+=> 0x4006a5 <addSymbol+33>:	cmpq   $0x0,(%rbx)
+2: /x $rax = 0x605510
+3: /x $rbx = 0x604890
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605510
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605520
+8: /x $rbp = 0x7fffffffdc78
+9: /x $rsp = 0x7fffffffdc78
+10: $eflags = [ PF AF IF ]
+11: /x $r8 = 0x60485d8
+12: /x $r9 = 0xd
+13: /x $r10 = 0x7ffff7dd1b78
+14: /x $r11 = 0x0
+15: /x $r12 = 0x4004c0
+16: /x $r13 = 0x7fffffffdd70
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+Continuing.
+
+Program received signal SIGSEGV, Segmentation fault.
+0x00000000004006de in search_loop ()
+1: x/i $pc
+=> 0x4006de <search_loop+3>:	mov    (%r11),%r11
+2: /x $rax = 0x60485d
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc70
+9: /x $rsp = 0x7fffffffdc70
+10: $eflags = [ CF PF AF SF IF RF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x400008257
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x400008257
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+Breakpoint 1 at 0x403b76
+SIGTRAP is used by the debugger.
+Are you sure you want to change it? (y or n) [answered Y; input not from terminal]
+
+Breakpoint 1, 0x0000000000403b76 in codegen_for_symbol_start_for_sobString2 ()
+1: x/i $pc
+=> 0x403b76 <codegen_for_symbol_start_for_sobString2>:	movabs $0x60485d,%rax
+2: /x $rax = 0x1
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc90
+9: /x $rsp = 0x7fffffffdc90
+10: $eflags = [ PF AF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x0
+15: /x $r12 = 0x4004c0
+16: /x $r13 = 0x7fffffffdd70
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x7fffffffdc90:	0xffffdc98	0x00007fff	0xf7a2d830	0x00007fff
+0x7fffffffdca0:	0x00000000	0x00000000	0xffffdd78	0x00007fff
+0x7fffffffdcb0:	0x00000000	0x00000001	0x004006fe	0x00000000
+0x7fffffffdcc0:	0x00000000	0x00000000	0x9e14c54a	0x2b81a25d
+0x7fffffffdcd0:	0x004004c0	0x00000000	0xffffdd70	0x00007fff
+0x7fffffffdce0:	0x00000000	0x00000000	0x00000000	0x00000000
+0x7fffffffdcf0:	0x2cd4c54a	0xd47e5d22	0x3a44c54a	0xd47e4d98
+0x7fffffffdd00:	0x00000000	0x00000000	0x00000000	0x00000000
+0x7fffffffdd10:	0x00000000	0x00000000	0x00000001	0x00000000
+0x7fffffffdd20:	0x004006fe	0x00000000	0x00400630	0x00000000
+0x7fffffffdd30:	0x00000000	0x00000000	0x00000000	0x00000000
+0x7fffffffdd40:	0x004004c0	0x00000000	0xffffdd70	0x00007fff
+0x7fffffffdd50:	0x00000000	0x00000000	0x004004e9	0x00000000
+0x7fffffffdd60:	0xffffdd68	0x00007fff	0x0000001c	0x00000000
+0x7fffffffdd70:	0x00000001	0x00000000	0xffffe156	0x00007fff
+0x7fffffffdd80:	0x00000000	0x00000000	0xffffe172	0x00007fff
+0x0000000000403b80 in codegen_for_symbol_start_for_sobString2 ()
+1: x/i $pc
+=> 0x403b80 <codegen_for_symbol_start_for_sobString2+10>:	push   %rax
+2: /x $rax = 0x60485d
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc90
+9: /x $rsp = 0x7fffffffdc90
+10: $eflags = [ PF AF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x0
+15: /x $r12 = 0x4004c0
+16: /x $r13 = 0x7fffffffdd70
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x0000000000403b81 in codegen_for_symbol_start_for_sobString2 ()
+1: x/i $pc
+=> 0x403b81 <codegen_for_symbol_start_for_sobString2+11>:	
+    pushq  $0x604890
+2: /x $rax = 0x60485d
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc90
+9: /x $rsp = 0x7fffffffdc88
+10: $eflags = [ PF AF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x0
+15: /x $r12 = 0x4004c0
+16: /x $r13 = 0x7fffffffdd70
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x0000000000403b86 in codegen_for_symbol_start_for_sobString2 ()
+1: x/i $pc
+=> 0x403b86 <codegen_for_symbol_start_for_sobString2+16>:	
+    callq  0x4006cc <findSymbol>
+2: /x $rax = 0x60485d
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc90
+9: /x $rsp = 0x7fffffffdc80
+10: $eflags = [ PF AF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x0
+15: /x $r12 = 0x4004c0
+16: /x $r13 = 0x7fffffffdd70
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x00000000004006cc in findSymbol ()
+1: x/i $pc
+=> 0x4006cc <findSymbol>:	push   %rbp
+2: /x $rax = 0x60485d
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc90
+9: /x $rsp = 0x7fffffffdc78
+10: $eflags = [ PF AF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x0
+15: /x $r12 = 0x4004c0
+16: /x $r13 = 0x7fffffffdd70
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x00000000004006cd in findSymbol ()
+1: x/i $pc
+=> 0x4006cd <findSymbol+1>:	mov    %rsp,%rbp
+2: /x $rax = 0x60485d
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc90
+9: /x $rsp = 0x7fffffffdc70
+10: $eflags = [ PF AF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x0
+15: /x $r12 = 0x4004c0
+16: /x $r13 = 0x7fffffffdd70
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x00000000004006d0 in findSymbol ()
+1: x/i $pc
+=> 0x4006d0 <findSymbol+4>:	mov    0x10(%rbp),%r11
+2: /x $rax = 0x60485d
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc70
+9: /x $rsp = 0x7fffffffdc70
+10: $eflags = [ PF AF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x0
+15: /x $r12 = 0x4004c0
+16: /x $r13 = 0x7fffffffdd70
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x00000000004006d4 in findSymbol ()
+1: x/i $pc
+=> 0x4006d4 <findSymbol+8>:	mov    0x18(%rbp),%r12
+2: /x $rax = 0x60485d
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc70
+9: /x $rsp = 0x7fffffffdc70
+10: $eflags = [ PF AF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x604890
+15: /x $r12 = 0x4004c0
+16: /x $r13 = 0x7fffffffdd70
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x00000000004006d8 in findSymbol ()
+1: x/i $pc
+=> 0x4006d8 <findSymbol+12>:	mov    (%r11),%r11
+2: /x $rax = 0x60485d
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc70
+9: /x $rsp = 0x7fffffffdc70
+10: $eflags = [ PF AF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x604890
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x7fffffffdd70
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x00000000004006db in search_loop ()
+1: x/i $pc
+=> 0x4006db <search_loop>:	mov    %r11,%r13
+2: /x $rax = 0x60485d
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc70
+9: /x $rsp = 0x7fffffffdc70
+10: $eflags = [ PF AF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x605510
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x7fffffffdd70
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x00000000004006de in search_loop ()
+1: x/i $pc
+=> 0x4006de <search_loop+3>:	mov    (%r11),%r11
+2: /x $rax = 0x60485d
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc70
+9: /x $rsp = 0x7fffffffdc70
+10: $eflags = [ PF AF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x605510
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x605510
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x00000000004006e1 in search_loop ()
+1: x/i $pc
+=> 0x4006e1 <search_loop+6>:	mov    %r11,%r15
+2: /x $rax = 0x60485d
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc70
+9: /x $rsp = 0x7fffffffdc70
+10: $eflags = [ PF AF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x6054f0
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x605510
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x00000000004006e4 in search_loop ()
+1: x/i $pc
+=> 0x4006e4 <search_loop+9>:	sar    $0x4,%r15
+2: /x $rax = 0x60485d
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc70
+9: /x $rsp = 0x7fffffffdc70
+10: $eflags = [ PF AF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x6054f0
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x605510
+17: /x $r14 = 0x0
+18: /x $r15 = 0x6054f0
+0x00000000004006e8 in search_loop ()
+1: x/i $pc
+=> 0x4006e8 <search_loop+13>:	cmp    %r12,%r15
+2: /x $rax = 0x60485d
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc70
+9: /x $rsp = 0x7fffffffdc70
+10: $eflags = [ IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x6054f0
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x605510
+17: /x $r14 = 0x0
+18: /x $r15 = 0x6054f
+0x00000000004006eb in search_loop ()
+1: x/i $pc
+=> 0x4006eb <search_loop+16>:	je     0x4006f6 <done>
+2: /x $rax = 0x60485d
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc70
+9: /x $rsp = 0x7fffffffdc70
+10: $eflags = [ CF SF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x6054f0
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x605510
+17: /x $r14 = 0x0
+18: /x $r15 = 0x6054f
+Breakpoint 1 at 0x403b76
+SIGTRAP is used by the debugger.
+Are you sure you want to change it? (y or n) [answered Y; input not from terminal]
+
+Breakpoint 1, 0x0000000000403b76 in codegen_for_symbol_start_for_sobString2 ()
+1: x/i $pc
+=> 0x403b76 <codegen_for_symbol_start_for_sobString2>:	movabs $0x60485d,%rax
+2: /x $rax = 0x1
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc90
+9: /x $rsp = 0x7fffffffdc90
+10: $eflags = [ PF AF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x0
+15: /x $r12 = 0x4004c0
+16: /x $r13 = 0x7fffffffdd70
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x7fffffffdc90:	0xffffdc98	0x00007fff	0xf7a2d830	0x00007fff
+0x7fffffffdca0:	0x00000000	0x00000000	0xffffdd78	0x00007fff
+0x7fffffffdcb0:	0x00000000	0x00000001	0x004006fe	0x00000000
+0x7fffffffdcc0:	0x00000000	0x00000000	0x632f7967	0x1796e769
+0x7fffffffdcd0:	0x004004c0	0x00000000	0xffffdd70	0x00007fff
+0x7fffffffdce0:	0x00000000	0x00000000	0x00000000	0x00000000
+0x7fffffffdcf0:	0xd1ef7967	0xe8691816	0xc77f7967	0xe86908ac
+0x7fffffffdd00:	0x00000000	0x00000000	0x00000000	0x00000000
+0x7fffffffdd10:	0x00000000	0x00000000	0x00000001	0x00000000
+0x7fffffffdd20:	0x004006fe	0x00000000	0x00400630	0x00000000
+0x7fffffffdd30:	0x00000000	0x00000000	0x00000000	0x00000000
+0x7fffffffdd40:	0x004004c0	0x00000000	0xffffdd70	0x00007fff
+0x7fffffffdd50:	0x00000000	0x00000000	0x004004e9	0x00000000
+0x7fffffffdd60:	0xffffdd68	0x00007fff	0x0000001c	0x00000000
+0x7fffffffdd70:	0x00000001	0x00000000	0xffffe156	0x00007fff
+0x7fffffffdd80:	0x00000000	0x00000000	0xffffe172	0x00007fff
+0x0000000000403b80 in codegen_for_symbol_start_for_sobString2 ()
+1: x/i $pc
+=> 0x403b80 <codegen_for_symbol_start_for_sobString2+10>:	push   %rax
+2: /x $rax = 0x60485d
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc90
+9: /x $rsp = 0x7fffffffdc90
+10: $eflags = [ PF AF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x0
+15: /x $r12 = 0x4004c0
+16: /x $r13 = 0x7fffffffdd70
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x0000000000403b81 in codegen_for_symbol_start_for_sobString2 ()
+1: x/i $pc
+=> 0x403b81 <codegen_for_symbol_start_for_sobString2+11>:	
+    pushq  $0x604890
+2: /x $rax = 0x60485d
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc90
+9: /x $rsp = 0x7fffffffdc88
+10: $eflags = [ PF AF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x0
+15: /x $r12 = 0x4004c0
+16: /x $r13 = 0x7fffffffdd70
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x0000000000403b86 in codegen_for_symbol_start_for_sobString2 ()
+1: x/i $pc
+=> 0x403b86 <codegen_for_symbol_start_for_sobString2+16>:	
+    callq  0x4006cc <findSymbol>
+2: /x $rax = 0x60485d
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc90
+9: /x $rsp = 0x7fffffffdc80
+10: $eflags = [ PF AF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x0
+15: /x $r12 = 0x4004c0
+16: /x $r13 = 0x7fffffffdd70
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x00000000004006cc in findSymbol ()
+1: x/i $pc
+=> 0x4006cc <findSymbol>:	push   %rbp
+2: /x $rax = 0x60485d
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc90
+9: /x $rsp = 0x7fffffffdc78
+10: $eflags = [ PF AF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x0
+15: /x $r12 = 0x4004c0
+16: /x $r13 = 0x7fffffffdd70
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x00000000004006cd in findSymbol ()
+1: x/i $pc
+=> 0x4006cd <findSymbol+1>:	mov    %rsp,%rbp
+2: /x $rax = 0x60485d
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc90
+9: /x $rsp = 0x7fffffffdc70
+10: $eflags = [ PF AF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x0
+15: /x $r12 = 0x4004c0
+16: /x $r13 = 0x7fffffffdd70
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x00000000004006d0 in findSymbol ()
+1: x/i $pc
+=> 0x4006d0 <findSymbol+4>:	mov    0x10(%rbp),%r11
+2: /x $rax = 0x60485d
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc70
+9: /x $rsp = 0x7fffffffdc70
+10: $eflags = [ PF AF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x0
+15: /x $r12 = 0x4004c0
+16: /x $r13 = 0x7fffffffdd70
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x00000000004006d4 in findSymbol ()
+1: x/i $pc
+=> 0x4006d4 <findSymbol+8>:	mov    0x18(%rbp),%r12
+2: /x $rax = 0x60485d
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc70
+9: /x $rsp = 0x7fffffffdc70
+10: $eflags = [ PF AF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x604890
+15: /x $r12 = 0x4004c0
+16: /x $r13 = 0x7fffffffdd70
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x00000000004006d8 in findSymbol ()
+1: x/i $pc
+=> 0x4006d8 <findSymbol+12>:	mov    (%r11),%r11
+2: /x $rax = 0x60485d
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc70
+9: /x $rsp = 0x7fffffffdc70
+10: $eflags = [ PF AF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x604890
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x7fffffffdd70
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x00000000004006db in search_loop ()
+1: x/i $pc
+=> 0x4006db <search_loop>:	mov    %r11,%r13
+2: /x $rax = 0x60485d
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc70
+9: /x $rsp = 0x7fffffffdc70
+10: $eflags = [ PF AF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x605510
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x7fffffffdd70
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x00000000004006de in search_loop ()
+1: x/i $pc
+=> 0x4006de <search_loop+3>:	mov    (%r11),%r11
+2: /x $rax = 0x60485d
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc70
+9: /x $rsp = 0x7fffffffdc70
+10: $eflags = [ PF AF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x605510
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x605510
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x00000000004006e1 in search_loop ()
+1: x/i $pc
+=> 0x4006e1 <search_loop+6>:	mov    (%r11),%r15
+2: /x $rax = 0x60485d
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc70
+9: /x $rsp = 0x7fffffffdc70
+10: $eflags = [ PF AF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x6054f0
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x605510
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x00000000004006e4 in search_loop ()
+1: x/i $pc
+=> 0x4006e4 <search_loop+9>:	sar    $0x4,%r15
+2: /x $rax = 0x60485d
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc70
+9: /x $rsp = 0x7fffffffdc70
+10: $eflags = [ PF AF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x6054f0
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x605510
+17: /x $r14 = 0x0
+18: /x $r15 = 0x60485d8
+0x00000000004006e8 in search_loop ()
+1: x/i $pc
+=> 0x4006e8 <search_loop+13>:	cmp    %r12,%r15
+2: /x $rax = 0x60485d
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc70
+9: /x $rsp = 0x7fffffffdc70
+10: $eflags = [ CF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x6054f0
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x605510
+17: /x $r14 = 0x0
+18: /x $r15 = 0x60485d
+0x00000000004006eb in search_loop ()
+1: x/i $pc
+=> 0x4006eb <search_loop+16>:	je     0x4006f6 <done>
+2: /x $rax = 0x60485d
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc70
+9: /x $rsp = 0x7fffffffdc70
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x6054f0
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x605510
+17: /x $r14 = 0x0
+18: /x $r15 = 0x60485d
+0x00000000004006f6 in done ()
+1: x/i $pc
+=> 0x4006f6 <done>:	mov    (%r11),%rax
+2: /x $rax = 0x60485d
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc70
+9: /x $rsp = 0x7fffffffdc70
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x6054f0
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x605510
+17: /x $r14 = 0x0
+18: /x $r15 = 0x60485d
+0x00000000004006f9 in done ()
+1: x/i $pc
+=> 0x4006f9 <done+3>:	mov    %rbp,%rsp
+2: /x $rax = 0x60485d8
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc70
+9: /x $rsp = 0x7fffffffdc70
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x6054f0
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x605510
+17: /x $r14 = 0x0
+18: /x $r15 = 0x60485d
+0x60485d8:	Cannot access memory at address 0x60485d8
+0x60485d:	0x00008257	0x00000004	0x0082e761	0x00000400
+0x60486d:	0x83776200	0x00040000	0x07630000	0x04000084
+0x60487d:	0x2b000000	0x00000000	0x00000000	0x00000000
+0x60488d:	0x10000000	0x00006055	0x00000000	0x00000000
+0x60489d:	0x00000000	0x00000000	0x00000000	0x00000000
+0x6048ad:	0x00000000	0x00000000	0x00000000	0x00000000
+0x6048bd:	0x00000000	0x00000000	0x00000000	0x00000000
+0x6048cd:	0x00000000	0x00000000	0x00000000	0x00000000
+0x00000000004006fc in done ()
+1: x/i $pc
+=> 0x4006fc <done+6>:	pop    %rbp
+2: /x $rax = 0x60485d8
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc70
+9: /x $rsp = 0x7fffffffdc70
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x6054f0
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x605510
+17: /x $r14 = 0x0
+18: /x $r15 = 0x60485d
+0x00000000004006fd in done ()
+1: x/i $pc
+=> 0x4006fd <done+7>:	retq   
+2: /x $rax = 0x60485d8
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc90
+9: /x $rsp = 0x7fffffffdc78
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x6054f0
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x605510
+17: /x $r14 = 0x0
+18: /x $r15 = 0x60485d
+0x0000000000403b8b in codegen_for_symbol_start_for_sobString2 ()
+1: x/i $pc
+=> 0x403b8b <codegen_for_symbol_start_for_sobString2+21>:	
+    add    $0x10,%rsp
+2: /x $rax = 0x60485d8
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc90
+9: /x $rsp = 0x7fffffffdc80
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x6054f0
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x605510
+17: /x $r14 = 0x0
+18: /x $r15 = 0x60485d
+0x0000000000403b8f in codegen_for_symbol_start_for_sobString2 ()
+1: x/i $pc
+=> 0x403b8f <codegen_for_symbol_start_for_sobString2+25>:	
+    mov    (%rax),%rax
+2: /x $rax = 0x60485d8
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc90
+9: /x $rsp = 0x7fffffffdc90
+10: $eflags = [ PF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x6054f0
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x605510
+17: /x $r14 = 0x0
+18: /x $r15 = 0x60485d
+
+Program received signal SIGSEGV, Segmentation fault.
+0x0000000000403b8f in codegen_for_symbol_start_for_sobString2 ()
+1: x/i $pc
+=> 0x403b8f <codegen_for_symbol_start_for_sobString2+25>:	
+    mov    (%rax),%rax
+2: /x $rax = 0x60485d8
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc90
+9: /x $rsp = 0x7fffffffdc90
+10: $eflags = [ PF IF RF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x6054f0
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x605510
+17: /x $r14 = 0x0
+18: /x $r15 = 0x60485d
+Breakpoint 1 at 0x403b7a
+SIGTRAP is used by the debugger.
+Are you sure you want to change it? (y or n) [answered Y; input not from terminal]
+
+Breakpoint 1, 0x0000000000403b7a in codegen_for_symbol_start_for_sobString2 ()
+1: x/i $pc
+=> 0x403b7a <codegen_for_symbol_start_for_sobString2>:	movabs $0x60485d,%rax
+2: /x $rax = 0x1
+Quit
+Breakpoint 1 at 0x403b76
+SIGTRAP is used by the debugger.
+Are you sure you want to change it? (y or n) [answered Y; input not from terminal]
+
+Breakpoint 1, 0x0000000000403b76 in codegen_for_symbol_start_for_sobString2 ()
+1: x/i $pc
+=> 0x403b76 <codegen_for_symbol_start_for_sobString2>:	movabs $0x60485d,%rax
+2: /x $rax = 0x1
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc90
+9: /x $rsp = 0x7fffffffdc90
+10: $eflags = [ PF AF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x0
+15: /x $r12 = 0x4004c0
+16: /x $r13 = 0x7fffffffdd70
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x7fffffffdc90:	0xffffdc98	0x00007fff	0xf7a2d830	0x00007fff
+0x7fffffffdca0:	0x00000000	0x00000000	0xffffdd78	0x00007fff
+0x7fffffffdcb0:	0x00000000	0x00000001	0x004006fe	0x00000000
+0x7fffffffdcc0:	0x00000000	0x00000000	0x354bf69c	0x5d6eb7ad
+0x7fffffffdcd0:	0x004004c0	0x00000000	0xffffdd70	0x00007fff
+0x7fffffffdce0:	0x00000000	0x00000000	0x00000000	0x00000000
+0x7fffffffdcf0:	0x878bf69c	0xa29148d2	0x911bf69c	0xa2915868
+0x7fffffffdd00:	0x00000000	0x00000000	0x00000000	0x00000000
+0x7fffffffdd10:	0x00000000	0x00000000	0x00000001	0x00000000
+0x7fffffffdd20:	0x004006fe	0x00000000	0x00400630	0x00000000
+0x7fffffffdd30:	0x00000000	0x00000000	0x00000000	0x00000000
+0x7fffffffdd40:	0x004004c0	0x00000000	0xffffdd70	0x00007fff
+0x7fffffffdd50:	0x00000000	0x00000000	0x004004e9	0x00000000
+0x7fffffffdd60:	0xffffdd68	0x00007fff	0x0000001c	0x00000000
+0x7fffffffdd70:	0x00000001	0x00000000	0xffffe156	0x00007fff
+0x7fffffffdd80:	0x00000000	0x00000000	0xffffe172	0x00007fff
+0x0000000000403b80 in codegen_for_symbol_start_for_sobString2 ()
+1: x/i $pc
+=> 0x403b80 <codegen_for_symbol_start_for_sobString2+10>:	push   %rax
+2: /x $rax = 0x60485d
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc90
+9: /x $rsp = 0x7fffffffdc90
+10: $eflags = [ PF AF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x0
+15: /x $r12 = 0x4004c0
+16: /x $r13 = 0x7fffffffdd70
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x0000000000403b81 in codegen_for_symbol_start_for_sobString2 ()
+1: x/i $pc
+=> 0x403b81 <codegen_for_symbol_start_for_sobString2+11>:	
+    pushq  $0x604890
+2: /x $rax = 0x60485d
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc90
+9: /x $rsp = 0x7fffffffdc88
+10: $eflags = [ PF AF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x0
+15: /x $r12 = 0x4004c0
+16: /x $r13 = 0x7fffffffdd70
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x0000000000403b86 in codegen_for_symbol_start_for_sobString2 ()
+1: x/i $pc
+=> 0x403b86 <codegen_for_symbol_start_for_sobString2+16>:	
+    callq  0x4006cc <findSymbol>
+2: /x $rax = 0x60485d
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc90
+9: /x $rsp = 0x7fffffffdc80
+10: $eflags = [ PF AF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x0
+15: /x $r12 = 0x4004c0
+16: /x $r13 = 0x7fffffffdd70
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x00000000004006cc in findSymbol ()
+1: x/i $pc
+=> 0x4006cc <findSymbol>:	push   %rbp
+2: /x $rax = 0x60485d
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc90
+9: /x $rsp = 0x7fffffffdc78
+10: $eflags = [ PF AF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x0
+15: /x $r12 = 0x4004c0
+16: /x $r13 = 0x7fffffffdd70
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x00000000004006cd in findSymbol ()
+1: x/i $pc
+=> 0x4006cd <findSymbol+1>:	mov    %rsp,%rbp
+2: /x $rax = 0x60485d
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc90
+9: /x $rsp = 0x7fffffffdc70
+10: $eflags = [ PF AF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x0
+15: /x $r12 = 0x4004c0
+16: /x $r13 = 0x7fffffffdd70
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x00000000004006d0 in findSymbol ()
+1: x/i $pc
+=> 0x4006d0 <findSymbol+4>:	mov    0x10(%rbp),%r11
+2: /x $rax = 0x60485d
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc70
+9: /x $rsp = 0x7fffffffdc70
+10: $eflags = [ PF AF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x0
+15: /x $r12 = 0x4004c0
+16: /x $r13 = 0x7fffffffdd70
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x00000000004006d4 in findSymbol ()
+1: x/i $pc
+=> 0x4006d4 <findSymbol+8>:	mov    0x18(%rbp),%r12
+2: /x $rax = 0x60485d
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc70
+9: /x $rsp = 0x7fffffffdc70
+10: $eflags = [ PF AF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x604890
+15: /x $r12 = 0x4004c0
+16: /x $r13 = 0x7fffffffdd70
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x00000000004006d8 in findSymbol ()
+1: x/i $pc
+=> 0x4006d8 <findSymbol+12>:	mov    (%r11),%r11
+2: /x $rax = 0x60485d
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc70
+9: /x $rsp = 0x7fffffffdc70
+10: $eflags = [ PF AF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x604890
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x7fffffffdd70
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x00000000004006db in search_loop ()
+1: x/i $pc
+=> 0x4006db <search_loop>:	mov    %r11,%r13
+2: /x $rax = 0x60485d
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc70
+9: /x $rsp = 0x7fffffffdc70
+10: $eflags = [ PF AF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x605510
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x7fffffffdd70
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x00000000004006de in search_loop ()
+1: x/i $pc
+=> 0x4006de <search_loop+3>:	mov    (%r11),%r11
+2: /x $rax = 0x60485d
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc70
+9: /x $rsp = 0x7fffffffdc70
+10: $eflags = [ PF AF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x605510
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x605510
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x00000000004006e1 in search_loop ()
+1: x/i $pc
+=> 0x4006e1 <search_loop+6>:	mov    (%r11),%r15
+2: /x $rax = 0x60485d
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc70
+9: /x $rsp = 0x7fffffffdc70
+10: $eflags = [ PF AF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x6054f0
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x605510
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x00000000004006e4 in search_loop ()
+1: x/i $pc
+=> 0x4006e4 <search_loop+9>:	sar    $0x4,%r15
+2: /x $rax = 0x60485d
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc70
+9: /x $rsp = 0x7fffffffdc70
+10: $eflags = [ PF AF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x6054f0
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x605510
+17: /x $r14 = 0x0
+18: /x $r15 = 0x60485d8
+0x00000000004006e8 in search_loop ()
+1: x/i $pc
+=> 0x4006e8 <search_loop+13>:	cmp    %r12,%r15
+2: /x $rax = 0x60485d
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc70
+9: /x $rsp = 0x7fffffffdc70
+10: $eflags = [ CF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x6054f0
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x605510
+17: /x $r14 = 0x0
+18: /x $r15 = 0x60485d
+0x00000000004006eb in search_loop ()
+1: x/i $pc
+=> 0x4006eb <search_loop+16>:	je     0x4006f6 <done>
+2: /x $rax = 0x60485d
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc70
+9: /x $rsp = 0x7fffffffdc70
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x6054f0
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x605510
+17: /x $r14 = 0x0
+18: /x $r15 = 0x60485d
+0x00000000004006f6 in done ()
+1: x/i $pc
+=> 0x4006f6 <done>:	mov    %r11,%rax
+2: /x $rax = 0x60485d
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc70
+9: /x $rsp = 0x7fffffffdc70
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x6054f0
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x605510
+17: /x $r14 = 0x0
+18: /x $r15 = 0x60485d
+0x00000000004006f9 in done ()
+1: x/i $pc
+=> 0x4006f9 <done+3>:	mov    %rbp,%rsp
+2: /x $rax = 0x6054f0
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc70
+9: /x $rsp = 0x7fffffffdc70
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x6054f0
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x605510
+17: /x $r14 = 0x0
+18: /x $r15 = 0x60485d
+0x00000000004006fc in done ()
+1: x/i $pc
+=> 0x4006fc <done+6>:	pop    %rbp
+2: /x $rax = 0x6054f0
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc70
+9: /x $rsp = 0x7fffffffdc70
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x6054f0
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x605510
+17: /x $r14 = 0x0
+18: /x $r15 = 0x60485d
+0x00000000004006fd in done ()
+1: x/i $pc
+=> 0x4006fd <done+7>:	retq   
+2: /x $rax = 0x6054f0
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc90
+9: /x $rsp = 0x7fffffffdc78
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x6054f0
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x605510
+17: /x $r14 = 0x0
+18: /x $r15 = 0x60485d
+0x0000000000403b8b in codegen_for_symbol_start_for_sobString2 ()
+1: x/i $pc
+=> 0x403b8b <codegen_for_symbol_start_for_sobString2+21>:	
+    add    $0x10,%rsp
+2: /x $rax = 0x6054f0
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc90
+9: /x $rsp = 0x7fffffffdc80
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x6054f0
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x605510
+17: /x $r14 = 0x0
+18: /x $r15 = 0x60485d
+0x0000000000403b8f in codegen_for_symbol_start_for_sobString2 ()
+1: x/i $pc
+=> 0x403b8f <codegen_for_symbol_start_for_sobString2+25>:	
+    mov    (%rax),%rax
+2: /x $rax = 0x6054f0
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc90
+9: /x $rsp = 0x7fffffffdc90
+10: $eflags = [ PF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x6054f0
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x605510
+17: /x $r14 = 0x0
+18: /x $r15 = 0x60485d
+0x0000000000403b92 in codegen_for_symbol_start_for_sobString2 ()
+1: x/i $pc
+=> 0x403b92 <codegen_for_symbol_start_for_sobString2+28>:	push   %rax
+2: /x $rax = 0x60485d8
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc90
+9: /x $rsp = 0x7fffffffdc90
+10: $eflags = [ PF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x6054f0
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x605510
+17: /x $r14 = 0x0
+18: /x $r15 = 0x60485d
+0x0000000000403b93 in codegen_for_symbol_start_for_sobString2 ()
+1: x/i $pc
+=> 0x403b93 <codegen_for_symbol_start_for_sobString2+29>:	
+    callq  0x40065a <write_sob_if_not_void>
+2: /x $rax = 0x60485d8
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc90
+9: /x $rsp = 0x7fffffffdc88
+10: $eflags = [ PF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x6054f0
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x605510
+17: /x $r14 = 0x0
+18: /x $r15 = 0x60485d
+0x0000000000403b98 in codegen_for_symbol_start_for_sobString2 ()
+1: x/i $pc
+=> 0x403b98 <codegen_for_symbol_start_for_sobString2+34>:	
+    add    $0x8,%rsp
+2: /x $rax = 0x1
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x1
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x605690
+7: /x $rsi = 0x605690
+8: /x $rbp = 0x7fffffffdc90
+9: /x $rsp = 0x7fffffffdc88
+10: $eflags = [ PF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0x25b
+14: /x $r11 = 0x246
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x605510
+17: /x $r14 = 0x0
+18: /x $r15 = 0x60485d
+0x0000000000403b9c in codegen_for_symbol_start_for_sobString3 ()
+1: x/i $pc
+=> 0x403b9c <codegen_for_symbol_start_for_sobString3>:	movabs $0x604866,%rax
+2: /x $rax = 0x1
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x1
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x605690
+7: /x $rsi = 0x605690
+8: /x $rbp = 0x7fffffffdc90
+9: /x $rsp = 0x7fffffffdc90
+10: $eflags = [ PF AF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0x25b
+14: /x $r11 = 0x246
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x605510
+17: /x $r14 = 0x0
+18: /x $r15 = 0x60485d
+0x0000000000403ba6 in codegen_for_symbol_start_for_sobString3 ()
+1: x/i $pc
+=> 0x403ba6 <codegen_for_symbol_start_for_sobString3+10>:	push   %rax
+2: /x $rax = 0x604866
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x1
+5: /x $rdx = 0x7ffff7dd3780
+6: /x $rdi = 0x605690
+7: /x $rsi = 0x605690
+8: /x $rbp = 0x7fffffffdc90
+9: /x $rsp = 0x7fffffffdc90
+10: $eflags = [ PF AF IF ]
+11: /x $r8 = 0x7ffff7fdc700
+12: /x $r9 = 0x1
+13: /x $r10 = 0x25b
+14: /x $r11 = 0x246
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x605510
+17: /x $r14 = 0x0
+18: /x $r15 = 0x60485d
+Starting program: /home/erez/comp_project/foo 
+
+Breakpoint 1, 0x0000000000403b76 in codegen_for_symbol_start_for_sobString2 ()
+1: x/i $pc
+=> 0x403b76 <codegen_for_symbol_start_for_sobString2>:	movabs $0x60485d,%rax
+2: /x $rax = 0x1
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc90
+9: /x $rsp = 0x7fffffffdc90
+10: $eflags = [ PF AF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x0
+15: /x $r12 = 0x4004c0
+16: /x $r13 = 0x7fffffffdd70
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x0000000000403b80 in codegen_for_symbol_start_for_sobString2 ()
+1: x/i $pc
+=> 0x403b80 <codegen_for_symbol_start_for_sobString2+10>:	push   %rax
+2: /x $rax = 0x60485d
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc90
+9: /x $rsp = 0x7fffffffdc90
+10: $eflags = [ PF AF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x0
+15: /x $r12 = 0x4004c0
+16: /x $r13 = 0x7fffffffdd70
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x0000000000403b81 in codegen_for_symbol_start_for_sobString2 ()
+1: x/i $pc
+=> 0x403b81 <codegen_for_symbol_start_for_sobString2+11>:	
+    pushq  $0x604890
+2: /x $rax = 0x60485d
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc90
+9: /x $rsp = 0x7fffffffdc88
+10: $eflags = [ PF AF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x0
+15: /x $r12 = 0x4004c0
+16: /x $r13 = 0x7fffffffdd70
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x0000000000403b86 in codegen_for_symbol_start_for_sobString2 ()
+1: x/i $pc
+=> 0x403b86 <codegen_for_symbol_start_for_sobString2+16>:	
+    callq  0x4006cc <findSymbol>
+2: /x $rax = 0x60485d
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc90
+9: /x $rsp = 0x7fffffffdc80
+10: $eflags = [ PF AF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x0
+15: /x $r12 = 0x4004c0
+16: /x $r13 = 0x7fffffffdd70
+17: /x $r14 = 0x0
+18: /x $r15 = 0x0
+0x0000000000403b8b in codegen_for_symbol_start_for_sobString2 ()
+1: x/i $pc
+=> 0x403b8b <codegen_for_symbol_start_for_sobString2+21>:	
+    add    $0x10,%rsp
+2: /x $rax = 0x6054f0
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc90
+9: /x $rsp = 0x7fffffffdc80
+10: $eflags = [ PF ZF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x6054f0
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x605510
+17: /x $r14 = 0x0
+18: /x $r15 = 0x60485d
+0x0000000000403b8f in codegen_for_symbol_start_for_sobString2 ()
+1: x/i $pc
+=> 0x403b8f <codegen_for_symbol_start_for_sobString2+25>:	
+    mov    (%rax),%rax
+2: /x $rax = 0x6054f0
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc90
+9: /x $rsp = 0x7fffffffdc90
+10: $eflags = [ PF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x6054f0
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x605510
+17: /x $r14 = 0x0
+18: /x $r15 = 0x60485d
+0x0000000000403b92 in codegen_for_symbol_start_for_sobString2 ()
+1: x/i $pc
+=> 0x403b92 <codegen_for_symbol_start_for_sobString2+28>:	push   %rax
+2: /x $rax = 0x60485d8
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc90
+9: /x $rsp = 0x7fffffffdc90
+10: $eflags = [ PF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x6054f0
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x605510
+17: /x $r14 = 0x0
+18: /x $r15 = 0x60485d
+0x0000000000403b93 in codegen_for_symbol_start_for_sobString2 ()
+1: x/i $pc
+=> 0x403b93 <codegen_for_symbol_start_for_sobString2+29>:	
+    callq  0x40065a <write_sob_if_not_void>
+2: /x $rax = 0x60485d8
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc90
+9: /x $rsp = 0x7fffffffdc88
+10: $eflags = [ PF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x6054f0
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x605510
+17: /x $r14 = 0x0
+18: /x $r15 = 0x60485d
+0x000000000040065a in write_sob_if_not_void ()
+1: x/i $pc
+=> 0x40065a <write_sob_if_not_void>:	mov    0x8(%rsp),%rax
+2: /x $rax = 0x60485d8
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc90
+9: /x $rsp = 0x7fffffffdc80
+10: $eflags = [ PF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x6054f0
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x605510
+17: /x $r14 = 0x0
+18: /x $r15 = 0x60485d
+0x000000000040065f in write_sob_if_not_void ()
+1: x/i $pc
+=> 0x40065f <write_sob_if_not_void+5>:	cmp    $0x1,%rax
+2: /x $rax = 0x60485d8
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc90
+9: /x $rsp = 0x7fffffffdc80
+10: $eflags = [ PF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x6054f0
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x605510
+17: /x $r14 = 0x0
+18: /x $r15 = 0x60485d
+0x0000000000400663 in write_sob_if_not_void ()
+1: x/i $pc
+=> 0x400663 <write_sob_if_not_void+9>:	
+    je     0x400683 <write_sob_if_not_void.continue>
+2: /x $rax = 0x60485d8
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc90
+9: /x $rsp = 0x7fffffffdc80
+10: $eflags = [ PF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x6054f0
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x605510
+17: /x $r14 = 0x0
+18: /x $r15 = 0x60485d
+0x0000000000400665 in write_sob_if_not_void ()
+1: x/i $pc
+=> 0x400665 <write_sob_if_not_void+11>:	push   %rax
+2: /x $rax = 0x60485d8
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc90
+9: /x $rsp = 0x7fffffffdc80
+10: $eflags = [ PF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x6054f0
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x605510
+17: /x $r14 = 0x0
+18: /x $r15 = 0x60485d
+0x0000000000400666 in write_sob_if_not_void ()
+1: x/i $pc
+=> 0x400666 <write_sob_if_not_void+12>:	callq  0x6045f9
+2: /x $rax = 0x60485d8
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc90
+9: /x $rsp = 0x7fffffffdc78
+10: $eflags = [ PF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x6054f0
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x605510
+17: /x $r14 = 0x0
+18: /x $r15 = 0x60485d
+0x00000000006045f9 in write_sob ()
+1: x/i $pc
+=> 0x6045f9:	mov    0x8(%rsp),%rax
+2: /x $rax = 0x60485d8
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc90
+9: /x $rsp = 0x7fffffffdc70
+10: $eflags = [ PF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x6054f0
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x605510
+17: /x $r14 = 0x0
+18: /x $r15 = 0x60485d
+0x00000000006045fe in write_sob ()
+1: x/i $pc
+=> 0x6045fe:	and    $0xf,%rax
+2: /x $rax = 0x60485d8
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc90
+9: /x $rsp = 0x7fffffffdc70
+10: $eflags = [ PF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x6054f0
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x605510
+17: /x $r14 = 0x0
+18: /x $r15 = 0x60485d
+0x0000000000604602 in write_sob ()
+1: x/i $pc
+=> 0x604602:	jmpq   *0x604609(,%rax,8)
+2: /x $rax = 0x8
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc90
+9: /x $rsp = 0x7fffffffdc70
+10: $eflags = [ IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x6054f0
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x605510
+17: /x $r14 = 0x0
+18: /x $r15 = 0x60485d
+0x0000000000604460 in write_sob_symbol ()
+1: x/i $pc
+=> 0x604460:	push   %rbp
+2: /x $rax = 0x8
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc90
+9: /x $rsp = 0x7fffffffdc70
+10: $eflags = [ IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x6054f0
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x605510
+17: /x $r14 = 0x0
+18: /x $r15 = 0x60485d
+0x0000000000604461 in write_sob_symbol ()
+1: x/i $pc
+=> 0x604461:	mov    %rsp,%rbp
+2: /x $rax = 0x8
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc90
+9: /x $rsp = 0x7fffffffdc68
+10: $eflags = [ IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x6054f0
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x605510
+17: /x $r14 = 0x0
+18: /x $r15 = 0x60485d
+0x0000000000604464 in write_sob_symbol ()
+1: x/i $pc
+=> 0x604464:	mov    0x10(%rbp),%rax
+2: /x $rax = 0x8
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc68
+9: /x $rsp = 0x7fffffffdc68
+10: $eflags = [ IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x6054f0
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x605510
+17: /x $r14 = 0x0
+18: /x $r15 = 0x60485d
+0x0000000000604468 in write_sob_symbol ()
+1: x/i $pc
+=> 0x604468:	mov    %rax,%rcx
+2: /x $rax = 0x60485d8
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x7ffff7dd1b20
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc68
+9: /x $rsp = 0x7fffffffdc68
+10: $eflags = [ IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x6054f0
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x605510
+17: /x $r14 = 0x0
+18: /x $r15 = 0x60485d
+0x000000000060446b in write_sob_symbol ()
+1: x/i $pc
+=> 0x60446b:	sar    $0x4,%rcx
+2: /x $rax = 0x60485d8
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x60485d8
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc68
+9: /x $rsp = 0x7fffffffdc68
+10: $eflags = [ IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x6054f0
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x605510
+17: /x $r14 = 0x0
+18: /x $r15 = 0x60485d
+0x000000000060446f in write_sob_symbol ()
+1: x/i $pc
+=> 0x60446f:	sar    $0x4,%rax
+2: /x $rax = 0x60485d8
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x60485d
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc68
+9: /x $rsp = 0x7fffffffdc68
+10: $eflags = [ CF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x6054f0
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x605510
+17: /x $r14 = 0x0
+18: /x $r15 = 0x60485d
+0x0000000000604473 in write_sob_symbol ()
+1: x/i $pc
+=> 0x604473:	sar    $0x22,%rcx
+2: /x $rax = 0x60485d
+3: /x $rbx = 0x604745
+4: /x $rcx = 0x60485d
+5: /x $rdx = 0x605670
+6: /x $rdi = 0x0
+7: /x $rsi = 0x605680
+8: /x $rbp = 0x7fffffffdc68
+9: /x $rsp = 0x7fffffffdc68
+10: $eflags = [ CF IF ]
+11: /x $r8 = 0x60486f8
+12: /x $r9 = 0xd
+13: /x $r10 = 0xfe7eff0000016389
+14: /x $r11 = 0x6054f0
+15: /x $r12 = 0x60485d
+16: /x $r13 = 0x605510
+17: /x $r14 = 0x0
+18: /x $r15 = 0x60485d
+0x60485d:	0x00008257	0x00000004	0x0082e761	0x00000400
+0x60486d:	0x83776200	0x00040000	0x07630000	0x04000084
+0x60487d:	0x2b000000	0x00000000	0x00000000	0x00000000
+0x60488d:	0x10000000	0x00006055	0x00000000	0x00000000
+0x60489d:	0x00000000	0x00000000	0x00000000	0x00000000
+0x6048ad:	0x00000000	0x00000000	0x00000000	0x00000000
+0x6048bd:	0x00000000	0x00000000	0x00000000	0x00000000
+0x6048cd:	0x00000000	0x00000000	0x00000000	0x00000000
