@@ -37,11 +37,12 @@
 	  	;(display "pe in code-gen: ") (display pe) (newline) (newline)
 	      (string-append  
 	      	(cond ((and (tagged-by? pe 'const) (not (symbol? (cadr pe)))) (string-append "\t; codegen for const start\n\tmov rax, " (find-const-in-pairs (cadr pe) const-table) "\n\t;code gen for constant end\n"))
-	      		   ((and (tagged-by? pe 'const) (symbol? (cadr pe))) (string-append "codegen_for_symbol_start_for" (find-const-in-pairs (cadr pe) symbol-table) ":\n\n"
+	      		   ((and (tagged-by? pe 'const) (symbol? (cadr pe))) (string-append "codegen_for_symbol_start_for_" (find-const-in-pairs (cadr pe) symbol-table) ":\n\n"
 	      		   																								"\tmov rax, " (find-const-in-pairs (cadr pe) symbol-table) "\n"
 	      		   																								"\tpush rax\n"
 	      		   																								"\tpush SymbolTable\n"
 	      		   																								"\tcall findSymbol\n" 
+	      		   																								"\tadd rsp, 2*8\n"
 	      		   																								"\n\t;code gen for symbol end\n"))
 			       ((tagged-by? pe 'if3) (handle_if pe depth symbol-table const-table global-env))
 			       ((tagged-by? pe 'seq) (handle_seq pe depth symbol-table const-table global-env))
@@ -163,22 +164,26 @@
 											    "\t\tpush rbp\n"
 											    "\t\tmov rbp, rsp\n"
 
-											    "\t\tmov r11, [rbp + 2*8]       ;the head of the symbol table\n"
+											    "\t\tmov r11, [rbp + 2*8]       ;a pointer to the head of the symbol table\n"
+											    "\t\tmov r12, [rbp + 3*8]          ; Address of the address of the first element\n"
+											    "\t\tmov r11, [r11]\n"
+											    ;"\t\tmov r13, r11        ; the head of the symbol table\n"
+
 											    "\tsearch_loop:\n\n"
 											    "\t\tmov r13, r11\n"
-											    "\t\tmov r12, [rbp + 3*8]          ; Address of the address of the first element\n"
-											    "\t\tmov rax, [r12]              ; Address of the first element\n"
+											   ; "\t\tmov rax, [r12]              ; Address of the first element\n"
 											    "\t\tmov r11, [r11 + symbol]\n"
-											    "\t\tmov r11, [r11]\n"
-											    "\t\tmov r11, [r11]\n"
-											    "\t\tcmp r11, r12\n"
+											    ;"\t\tmov r11, [r11]\n"
+											    ;"\t\tmov r11, [r11]\n"
+											    "\t\tcmp [r11], r12\n"
 											    "\t\tje done                  ; Don't do anything if the list is empty\n"
 											    "\t\tmov r11, r13\n"
+											    ;"\t\tmov r11, [r11]\n"
 											    "\t\tmov r11, [r11 + next]       ; The next element in the list\n"
 											    "\t\tjmp search_loop\n"
 
 											"\tdone:\n\n"   
-												"\t\tmov rax, r11\n"
+												"\t\tmov rax, [r11]\n"
 											    "\t\tmov rsp, rbp\n"
 											    "\t\tpop rbp\n"
 											    "\t\tret\n"))
@@ -4247,7 +4252,7 @@
 
 (define create-symbol-table
 	(lambda (input-file)
-		(map (lambda (sym) (list (string-append "sobSymbol_" (symbol->string sym)) sym)) (remove-duplicates (get_symbols input-file)))))
+		(map (lambda (sym) (list (string-append "sobSymbol_" (check_for_special_symbols (symbol->string sym))) sym)) (remove-duplicates (get_symbols input-file)))))
 
 (define create-string-of-symbols
 		(lambda (sym-table)
@@ -4267,9 +4272,22 @@
 							   "\tpush rax\n"
 							   "\tpush SymbolTable\n"
 							   "\tcall addSymbol\n"
+							   "\tadd rsp, 2*8\n"
 							   (create-symbol-table-for-assembly (cdr sym-table))))))
 
 
+(define check_for_special_symbols
+		(lambda (sym)
+				(cond 
+				  ((member #\! (string->list sym)) (list->string (substq #\B #\! (string->list sym))))
+				  ((member #\< (string->list sym)) (list->string (substq #\L #\< (string->list sym))))
+				  ((member #\> (string->list sym)) (list->string (substq #\G #\> (string->list sym))))
+				  ((member #\= (string->list sym)) (list->string (substq #\G #\= (string->list sym))))
+				  ((member #\+ (string->list sym)) (list->string (substq #\P #\+ (string->list sym))))
+				  ((member #\/ (string->list sym)) (list->string (substq #\D #\/ (string->list sym))))
+				  ((member #\* (string->list sym)) (list->string (substq #\M #\* (string->list sym)))) 
+				  ((member #\- (string->list sym)) (list->string (substq #\S #\- (string->list sym))))
+				  (else sym))))
 
 
 ;=========================================================================================================================================

@@ -175,17 +175,17 @@ sobTrue:
 sobNil:
 	dq SOB_NIL
 
-sobInt1:
-	dq MAKE_LITERAL (T_INTEGER, 1)
-
-sobPair2:
-	dq MAKE_LITERAL_PAIR (sobInt2, sobNil)
-
-sobInt2:
-	dq MAKE_LITERAL (T_INTEGER, 2)
-
 sobUndef:
 	dq SOB_UNDEFINED
+
+sobSymbol_a:
+	MAKE_LITERAL_SYMBOL "a"
+
+sobSymbol_b:
+	MAKE_LITERAL_SYMBOL "b"
+
+sobSymbol_c:
+	MAKE_LITERAL_SYMBOL "c"
 
 
 
@@ -232,23 +232,21 @@ findSymbol:
 
 		push rbp
 		mov rbp, rsp
-		mov r11, [rbp + 2*8]       ;the head of the symbol table
+		mov r11, [rbp + 2*8]       ;a pointer to the head of the symbol table
+		mov r12, [rbp + 3*8]          ; Address of the address of the first element
+		mov r11, [r11]
 	search_loop:
 
 		mov r13, r11
-		mov r12, [rbp + 3*8]          ; Address of the address of the first element
-		mov rax, [r12]              ; Address of the first element
 		mov r11, [r11 + symbol]
-		mov r11, [r11]
-		mov r11, [r11]
-		cmp r11, r12
+		cmp [r11], r12
 		je done                  ; Don't do anything if the list is empty
 		mov r11, r13
 		mov r11, [r11 + next]       ; The next element in the list
 		jmp search_loop
 	done:
 
-		mov rax, r11
+		mov rax, [r11]
 		mov rsp, rbp
 		pop rbp
 		ret
@@ -2738,6 +2736,30 @@ end_divide_code:
 ; =============================== PRIMITIVE FUNCTIONS =========================
 start_of_creation_of_symbol_table:
 
+	mov rdi, 8
+	call malloc
+	mov r8, sobSymbol_a
+	mov qword [rax], r8
+	push rax
+	push SymbolTable
+	call addSymbol
+	add rsp, 2*8
+	mov rdi, 8
+	call malloc
+	mov r8, sobSymbol_b
+	mov qword [rax], r8
+	push rax
+	push SymbolTable
+	call addSymbol
+	add rsp, 2*8
+	mov rdi, 8
+	call malloc
+	mov r8, sobSymbol_c
+	mov qword [rax], r8
+	push rax
+	push SymbolTable
+	call addSymbol
+	add rsp, 2*8
 
 start_of_instructions:
 
@@ -3928,98 +3950,49 @@ endLabel107:
 ; end
 
 ; start
-; start of applic of lambda-simple code: 
+codegen_for_symbol_start_for_sobSymbol_a:
 
-	; codegen for const start
-	mov rax, sobPair2
-	;code gen for constant end
+	mov rax, sobSymbol_a
 	push rax
-	; codegen for const start
-	mov rax, sobInt1
-	;code gen for constant end
+	push SymbolTable
+	call findSymbol
+	add rsp, 2*8
+
+	;code gen for symbol end
+	mov rax, [rax]
 	push rax
+	call write_sob_if_not_void
+	add rsp, 8
 
-	push 2
-; start of creating a closure of lambda-simple 0
+; end
 
-	mov rbx, 0
-	mov rdi, 16
-	call malloc; rax now hold a pointer to the target closure
-make_closure108:
+; start
+codegen_for_symbol_start_for_sobSymbol_b:
 
-	MAKE_LITERAL_CLOSURE rax, rbx, bodyOfLambda108
-	jmp endLabel108
+	mov rax, sobSymbol_b
+	push rax
+	push SymbolTable
+	call findSymbol
+	add rsp, 2*8
 
-bodyOfLambda108:
-	push rbp
-	mov rbp, rsp
-	mov r10, qword [rbp +3*8]
-	cmp r10, 2
-	jne bad_arg_count108
-; start of applic of lambda-simple code: 
+	;code gen for symbol end
+	mov rax, [rax]
+	push rax
+	call write_sob_if_not_void
+	add rsp, 8
 
+; end
 
-	push 0
-	mov rax, list
-	mov r10, [rax]
-	mov rcx, r10
-	TYPE rcx
-	cmp rcx, T_CLOSURE
-	jne not_a_closure127
-	mov rbx, r10
-	CLOSURE_ENV rbx
-	push rbx
-	CLOSURE_CODE r10
-	call r10
-	add rsp, 8*1
-	jmp done_closure127
-not_a_closure127:
+; start
+codegen_for_symbol_start_for_sobSymbol_c:
 
-	mov rax, sobVoid
-done_closure127:
+	mov rax, sobSymbol_c
+	push rax
+	push SymbolTable
+	call findSymbol
+	add rsp, 2*8
 
-	pop r15
-	shl r15, 3
-	add rsp, r15
-
-; end of applic of lambda-simple code: 
-
-	mov rsp, rbp
-	pop rbp
-	ret
-
-bad_arg_count108:
-	mov rax, sobVoid
-	mov rsp, rbp
-	pop rbp
-	ret
-
-endLabel108:
-; end of creating a closure of lambda-simple 0
-
-	mov r10, [rax]
-	mov rcx, r10
-	TYPE rcx
-	cmp rcx, T_CLOSURE
-	jne not_a_closure126
-	mov rbx, r10
-	CLOSURE_ENV rbx
-	push rbx
-	CLOSURE_CODE r10
-	call r10
-	add rsp, 8*1
-	jmp done_closure126
-not_a_closure126:
-
-	mov rax, sobVoid
-done_closure126:
-
-	pop r15
-	shl r15, 3
-	add rsp, r15
-
-; end of applic of lambda-simple code: 
-
+	;code gen for symbol end
 	mov rax, [rax]
 	push rax
 	call write_sob_if_not_void

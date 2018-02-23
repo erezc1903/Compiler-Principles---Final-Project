@@ -749,7 +749,9 @@ write_sob_symbol:
 	jmp .loop
 
 .done:
-	leave
+	mov rax, 0
+	mov rsp, rbp
+	pop rbp
 	ret
 
 section .data

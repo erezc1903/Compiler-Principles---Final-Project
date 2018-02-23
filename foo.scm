@@ -17,9 +17,16 @@
 ;'(1 2 3 (4 (5 6 7) 8 9))
 ;'(4 5 6 . #(4 8 16 (#\a #\b #\c)))
 ;'(4 5 6 . #(4 8 16 (1 2 3)))
-;'a ;; to figure out how to handle symbol type cons
-;'b
-;'c
+'a ;; to figure out how to handle symbol type cons
+'b
+'c
+;'!
+;'+
+;'-
+;'*
+;'/
+;'>
+;'<
 ;;; Constants
 
 
