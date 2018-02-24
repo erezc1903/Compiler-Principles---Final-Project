@@ -84,7 +84,7 @@
 			  (const-table (const_table input))
 			  (const-table-as-list-of-pairs (map (lambda (e) (set! index (+ index 1)) (pairs_of_name_and_object e index)) const-table))
 			  (global-env (append primitive-procedures (global_env input)))
-			  (global-env-as-pairs (map pairs_of_label_and_name global-env)))
+			  (global-env-as-pairs (map check_for_special_symbols (map pairs_of_label_and_name global-env))))
 			  ;(symbol-table (create-symbol-table input)))
 
 			;(display "global-env-as-pairs: ") (display global-env-as-pairs) (newline) (newline)
@@ -3617,9 +3617,9 @@
 				"\tTYPE rbx\n"
 				"\tcmp rbx, T_BOOL\n"
 				"\tjne .retFalse\n"
-				"\tmov rbx, r10\n"
+				"\tmov rbx, rax\n"
 				"\tcmp rbx, sobFalse\n"
-				"\tje .retFalse\n"
+				"\tjne .retFalse\n"
 				"\tmov rax, sobTrue\n"
 				"\tjmp .done\n\n"
 				".retFalse:\n"
@@ -4396,15 +4396,15 @@
 (define check_for_special_symbols
 		(lambda (sym)
 				(cond 
-				  ((member #\! (string->list sym)) (list->string (substq #\B #\! (string->list sym))))
-				  ((member #\< (string->list sym)) (list->string (substq #\L #\< (string->list sym))))
-				  ((member #\> (string->list sym)) (list->string (substq #\G #\> (string->list sym))))
-				  ((member #\= (string->list sym)) (list->string (substq #\G #\= (string->list sym))))
-				  ((member #\+ (string->list sym)) (list->string (substq #\P #\+ (string->list sym))))
-				  ((member #\/ (string->list sym)) (list->string (substq #\D #\/ (string->list sym))))
-				  ((member #\* (string->list sym)) (list->string (substq #\M #\* (string->list sym)))) 
-				  ((member #\- (string->list sym)) (list->string (substq #\S #\- (string->list sym))))
-				  (else sym))))
+				  ((member #\! (string->list (car sym))) (list (list->string (substq #\B #\! (string->list (car sym)))) (cadr sym)))
+				  ((member #\< (string->list (car sym))) (list (list->string (substq #\L #\< (string->list (car sym)))) (cadr sym)))
+				  ((member #\> (string->list (car sym))) (list (list->string (substq #\G #\> (string->list (car sym)))) (cadr sym)))
+				  ((member #\= (string->list (car sym))) (list (list->string (substq #\E #\= (string->list (car sym)))) (cadr sym)))
+				  ((member #\+ (string->list (car sym))) (list (list->string (substq #\P #\+ (string->list (car sym)))) (cadr sym)))
+				  ((member #\/ (string->list (car sym))) (list (list->string (substq #\D #\/ (string->list (car sym)))) (cadr sym)))
+				  ((member #\* (string->list (car sym))) (list (list->string (substq #\M #\* (string->list (car sym)))) (cadr sym)))
+				  ((member #\- (string->list (car sym))) (list (list->string (substq #\S #\- (string->list (car sym)))) (cadr sym)))
+				  (else (list (car sym) (cadr sym))))))
 
 
 ;=========================================================================================================================================

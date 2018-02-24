@@ -100,10 +100,231 @@
 ;             (equal? (cdr x) (cdr y)))))
 ;(equal? (cons 1 2) (cons 1 3)) ;V
 
+;; test 32
+;(define (variable? x) (symbol? x))
+;(variable? #t) ;V
+
+;; test 33
+;((lambda (x y)
+;      (cond ((= x y) #t)
+;            ((> x y) 'x>y)
+;            ((and (> (+ x y) 10) (> (* x y) 40)) 'string)
+;            )
+;      ) 111 11) ;V
+
+;; test 34
+;((lambda (a) (if (string? a) (string->symbol a))) "a23") ;V
+
+;; test 35
+; (define (=number? exp num)
+;  (and (number? exp) (= exp num)))
+;(=number? 5 1) ;V
+
+; test 37
+;(define (a x set)
+;  (cond
+;    ((null? set) (list x))
+;    ((= x (car set)) set)
+;    ((< x (car set)) (cons x set))
+;    (else (cons (car set)(a x (cdr set))))))
+	
+;(a 3 (cons 5 4)) ;V
+
+;; test 38
+;(define (expmod a b m) 
+;  (cond ((= b 0) 1)
+;	((= (remainder b 2) 0) (remainder (expmod (remainder (* a a) m) (/ b 2) m) m))
+;	(else (remainder (* a (expmod a (- b 1) m)) m))))
+   
+;(expmod 5 13 1) ;V
+
+;; test 40
+;(define (b set1 set2)
+;  (cond
+;    ((null? set1) set2)
+;    ((null? set2) set1)
+;    (else
+;     (let ((s1 (car set1))
+;           (s2 (car set2)))
+;       (cond
+;       ((= s1 s2) (cons s1 (b (cdr set1) (cdr set2))))
+;       ((> s1 s2) (cons s2 (b set1 (cdr set2))))
+;       ((< s1 s2) (cons s1 (b (cdr set1) set2))))))))
+;(b '(1 2 3) '(4 5 6)) ;V
+
+;; test 43
+;(define a 'hello)
+;a ;V
+
+;; test 44
+;(define b (string-length "world"))
+;b ;V
+
+;; test 45
+;(define loop (lambda (num func param)
+;                 (if (zero? num)
+;                     param
+;                     (loop (- num 1) func (func param))
+;                     )
+;                 )
+;    )
+;(loop 7 (lambda (x) (+ x x)) 43) ;V
+
+;; test 46
+;(define loop2 (lambda (num func param)
+;                  (if (zero? num)
+;                      param
+;                      (func (loop2 (- num 1) func param)
+;                        )
+;                      )
+;                  )
+;    )
+;(loop2 7 (lambda (x) (+ x x)) 3) ;V
+
+;; test 50
+;(define c (list 1 (list 2 (list 3 (list 4 (list 5 (list 6 7)))))))
+;c ;V
+;; test 52
+;(define (accumulate op init lst)
+;    (if (null? lst)
+;        init
+;        (op (car lst) (accumulate op init (cdr lst)))))
+;(accumulate * 2 '(1 2 3 4 5 6 7 8 9)) ;V
+
+;; test 53
+;(define f1 (lambda (x) x))
+;(f1 2) ;V
+
+;; test 54
+;(define f2 (lambda (o a b) (o a b)))
+;(f2 + 5 6) ;V
 
 
+;; test 59
+;(let ((square (lambda (x) (* x x)))) 33) ;V
+
+;; test 60
+;(define fun1 (lambda ()
+;                 (begin
+;                   (+ 2 1)
+;                   (+ 3 4)
+;                   )
+;                 )
+;    )
+;(fun1) ;V
 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; FIX ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; test 61
+; (define fun2 (lambda (x)
+;                 (begin
+;                   (set! x (+ 2 1))
+;                   (set! x (+ x 3 4))
+;                   x
+;                   )
+;                 )
+;    )
+;(fun2 45)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; FIX ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;(define (fvar fun2) 
+;	(lambda-simple (x) (seq ((set (pvar x 0) (applic (fvar +) ((const 2) (const 1)))) 
+;							(set (pvar x 0) (applic (fvar +) ((pvar x 0) (const 3) (const 4)))) (pvar x 0))))) 
+;							(applic (fvar fun2) ((const 45)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; FIX ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; test 76
+;(define foo7 (lambda (x y) (
+;                            begin
+;                            (set! y x)
+;                            (set! x y)
+;                            (+ y x))
+;                 )
+;    )
+;(foo7 1 3)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; FIX ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;; test 79
+;(define foo10 (lambda (x y) (
+;                            begin
+;                            (set! y x)
+;                            (eq? y x))
+;                 )
+;    )
+;(foo10 12 12) ;V
+
+;; test 90
+;(((lambda (x)  
+;    (lambda (z)
+;      (* x x))) 4) 5) ;V
+
+;; test 91
+;((lambda () (+))) ;V
+
+;; test 92
+;((((lambda () (lambda (aa) (lambda (bb) (+ aa bb))))) 55) 66) ;V
+
+;; test 93
+;((((lambda () (lambda (aa) (lambda (bb) (- aa bb))))) 55) 66) ;V
+
+;; test 94
+;((((lambda () (lambda (aa) (lambda (bb) (+ aa bb))))) 30) 4) ;V
+
+;; test 95
+;((lambda (a b c d) (a (b (c d)))) + - * 4) ;V
+
+;; test 99
+;(define rem (lambda (x)(remainder x 10)))
+;(rem 443) ;V
+
+;; test 100
+;(define f (lambda (b) (/ 200 b)))
+;(f 4) ;V
+
+;; test 101
+;((lambda (a b) (cons a b)) 5 4) ;V
+
+;; test 103
+;(boolean? (procedure? (lambda () (make-string 5)))) ;V
+
+;; test 104
+;((lambda (a) (boolean? a)) #t) ;V
+
+;; test 105
+;((lambda (a) (if (char? a) (char->integer a) (if (integer? a) (integer->char a) a))) #\x50) ;V
+
+;; test 106
+;(pair? (cons 4 6)) ;V
+
+;; test 107
+;((lambda (a b) (cons a b)) 55 6) ;V
+
+;; test 108
+;(pair? (lambda (a b) (cons a b))) ;V
+
+;; test 109
+;((lambda (a b) (pair? (cons a b))) 1234 5678) ;V
+
+;; test 110
+;(procedure? (lambda (a b) (cons a b))) ;V
+
+;; test 111
+;(zero? 5) ;V
+
+;; test 112
+;(not (zero? 5)) ;V
+
+;; test 113
+;(define a (lambda (b) (rational? b))) ;V
+;(a 56)
+
+; test 114
+;(define a (lambda (b) (not (rational? b))))
+;(a 56) ;V
+
+;; test 115
+;(denominator (/ 10 2)) ;V
 
 
 
