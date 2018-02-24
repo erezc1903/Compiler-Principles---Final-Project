@@ -33,8 +33,8 @@
 
 (define code-gen
 	  (lambda (pe depth const-table global-env)
-	  	(display "const-table in code-gen: ") (display const-table) (newline)
-	  	(display "pe in code-gen: ") (display pe) (newline) (newline)
+	  	;(display "const-table in code-gen: ") (display const-table) (newline)
+	  	;(display "pe in code-gen: ") (display pe) (newline) (newline)
 	      (string-append  
 	      	(cond ((and (tagged-by? pe 'const) (not (symbol? (cadr pe)))) (string-append "\t; codegen for const start\n\tmov rax, " (find-const-in-pairs (cadr pe) const-table) "\n\t;code gen for constant end\n"))
 	      		   ((and (tagged-by? pe 'const) (symbol? (cadr pe))) (string-append 
@@ -88,9 +88,9 @@
 			  ;(symbol-table (create-symbol-table input)))
 
 			;(display "global-env-as-pairs: ") (display global-env-as-pairs) (newline) (newline)
-			;(display "input: ") (display input) (newline) (newline)
-			(display "const-table: ") (display const-table) (newline) (newline)
-			(display "const-table-as-list-of-pairs: ") (display const-table-as-list-of-pairs) (newline) (newline)
+			(display "input: ") (display input) (newline) (newline)
+			;(display "const-table: ") (display const-table) (newline) (newline)
+			;(display "const-table-as-list-of-pairs: ") (display const-table-as-list-of-pairs) (newline) (newline)
 			;(display "symbol-table: ") (display symbol-table) (newline) (newline)
 
 
@@ -3378,6 +3378,25 @@
 				"\tmov rbp, rsp\n"
 				"\tmov r10, qword [rbp + 8*4]\n"
 				"\tmov r9, qword [rbp + 8*5]\n"
+				"\tmov rbx, [r10]\n"
+				"\tmov rcx, [r9]\n"
+				"\tTYPE rbx\n"
+				"\tTYPE rcx\n"
+				"\tcmp rbx, rcx\n"
+				"\tjne .retFalse\n"
+				"\tmov rbx, [r10]\n"
+				"\tmov rcx, [r9]\n"
+				"\tTYPE rbx\n"
+				"\tTYPE rcx\n"
+				"\tcmp rbx, T_SYMBOL\n"
+				"\tje .checkSymbols\n"
+				"\tmov rbx, [r10]\n"
+				"\tmov rcx, [r9]\n"
+				"\tcmp rbx, rcx\n"
+				"\tje .retTrue\n"
+				"\tjmp .retFalse\n"
+
+				".checkSymbols:\n\n"
 				"\tmov r10, [r10]\n"
 				"\tDATA r10\n"
 				"\tpush r10\n"
@@ -3397,6 +3416,9 @@
 				"\tjmp .doneEq?\n"
 				".retTrue:\n"
 				"\tmov rax, sobTrue\n"
+				"\tjmp .doneEq?\n"
+				".retFalse:\n\n"
+				"\tmov rax, sobFalse\n"
 				".doneEq?:\n"
 				"\tmov rsp, rbp\n" 
 				"\tpop rbp\n"

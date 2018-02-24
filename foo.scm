@@ -1,3 +1,130 @@
+
+;23 ;V
+
+;; test 2
+;(- 2) ; known problem
+
+;; test 3
+;-1 ;V
+
+;; test 4
+;(/ 35 7) ;V
+
+;; test 5
+;(* 5 7) ;V
+
+;; test 6
+;(+ 53242653 35463560) ;V
+
+;; test 7
+;(+ (* 564 5) (- (+ 4 5))) ;V
+
+;; test 8
+;(- ( - ( - ( - ( - ( - ( - ( - (- 5))))))))) ;known problem
+
+;; test 9
+;((lambda (a) ( + a 7)) 5) ;V
+
+;; test 10
+;((lambda (a b) (a ( b (a 5 6) 8) 11)) + -) ;V
+
+;; test 11
+;((lambda (a b) (if (number? a) (make-string a) b)) #t 6) ;V
+
+;; test 12
+; ((lambda (a b c) (if (= a c) (+ a c) (- b c 4))) 1 2 3) ;V
+
+
+;(define sum (lambda (x) (if (= x 0) 0 (+ x (sum (- x 1)))))) 
+; (sum 60) ;V
+
+;; test 15
+;(define rec (lambda (func1 func2 init param num)
+;                (if (= 0 num)
+;                    init
+;                    (func1 (rec func1 func2 (func2 2 init param) param (- num 1))
+;                      )
+;                    )
+;                )
+;    )
+;(rec - + 5 7 20) ;V
+
+;; test 21
+;((lambda (f1 f2 input1 input2 input3 ifval)
+;      (if (ifval input2 input3)
+;      (f1 (f2 input1 5) 40)
+;      (begin
+;        (set! f2 f1)
+;        (f1 (f2 input1 5) 40)
+;        )
+;      )
+; ) * + 5 7 -8 >) ;V
+;; test 24
+;(((lambda (x y) (lambda () (+ x y))) 56 65)) ;V
+
+;; test 25
+;(((lambda (x y) (lambda () (+ x y))) ((lambda (a) (* a a)) 500) 2)) ;V
+
+;; test 26
+;(((lambda (x y) (lambda () (x 89 y))) (lambda (a b) (* a b)) 2)) ;V
+
+;;test 28
+;((lambda (f1 f2)
+;      (if (eq? f1 f2)
+;          'eq!
+;          'no!
+;          )
+;      ) + -) ;V
+
+;; test 29
+;(define factorial
+;    (lambda(n)
+;      (if (= n 0)
+;        1
+;        (* n (factorial (- n 1))))))
+;(factorial 6) ;V
+
+;; test 30
+;(define fibonacci
+;        (lambda (n)
+;          (if (< n 2)
+;              1
+;              (+ (fibonacci (- n 1)) (fibonacci (- n 2))))))
+;(fibonacci 11) ;V
+
+;; test 31
+;(define (equal? x y)
+;    (if (not (pair? x))
+;        (eq? x y)
+;        (and (equal? (car x) (car y))
+;             (equal? (cdr x) (cdr y)))))
+;(equal? (cons 1 2) (cons 1 3)) ;V
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ;;; Constants
 ;5
 ;-5
@@ -17,13 +144,13 @@
 ;'(1 2 3 (4 (5 6 7) 8 9))
 ;'(4 5 6 . #(4 8 16 (#\a #\b #\c)))
 ;'(4 5 6 . #(4 8 16 (1 2 3)))
-'a ;; to figure out how to handle symbol type cons
-'b
-'+
+;'a ;; to figure out how to handle symbol type cons
+;'b
+;'+
 ;(symbol? "a")
 ;; Constants
 ;(eq? 'a 'a)
-(eq? (string->symbol (symbol->string (string->symbol "c"))) (string->symbol "c"))
+;(eq? (string->symbol (symbol->string (string->symbol "c"))) (string->symbol "c"))
 
 
 ;"+"
