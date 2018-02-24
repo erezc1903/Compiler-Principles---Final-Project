@@ -554,6 +554,8 @@ write_sob_pair:
 	call printf
 	mov rax, qword [rbp + 8 + 1*8]
 	CAR rax
+	mov r11, rax
+
 	push rax
 	call write_sob
 	add rsp, 1*8
@@ -687,14 +689,20 @@ write_sob_symbol:
 	mov rbp, rsp
 
 	mov rax, qword [rbp + 8 + 1*8]
+	mov r12, rax
+	DATA r12
+	mov r12, [r12]
+	TYPE r12
+	cmp r12, T_STRING
+	je .printStringOfSymbol
 	mov rcx, rax
 	DATA rcx
 	DATA rax
 	mov rax, [rax]
-	mov r13, rax
-	TYPE r13
-	cmp r13, T_SYMBOL
-	je .send_symbol_to_print
+	DATA rax
+	mov rax, [rax]
+	mov rcx, [rcx]
+	DATA rcx
 	mov rcx, [rcx]
 	STRING_LENGTH rcx
 	STRING_ELEMENTS rax
@@ -756,10 +764,14 @@ write_sob_symbol:
 	inc rax
 	jmp .loop
 
-.send_symbol_to_print:
-	push rax
-	call write_sob
-	add rsp, 8
+.printStringOfSymbol:
+	mov rcx, r12
+	mov rax, r12
+	STRING_LENGTH rcx
+	STRING_ELEMENTS rax
+	jmp .loop
+
+
 .done:
 	mov rax, 0
 	mov rsp, rbp

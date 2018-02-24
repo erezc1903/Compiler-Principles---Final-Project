@@ -4,7 +4,7 @@
 ;; test 2
 ;(- 2) ; known problem
 
-;; test 3
+; test 3
 ;-1 ;V
 
 ;; test 4
@@ -16,8 +16,8 @@
 ;; test 6
 ;(+ 53242653 35463560) ;V
 
-;; test 7
-;(+ (* 564 5) (- (+ 4 5))) ;V
+; test 7
+;(+ (* 564 5) (- (+ 4 5))) ; known problem
 
 ;; test 8
 ;(- ( - ( - ( - ( - ( - ( - ( - (- 5))))))))) ;known problem
@@ -226,10 +226,6 @@
 ;    )
 ;(fun2 45)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; FIX ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;(define (fvar fun2) 
-;	(lambda-simple (x) (seq ((set (pvar x 0) (applic (fvar +) ((const 2) (const 1)))) 
-;							(set (pvar x 0) (applic (fvar +) ((pvar x 0) (const 3) (const 4)))) (pvar x 0))))) 
-;							(applic (fvar fun2) ((const 45)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; FIX ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -272,7 +268,7 @@
 ;((((lambda () (lambda (aa) (lambda (bb) (+ aa bb))))) 30) 4) ;V
 
 ;; test 95
-;((lambda (a b c d) (a (b (c d)))) + - * 4) ;V
+;((lambda (a b c d) (a (b (c d)))) + - * 4) ;known problem
 
 ;; test 99
 ;(define rem (lambda (x)(remainder x 10)))
@@ -319,19 +315,433 @@
 ;(define a (lambda (b) (rational? b))) ;V
 ;(a 56)
 
-; test 114
+;;test 114
 ;(define a (lambda (b) (not (rational? b))))
 ;(a 56) ;V
 
 ;; test 115
 ;(denominator (/ 10 2)) ;V
 
+;; test 116
+;(numerator 100/50) ;V
+
+;; test 117
+;(define a (lambda (x y) (if (not (zero? x)) (denominator (/ y x)) (numerator y))))
+;(a 0 5) ;V
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; FIX ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;test 119
+;(define x (lambda (a b) (if (> (string-length a) b) (string-ref a b) a)))
+;(char->integer (x "hello" 3))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; FIX ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
 
+;; test 120
+;(define x (lambda (a b c) (if (> (string-length a) b) (string-set! a b c) a)))
+;(string->symbol (x "hello" 30 #\r)) ;V
+
+;; test 121
+;(string->symbol ((lambda (b) (symbol->string b)) 'a)) ;V
+
+;; test 128
+;(define f (lambda (p x) (begin
+;                            (set-car! p x)
+;                            p)))
+;(f (cons 4 5) 444) ;V
+
+;; test 129
+;(define f (lambda (p x) (begin
+;                            (set-cdr! p x)
+;                            p)))
+;(f (cons 4 5) 444) ;V
+
+;; test 130
+;(apply (lambda (a) (* a a)) '(2)) ;V
+
+;; test 131
+;(let ((str 'hello))
+;    (set! f1 (lambda () str))
+;    (set! f2 (lambda () (string->symbol str)))
+;	str
+;    ) ;V
+
+;; test 132
+;(let ((x 2) (y 3))
+;  (let* ((x 7)
+;         (z (+ x y)))
+;    (* z x))) ;V
+
+;; test 133
+;(let* ((x 2) (y 3))
+;    (let ((x 7)
+;           (z (+ x y)))
+;      (* z x))) ;V
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; FIX ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; test 134
+;(letrec ((x 2) (y 3))
+;    (let ((x 7)
+;           (z (+ x y)))
+;      (* z x)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; FIX ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+; test 135
+;((lambda (ls1 ls2) (append ls1 ls2)) '(1 2 3) '(q w e)) ;V
+
+
+;; test 136
+;(define bla (lambda (x y) (append (list x 2) (list 2 y))))
+;(bla '(1 2 3) '(q w e)) ;V
 
 
 
+;; test 137
+;(apply + (list 1 3 2)) ;V
+
+;; test 138
+;((lambda (list) (apply (lambda (x . y) (+ x 3)) list)) (list 1 3 2)) ;V
+
+;; test 139
+;(map number? '(1 2 3)) ;V
+
+;; test 140
+;(map boolean? '(#t #t #f "bla")) ;V
+
+;; test 141
+;(map (lambda (x) (if (integer? x) (char->integer (integer->char x)) 0)) '(1 2 3 + #f)) ;V
+
+
+;; test 142
+;(map (lambda (x) (if (string? x) (string->symbol x) 0)) '("a1" "b2" 3 + "cf")) ;V
+
+
+;; test 143
+;((lambda (int) (integer? int))4) ;V
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; FIX ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; test 144
+;(map number? '(1 2 '3))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; FIX ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;; test 145
+;(string? '1) ;V
+
+;; test 147
+;((lambda (ch) (if (char? ch) (char->integer ch))) #\x666) ;V
+
+;; test 148
+;((lambda (int) (if (boolean? (char? (integer->char int))) 'ok)) 5) ;V
+
+;; test 149
+;((lambda (str)
+;   (if (string? str)
+;       (begin
+;	 (string-set! str 1 (integer->char 66))
+;	 str))) "ssss") ; V
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; FIX ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; test 150
+;((lambda (sym int)
+;   (if (symbol? sym) (begin
+;		       (set! a (symbol->string sym))
+;		       (string-set! a 2 (integer->char int))
+;		       a))) 'abc 33)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; FIX ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;; test 151
+;((lambda (list) (begin
+;		(set-car! (car (cdr list)) (cons 1 2))
+;		 list)) (list 1 (cons 22 66) 3 4)) ;V
+
+;; test 152
+;((lambda (list) (begin
+;		(set-cdr! (cdr list) (cons 1 2))
+;		list)) (list 1 2 3 4)) ;V
+
+;; test 153
+;(let* ((x 1)
+;         (y 2)
+;         (z 3))
+;    (+ x y z)
+;    ) ;V
+
+;; test 154
+;((lambda (x y) (
+;                 let* ((a x)
+;                       (b y)
+;                       )
+;                 (* a a b))
+;    ) 44 55) ;V
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; FIX ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; test 155
+;(letrec ((loop (lambda (i a)
+;		 (set! a (+ (* 10 a) i))
+;		 (if (< i 10)
+;		     (loop (+ i 1) a)
+;		     a))))
+;  (loop 0 0))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; FIX ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; FIX ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;; test 156
+;(define func (lambda (lst num) (
+;                                  letrec ((loop
+;                                             (lambda (i a)
+;                                               (cond ((null? i)
+;                                                      #f)
+;                                                 ((eq? (car i) a) #t)
+;                                                 (else
+;                                                   (loop (cdr i) a)))
+;                                               )))
+;                                    (loop lst num)))
+;                 )
+;(func (list 1 2 3) 5)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; FIX ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; test 157
+;(quasiquote (0 1 2)) ;V
+
+;; test 158
+;(quasiquote (0 (unquote (+ 1 2)) 4)) ;V
+
+
+;; test 159
+;(quote (1 a 4)) ;V
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; FIX ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; test 160
+;(define q (quote (bla (((s ) s )sd ))))
+;q ; known problem with nested lists
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; FIX ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; test 161
+;(quasiquote (1 2 (unquote (+ 3 4)))) ;V
+
+
+;; test 162
+;(quasiquote ( a 3 4 (unquote (* 4 3 2 1)))) ;V
+
+
+
+;; test 164
+;`(unquote (quote (3 4 5))) ; V
+
+;; test 166
+;(let* ((a 1) (b 1) (c (* a b)))
+;   c) ;V
+
+;; test 167
+;(define (lst . x) x)
+;(lst 1 2 3 4 5 6) ;V
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; FIX ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; test 168
+;(define (func . numbers)
+;    (if (null? numbers)
+;        0
+;        (+ (car numbers) (apply func (cdr numbers)))))
+;(func 9 8 7 6 5 4)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; FIX ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;; test 169
+;(define (f . x) (apply + x)) 
+;(f 5 4 8 6) ;V
+
+;; test 172
+;5 ;V
+
+;; test 174
+;(define (plusminus . l)
+;    (if (null? l) 0
+;        (if (null? (cdr l)) (car l)
+;        (+ (- (car l) (car (cdr l))) (apply plusminus (cdr (cdr l)))))))
+;(plusminus 5 4 8 6 7 2 3 0 5 4 8 9 0) ;V
+
+;; test 175
+;(define (less-than  . l)
+;     (cond
+;       ((null? l) #t)
+;       ((null? (cdr l)) #t)
+;       ((< (car l) (car (cdr l))) (apply less-than  (cdr l)))
+;       (else #f)))
+	   
+;(less-than 5 4 8 9 6 2 5 4 4 44) ;V
+
+;; test 176
+;(procedure? (lambda () (make-string 5))) ;V
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; FIX ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; test 177
+;(((((lambda (a)
+;      (lambda (b)
+;        (((lambda (a) (lambda (b) ((a b) (lambda (x) (lambda (y) y)))))
+;	  ((lambda (n)
+;	     ((n (lambda (x) (lambda (x) (lambda (y) y))))
+;	      (lambda (x) (lambda (y) x))))
+;	   (((lambda (a)
+;	       (lambda (b)
+;		 ((b (lambda (n)
+;		       ((lambda (p) (p (lambda (a) (lambda (b) b))))
+;			((n (lambda (p)
+;			      (((lambda (a)
+;				  (lambda (b) (lambda (c) ((c a) b))))
+;				((lambda (n)
+;				   (lambda (s)
+;				     (lambda (z) (s ((n s) z)))))
+;				 ((lambda (p)
+;				    (p (lambda (a) (lambda (b) a))))
+;				  p)))
+;			       ((lambda (p)
+;				  (p (lambda (a) (lambda (b) a))))
+;				p))))
+;			 (((lambda (a)
+;			     (lambda (b) (lambda (c) ((c a) b))))
+;			   (lambda (x) (lambda (y) y)))
+;			  (lambda (x) (lambda (y) y)))))))
+;		  a)))
+;	     a)
+;	    b)))
+;	 ((lambda (n)
+;	    ((n (lambda (x) (lambda (x) (lambda (y) y))))
+;	     (lambda (x) (lambda (y) x))))
+;	  (((lambda (a)
+;	      (lambda (b)
+;		((b (lambda (n)
+;		      ((lambda (p) (p (lambda (a) (lambda (b) b))))
+;		       ((n (lambda (p)
+;			     (((lambda (a)
+;				 (lambda (b) (lambda (c) ((c a) b))))
+;			       ((lambda (n)
+;				  (lambda (s)
+;				    (lambda (z) (s ((n s) z)))))
+;				((lambda (p)
+;				   (p (lambda (a) (lambda (b) a))))
+;				 p)))
+;			      ((lambda (p)
+;				 (p (lambda (a) (lambda (b) a))))
+;			       p))))
+;			(((lambda (a)
+;			    (lambda (b) (lambda (c) ((c a) b))))
+;			  (lambda (x) (lambda (y) y)))
+;			 (lambda (x) (lambda (y) y)))))))
+;		 a)))
+;	    b)
+;	   a)))))
+;    ((lambda (n)
+;       ((lambda (p) (p (lambda (a) (lambda (b) b))))
+;	((n (lambda (p)
+;	      (((lambda (a) (lambda (b) (lambda (c) ((c a) b))))
+;		((lambda (n) (lambda (s) (lambda (z) (s ((n s) z)))))
+;		 ((lambda (p) (p (lambda (a) (lambda (b) a)))) p)))
+;	       (((lambda (a)
+;		   (lambda (b)
+;		     ((b (a (lambda (a)
+;			      (lambda (b)
+;				((a (lambda (n)
+;				      (lambda (s)
+;					(lambda (z) (s ((n s) z))))))
+;				 b)))))
+;		      (lambda (x) (lambda (y) y)))))
+;		 ((lambda (p) (p (lambda (a) (lambda (b) a)))) p))
+;		((lambda (p) (p (lambda (a) (lambda (b) b)))) p)))))
+;	 (((lambda (a) (lambda (b) (lambda (c) ((c a) b))))
+;	   (lambda (x) x))
+;	  (lambda (x) x)))))
+;     (lambda (x) (lambda (y) (x (x (x (x (x y)))))))))
+;   (((lambda (a)
+;       (lambda (b)
+;	 ((b (a (lambda (a)
+;		  (lambda (b)
+;		    ((a (lambda (n)
+;			  (lambda (s) (lambda (z) (s ((n s) z))))))
+;		     b)))))
+;	  (lambda (x) (lambda (y) y)))))
+;     (((lambda (a)
+;	 (lambda (b)
+;	   ((b (a (lambda (a)
+;		    (lambda (b)
+;		      ((a (lambda (n)
+;			    (lambda (s) (lambda (z) (s ((n s) z))))))
+;		       b)))))
+;	    (lambda (x) (lambda (y) y)))))
+;       ((lambda (x) (lambda (y) (x (x (x y)))))
+;	(lambda (x) (lambda (y) (x (x y))))))
+;      (lambda (x) (lambda (y) (x (x (x y)))))))
+;    (lambda (x) (lambda (y) (x (x (x (x (x y)))))))))
+;  #t)
+; #f)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; FIX ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; test 178
+((lambda (x) (x x 10000))
+ (lambda (x n)
+   (if (zero? n) #t
+       (x x (- n 1)))))
+
+; test 179
+(define not (lambda (x) (if x #f #t)))
+
+(and
+ (boolean? #t)
+ (boolean? #f)
+ (not (boolean? 1234))
+ (not (boolean? 'a))
+ (symbol? 'b)
+ (procedure? procedure?)
+ (eq? (car '(a b c)) 'a)
+ (= (car (cons 1 2)) 1)
+ (integer? 1234)
+ (char? #\a)
+ (null? '())
+ (string? "abc")
+ (symbol? 'lambda)
+ (not (string? 1234))
+ (pair? '(a . b))
+ (not (pair? '()))
+ (zero? 0)
+ (not (zero? 234))
+ (= 97 (char->integer (string-ref "abc" 0)))
+ (let ((n 10000))
+   (= n (string-length (make-string n))))
+ (= 65 (char->integer #\A))
+ (= 3 (remainder 7 4))
+ (= 6 (* 1 2 3))
+ (= 1 (*))
+ (= 234 (* 234))
+ (= 6 (+ 1 2 3))
+ (zero? (+))
+ (= 234 (+ 234))
+ (= 1 (- 6 3 2))
+ (< 1 2 3 4 5)
+ (> 5 4 3 2 1)
+ )
 
 
 

@@ -88,7 +88,7 @@
 			  ;(symbol-table (create-symbol-table input)))
 
 			;(display "global-env-as-pairs: ") (display global-env-as-pairs) (newline) (newline)
-			;(display "input: ") (display input) (newline) (newline)
+			(display "input: ") (display input) (newline) (newline)
 			;(display "const-table: ") (display const-table) (newline) (newline)
 			;(display "const-table-as-list-of-pairs: ") (display const-table-as-list-of-pairs) (newline) (newline)
 			;(display "symbol-table: ") (display (get_symbols const-table)) (newline) (newline)
@@ -480,74 +480,6 @@
 
 						"; end of creating a closure of lambda-simple " (number->string depth) "\n\n"))))
 
-(define make-body-label-for-lambda-simple
-	(let ((num 1000))
-			(lambda ()
-				(set! num (+ num 1))
-				(string-append "bodyOfLambda" (number->string num)))))
-
-(define make-copy-args-label-for-lambda-simple
-	(let ((num 1000))
-			(lambda ()
-				(set! num (+ num 1))
-				(string-append "copy_args_loop" (number->string num)))))
-
-(define make-no-args-label-for-lambda-simple
-	(let ((num 1000))
-			(lambda ()
-				(set! num (+ num 1))
-				(string-append "no_args" (number->string num)))))
-
-(define make-copy-env-label-for-lambda-simple
-	(let ((num 1000))
-			(lambda ()
-				(set! num (+ num 1))
-				(string-append "copy_env_loop" (number->string num)))))
-
-(define make-make-closure-label-for-lambda-simple
-	(let ((num 1000))
-			(lambda ()
-				(set! num (+ num 1))
-				(string-append "make_closure" (number->string num)))))
-
-
-(define make-end-label-for-lambda-simple
-	(let ((num 1000))
-			(lambda ()
-				(set! num (+ num 1))
-				(string-append "endLabel" (number->string num)))))
-
-(define make-done-copying-args-label-for-lambda-simple
-	(let ((num 1000))
-			(lambda ()
-				(set! num (+ num 1))
-				(string-append "done_copy_args" (number->string num)))))
-
-(define make-done-copying-env-label-for-lambda-simple
-	(let ((num 1000))
-			(lambda ()
-				(set! num (+ num 1))
-				(string-append "done_copy_env" (number->string num)))))
-
-(define make-bad-arg-count-label-for-lambda-simple
-	(let ((num 1000))
-			(lambda ()
-				(set! num (+ num 1))
-				(string-append "bad_arg_count" (number->string num)))))
-
-(define make-opt-args-loop-label-for-lambda-simple
-	(let ((num 1000))
-			(lambda ()
-				(set! num (+ num 1))
-				(string-append "opt_args_loop" (number->string num)))))
-
-(define make-opt-args-loop-end-label-for-lambda-simple
-	(let ((num 1000))
-			(lambda ()
-				(set! num (+ num 1))
-				(string-append "opt_args_loop_end" (number->string num)))))
-
-
 ;=========================================================================================================================================
 ;======================================================= END OF FUNCTIONS FOR LAMBDA SIMPLE EXPRESSION ===================================
 ;=========================================================================================================================================
@@ -563,17 +495,17 @@
 			;(display "handle_lambda_simple params: ") (display params) (newline)
 			;(display "handle_lambda_simple body: ") (display body) (newline)
 			;(display "handle_lambda_simple depth: ") (display depth) (newline)
-			(let* ((body-label (make-body-label-for-lambda-opt))
-				  (copy-args-label (make-copy-args-label-for-lambda-opt))
-				  (copy-env-label (make-copy-env-label-for-lambda-opt))
-				  (no-args-label (make-no-args-label-for-lambda-opt))
-				  (done-copy-args (make-done-copying-args-label-for-lambda-opt))
-				  (make-closure-label (make-make-closure-label-for-lambda-opt))
-				  (end-label (make-end-label-for-lambda-opt))
-				  (done-copy-env (make-done-copying-env-label-for-lambda-opt))
-				  (bad-args-label (make-bad-arg-count-label-for-lambda-opt))
-				  (opt-args-loop (make-opt-args-loop-label-for-lambda-opt))
-				  (opt-args-loop-end (make-opt-args-loop-end-label-for-lambda-opt))
+			(let* ((body-label (make-body-label-for-lambda-simple))
+				  (copy-args-label (make-copy-args-label-for-lambda-simple))
+				  (copy-env-label (make-copy-env-label-for-lambda-simple))
+				  (no-args-label (make-no-args-label-for-lambda-simple))
+				  (done-copy-args (make-done-copying-args-label-for-lambda-simple))
+				  (make-closure-label (make-make-closure-label-for-lambda-simple))
+				  (end-label (make-end-label-for-lambda-simple))
+				  (done-copy-env (make-done-copying-env-label-for-lambda-simple))
+				  (bad-args-label (make-bad-arg-count-label-for-lambda-simple))
+				  (opt-args-loop (make-opt-args-loop-label-for-lambda-simple))
+				  (opt-args-loop-end (make-opt-args-loop-end-label-for-lambda-simple))
 				  (extended-env
 				  	 (string-append 
 				  	 			"\txor rax, rax\n"
@@ -695,69 +627,69 @@
 						"; end of creating a closure of lambda-simple " (number->string depth) "\n\n"))))
 
 
-(define make-body-label-for-lambda-opt
-	(let ((num 5000))
+(define make-body-label-for-lambda-simple
+	(let ((num 100))
 			(lambda ()
 				(set! num (+ num 1))
 				(string-append "bodyOfLambda" (number->string num)))))
 
-(define make-copy-args-label-for-lambda-opt
-	(let ((num 5000))
+(define make-copy-args-label-for-lambda-simple
+	(let ((num 100))
 			(lambda ()
 				(set! num (+ num 1))
 				(string-append "copy_args_loop" (number->string num)))))
 
-(define make-no-args-label-for-lambda-opt
-	(let ((num 5000))
+(define make-no-args-label-for-lambda-simple
+	(let ((num 100))
 			(lambda ()
 				(set! num (+ num 1))
 				(string-append "no_args" (number->string num)))))
 
-(define make-copy-env-label-for-lambda-opt
-	(let ((num 5000))
+(define make-copy-env-label-for-lambda-simple
+	(let ((num 100))
 			(lambda ()
 				(set! num (+ num 1))
 				(string-append "copy_env_loop" (number->string num)))))
 
-(define make-make-closure-label-for-lambda-opt
-	(let ((num 5000))
+(define make-make-closure-label-for-lambda-simple
+	(let ((num 100))
 			(lambda ()
 				(set! num (+ num 1))
 				(string-append "make_closure" (number->string num)))))
 
 
-(define make-end-label-for-lambda-opt
-	(let ((num 5000))
+(define make-end-label-for-lambda-simple
+	(let ((num 100))
 			(lambda ()
 				(set! num (+ num 1))
 				(string-append "endLabel" (number->string num)))))
 
-(define make-done-copying-args-label-for-lambda-opt
-	(let ((num 5000))
+(define make-done-copying-args-label-for-lambda-simple
+	(let ((num 100))
 			(lambda ()
 				(set! num (+ num 1))
 				(string-append "done_copy_args" (number->string num)))))
 
-(define make-done-copying-env-label-for-lambda-opt
-	(let ((num 5000))
+(define make-done-copying-env-label-for-lambda-simple
+	(let ((num 100))
 			(lambda ()
 				(set! num (+ num 1))
 				(string-append "done_copy_env" (number->string num)))))
 
-(define make-bad-arg-count-label-for-lambda-opt
-	(let ((num 5000))
+(define make-bad-arg-count-label-for-lambda-simple
+	(let ((num 100))
 			(lambda ()
 				(set! num (+ num 1))
 				(string-append "bad_arg_count" (number->string num)))))
 
-(define make-opt-args-loop-label-for-lambda-opt
-	(let ((num 5000))
+(define make-opt-args-loop-label-for-lambda-simple
+	(let ((num 100))
 			(lambda ()
 				(set! num (+ num 1))
 				(string-append "opt_args_loop" (number->string num)))))
 
-(define make-opt-args-loop-end-label-for-lambda-opt
-	(let ((num 5000))
+(define make-opt-args-loop-end-label-for-lambda-simple
+	(let ((num 100))
 			(lambda ()
 				(set! num (+ num 1))
 				(string-append "opt_args_loop_end" (number->string num)))))
@@ -4377,7 +4309,7 @@
 			  ((string? con) (list (string-append "sobString" (number->string num)) con))
 			  ((null? con) (list "sobNil" '()))
 			  ((vector? con) (list (string-append "sobVector" (number->string num)) con))
-			  ((symbol? con) (list (string-append "sobSymbol" (fix_symbols (symbol->string con))) con))
+			  ((symbol? con) (list (string-append "sobSymbol" (symbol->string con)) con))
 			  ((or (list? con) (pair? con)) (list (string-append "sobPair" (number->string num)) con))
 			  (else (list "sobVoid" con))
 			  )))
@@ -4468,19 +4400,6 @@
 															   (create-symbol-table-for-assembly (cdr const-table) table-in-pairs)))
 					(else (create-symbol-table-for-assembly (cdr const-table) table-in-pairs)))))
 
-
-(define fix_symbols
-		(lambda (sym)
-				(cond 
-				  ((member #\! (string->list sym)) (list->string (substq #\B #\! (string->list sym))))
-				  ((member #\< (string->list sym)) (list->string (substq #\L #\< (string->list sym))))
-				  ((member #\> (string->list sym)) (list->string (substq #\G #\> (string->list sym))))
-				  ((member #\= (string->list sym)) (list->string (substq #\E #\= (string->list sym))))
-				  ((member #\+ (string->list sym)) (list->string (substq #\P #\+ (string->list sym))))
-				  ((member #\/ (string->list sym)) (list->string (substq #\D #\/ (string->list sym))))
-				  ((member #\* (string->list sym)) (list->string (substq #\M #\* (string->list sym))))
-				  ((member #\- (string->list sym)) (list->string (substq #\S #\- (string->list sym))))
-				  (else sym))))
 
 (define check_for_special_symbols
 		(lambda (sym)
