@@ -19,18 +19,20 @@
 ;'(4 5 6 . #(4 8 16 (1 2 3)))
 'a ;; to figure out how to handle symbol type cons
 'b
-'c
-'!
 '+
-'-
-'*
-'/
-'>
-'<
+;(symbol? "a")
 ;; Constants
+;(eq? 'a 'a)
+(eq? (string->symbol (symbol->string (string->symbol "c"))) (string->symbol "c"))
 
-"+"
 
+;"+"
+
+;(list 1 2 '(3))
+
+;((lambda () 3))
+
+;(append '(1 2) '(3 4) '(5 6))
 
 ;;; primitives tests
 ;append

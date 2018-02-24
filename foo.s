@@ -175,38 +175,17 @@ sobTrue:
 sobNil:
 	dq SOB_NIL
 
-sobString9:
+sobString2:
 	MAKE_LITERAL_STRING "a"
 
-sobString10:
-	MAKE_LITERAL_STRING "b"
-
-sobString7:
-	MAKE_LITERAL_STRING "c"
-
-sobString8:
-	MAKE_LITERAL_STRING "!"
-
-sobString5:
-	MAKE_LITERAL_STRING "+"
-
-sobString6:
-	MAKE_LITERAL_STRING "-"
-
 sobString3:
-	MAKE_LITERAL_STRING "*"
-
-sobString4:
-	MAKE_LITERAL_STRING "/"
-
-sobString1:
-	MAKE_LITERAL_STRING ">"
-
-sobString2:
-	MAKE_LITERAL_STRING "<"
+	MAKE_LITERAL_STRING "b"
 
 sobString0:
 	MAKE_LITERAL_STRING "+"
+
+sobString1:
+	MAKE_LITERAL_STRING "c"
 
 sobUndef:
 	dq SOB_UNDEFINED
@@ -553,6 +532,37 @@ string?_code:
 end_string?_code:
 	mov rax, [rax]
 	mov qword [string?], rax
+
+	mov rbp, rsp
+	mov rdi, 16
+	call malloc
+	mov rbx, 1
+	MAKE_LITERAL_CLOSURE rax, rbx, symbol?_code
+	jmp end_symbol?_code
+
+symbol?_code:
+	push rbp
+	mov rbp, rsp
+	mov rax, qword [rbp + 8*4]
+	mov r10, [rax]
+	mov rbx, r10
+	TYPE rbx
+	cmp rbx, T_SYMBOL
+	je trueSymbol?
+	mov rax, sobFalse
+	jmp doneSymbol?
+
+trueSymbol?:
+	mov rax, sobTrue
+
+doneSymbol?:
+	mov rsp, rbp
+	pop rbp
+	ret
+
+end_symbol?_code:
+	mov rax, [rax]
+	mov qword [symbol?], rax
 
 	mov rbp, rsp
 	mov rdi, 16
@@ -2759,62 +2769,112 @@ end_divide_code:
 	mov rax, [rax]
 	mov qword [divide], rax
 
+	mov rbp, rsp
+	mov rdi, 16
+	call malloc
+	mov rbx, 1
+	MAKE_LITERAL_CLOSURE rax, rbx, symbolToString_code
+	jmp end_symbolToString_code
+
+symbolToString_code:
+	push rbp
+	mov rbp, rsp
+	mov rax, qword [rbp + 8*4]
+	mov r10, [rax]
+	DATA r10
+	push r10
+	push SymbolTable
+	call findSymbol
+	add rsp, 2*8
+	mov rax, [rax]
+	DATA rax
+.doneSymbolToString:
+	mov rsp, rbp
+	pop rbp
+	ret
+
+end_symbolToString_code:
+	mov rax, [rax]
+	mov qword [symbolToString], rax
+
+	mov rbp, rsp
+	mov rdi, 16
+	call malloc
+	mov rbx, 1
+	MAKE_LITERAL_CLOSURE rax, rbx, stringToSymbol_code
+	jmp end_stringToSymbol_code
+
+stringToSymbol_code:
+	push rbp
+	mov rbp, rsp
+	mov r10, qword [rbp + 8*4]
+	mov rdi, 8
+	call malloc
+	mov r9, rax
+	mov r8, r10
+	shl r8, 4
+	or r8, T_SYMBOL
+	mov qword [rax], r8
+	push rax
+	push SymbolTable
+	call addSymbol
+	add rsp, 2*8
+	mov rax, r9
+.doneStringToSymbol:
+	mov rsp, rbp
+	pop rbp
+	ret
+
+end_stringToSymbol_code:
+	mov rax, [rax]
+	mov qword [stringToSymbol], rax
+
+	mov rbp, rsp
+	mov rdi, 16
+	call malloc
+	mov rbx, 1
+	MAKE_LITERAL_CLOSURE rax, rbx, eq?_code
+	jmp end_eq?_code
+
+eq?_code:
+	push rbp
+	mov rbp, rsp
+	mov r10, qword [rbp + 8*4]
+	mov r9, qword [rbp + 8*5]
+	mov r10, [r10]
+	DATA r10
+	push r10
+	push SymbolTable
+	call findSymbol
+	add rsp, 2*8
+	mov r14, rax
+	mov r9, [r9]
+	DATA r9
+	push r9
+	push SymbolTable
+	call findSymbol
+	add rsp, 2*8
+	cmp rax, r14
+	je .retTrue
+	mov rax, sobFalse
+	jmp .doneEq?
+.retTrue:
+	mov rax, sobTrue
+.doneEq?:
+	mov rsp, rbp
+	pop rbp
+	ret
+
+end_eq?_code:
+	mov rax, [rax]
+	mov qword [eq?], rax
+
 ; =============================== PRIMITIVE FUNCTIONS =========================
 start_of_creation_of_symbol_table:
 
 	mov rdi, 8
 	call malloc
-	mov r8, sobString9
-	shl r8, 4
-	or r8, T_SYMBOL
-	mov qword [rax], r8
-	push rax
-	push SymbolTable
-	call addSymbol
-	add rsp, 2*8
-	mov rdi, 8
-	call malloc
-	mov r8, sobString10
-	shl r8, 4
-	or r8, T_SYMBOL
-	mov qword [rax], r8
-	push rax
-	push SymbolTable
-	call addSymbol
-	add rsp, 2*8
-	mov rdi, 8
-	call malloc
-	mov r8, sobString7
-	shl r8, 4
-	or r8, T_SYMBOL
-	mov qword [rax], r8
-	push rax
-	push SymbolTable
-	call addSymbol
-	add rsp, 2*8
-	mov rdi, 8
-	call malloc
-	mov r8, sobString8
-	shl r8, 4
-	or r8, T_SYMBOL
-	mov qword [rax], r8
-	push rax
-	push SymbolTable
-	call addSymbol
-	add rsp, 2*8
-	mov rdi, 8
-	call malloc
-	mov r8, sobString5
-	shl r8, 4
-	or r8, T_SYMBOL
-	mov qword [rax], r8
-	push rax
-	push SymbolTable
-	call addSymbol
-	add rsp, 2*8
-	mov rdi, 8
-	call malloc
-	mov r8, sobString6
+	mov r8, sobString2
 	shl r8, 4
 	or r8, T_SYMBOL
 	mov qword [rax], r8
@@ -2834,27 +2894,7 @@ start_of_creation_of_symbol_table:
 	add rsp, 2*8
 	mov rdi, 8
 	call malloc
-	mov r8, sobString4
-	shl r8, 4
-	or r8, T_SYMBOL
-	mov qword [rax], r8
-	push rax
-	push SymbolTable
-	call addSymbol
-	add rsp, 2*8
-	mov rdi, 8
-	call malloc
-	mov r8, sobString1
-	shl r8, 4
-	or r8, T_SYMBOL
-	mov qword [rax], r8
-	push rax
-	push SymbolTable
-	call addSymbol
-	add rsp, 2*8
-	mov rdi, 8
-	call malloc
-	mov r8, sobString2
+	mov r8, sobString0
 	shl r8, 4
 	or r8, T_SYMBOL
 	mov qword [rax], r8
@@ -2914,6 +2954,8 @@ opt_args_loop_end101:
 	mov qword [rbp + 4*8 + (r15 + 1)*8], r13
 ; start of applic of lambda-simple code: 
 
+	mov rax, sobNil
+	push rax
 	mov rax, qword [rbp + (4+1)*8]
 	push rax
 	mov rax, qword [rbp + (4+0)*8]
@@ -2942,6 +2984,7 @@ done_closure101:
 	shl r15, 3
 	add rsp, r15
 
+	add rsp, 8
 ; end of applic of lambda-simple code: 
 
 	mov rsp, rbp
@@ -2988,8 +3031,12 @@ bodyOfLambda102:
 	jne bad_arg_count102
 ; start of applic of lambda-simple code: 
 
+	mov rax, sobNil
+	push rax
 ; start of applic of lambda-simple code: 
 
+	mov rax, sobNil
+	push rax
 	mov rax, qword [rbp + (4+1)*8]
 	push rax
 
@@ -3016,6 +3063,7 @@ done_closure108:
 	shl r15, 3
 	add rsp, r15
 
+	add rsp, 8
 ; end of applic of lambda-simple code: 
 
 	push rax
@@ -3043,6 +3091,7 @@ done_closure107:
 	shl r15, 3
 	add rsp, r15
 
+	add rsp, 8
 ; end of applic of lambda-simple code: 
 
 	mov r10, [rax]
@@ -3056,10 +3105,16 @@ done_closure107:
 L0:
 	; start of applic of lambda-simple code: 
 
+	mov rax, sobNil
+	push rax
 ; start of applic of lambda-simple code: 
 
+	mov rax, sobNil
+	push rax
 ; start of applic of lambda-simple code: 
 
+	mov rax, sobNil
+	push rax
 	mov rax, qword [rbp + (4+1)*8]
 	push rax
 	mov rax, cdr
@@ -3088,6 +3143,7 @@ done_closure106:
 	shl r15, 3
 	add rsp, r15
 
+	add rsp, 8
 ; end of applic of lambda-simple code: 
 
 	push rax
@@ -3117,13 +3173,18 @@ done_closure105:
 	shl r15, 3
 	add rsp, r15
 
+	add rsp, 8
 ; end of applic of lambda-simple code: 
 
 	push rax
 ; start of applic of lambda-simple code: 
 
+	mov rax, sobNil
+	push rax
 ; start of applic of lambda-simple code: 
 
+	mov rax, sobNil
+	push rax
 	mov rax, qword [rbp + (4+1)*8]
 	push rax
 	mov rax, car
@@ -3152,6 +3213,7 @@ done_closure104:
 	shl r15, 3
 	add rsp, r15
 
+	add rsp, 8
 ; end of applic of lambda-simple code: 
 
 	push rax
@@ -3181,6 +3243,7 @@ done_closure103:
 	shl r15, 3
 	add rsp, r15
 
+	add rsp, 8
 ; end of applic of lambda-simple code: 
 
 	push rax
@@ -3208,6 +3271,7 @@ done_closure102:
 	shl r15, 3
 	add rsp, r15
 
+	add rsp, 8
 ; end of applic of lambda-simple code: 
 
 
@@ -3257,6 +3321,8 @@ bodyOfLambda103:
 	jne bad_arg_count103
 ; start of applic of lambda-simple code: 
 
+	mov rax, sobNil
+	push rax
 	mov rax, qword [rbp + (4+1)*8]
 	push rax
 
@@ -3283,6 +3349,7 @@ done_closure114:
 	shl r15, 3
 	add rsp, r15
 
+	add rsp, 8
 ; end of applic of lambda-simple code: 
 
 	mov r10, [rax]
@@ -3296,10 +3363,16 @@ done_closure114:
 L1:
 	; start of applic of lambda-simple code: 
 
+	mov rax, sobNil
+	push rax
 ; start of applic of lambda-simple code: 
 
+	mov rax, sobNil
+	push rax
 ; start of applic of lambda-simple code: 
 
+	mov rax, sobNil
+	push rax
 	mov rax, qword [rbp + (4+1)*8]
 	push rax
 
@@ -3326,6 +3399,7 @@ done_closure113:
 	shl r15, 3
 	add rsp, r15
 
+	add rsp, 8
 ; end of applic of lambda-simple code: 
 
 	push rax
@@ -3355,13 +3429,18 @@ done_closure112:
 	shl r15, 3
 	add rsp, r15
 
+	add rsp, 8
 ; end of applic of lambda-simple code: 
 
 	push rax
 ; start of applic of lambda-simple code: 
 
+	mov rax, sobNil
+	push rax
 ; start of applic of lambda-simple code: 
 
+	mov rax, sobNil
+	push rax
 	mov rax, qword [rbp + (4+1)*8]
 	push rax
 
@@ -3388,6 +3467,7 @@ done_closure111:
 	shl r15, 3
 	add rsp, r15
 
+	add rsp, 8
 ; end of applic of lambda-simple code: 
 
 	push rax
@@ -3415,6 +3495,7 @@ done_closure110:
 	shl r15, 3
 	add rsp, r15
 
+	add rsp, 8
 ; end of applic of lambda-simple code: 
 
 	push rax
@@ -3442,6 +3523,7 @@ done_closure109:
 	shl r15, 3
 	add rsp, r15
 
+	add rsp, 8
 ; end of applic of lambda-simple code: 
 
 
@@ -3518,6 +3600,8 @@ opt_args_loop_end102:
 	mov qword [rbp + 4*8 + (r15 + 1)*8], r13
 ; start of applic of lambda-simple code: 
 
+	mov rax, sobNil
+	push rax
 	mov rax, qword [rbp + (4+0)*8]
 	push rax
 	; codegen for const start
@@ -3548,6 +3632,7 @@ done_closure115:
 	shl r15, 3
 	add rsp, r15
 
+	add rsp, 8
 ; end of applic of lambda-simple code: 
 
 	mov rsp, rbp
@@ -3594,6 +3679,8 @@ bodyOfLambda105:
 	jne bad_arg_count105
 ; start of applic of lambda-simple code: 
 
+	mov rax, sobNil
+	push rax
 	mov rax, qword [rbp + (4+1)*8]
 	push rax
 
@@ -3620,6 +3707,7 @@ done_closure117:
 	shl r15, 3
 	add rsp, r15
 
+	add rsp, 8
 ; end of applic of lambda-simple code: 
 
 	mov r10, [rax]
@@ -3631,6 +3719,8 @@ done_closure117:
 L2:
 	; start of applic of lambda-simple code: 
 
+	mov rax, sobNil
+	push rax
 	mov rax, qword [rbp + (4+1)*8]
 	push rax
 	mov rax, qword [rbp + (4+0)*8]
@@ -3659,6 +3749,7 @@ done_closure116:
 	shl r15, 3
 	add rsp, r15
 
+	add rsp, 8
 ; end of applic of lambda-simple code: 
 
 
@@ -3708,6 +3799,8 @@ bodyOfLambda106:
 	jne bad_arg_count106
 ; start of applic of lambda-simple code: 
 
+	mov rax, sobNil
+	push rax
 	mov rax, qword [rbp + (4+0)*8]
 	push rax
 
@@ -3734,6 +3827,7 @@ done_closure125:
 	shl r15, 3
 	add rsp, r15
 
+	add rsp, 8
 ; end of applic of lambda-simple code: 
 
 	mov r10, [rax]
@@ -3741,8 +3835,12 @@ done_closure125:
 	je L3
 ; start of applic of lambda-simple code: 
 
+	mov rax, sobNil
+	push rax
 ; start of applic of lambda-simple code: 
 
+	mov rax, sobNil
+	push rax
 	mov rax, qword [rbp + (4+1)*8]
 	push rax
 
@@ -3769,11 +3867,14 @@ done_closure124:
 	shl r15, 3
 	add rsp, r15
 
+	add rsp, 8
 ; end of applic of lambda-simple code: 
 
 	push rax
 ; start of applic of lambda-simple code: 
 
+	mov rax, sobNil
+	push rax
 	mov rax, qword [rbp + (4+1)*8]
 	push rax
 
@@ -3800,6 +3901,7 @@ done_closure123:
 	shl r15, 3
 	add rsp, r15
 
+	add rsp, 8
 ; end of applic of lambda-simple code: 
 
 	push rax
@@ -3827,6 +3929,7 @@ done_closure122:
 	shl r15, 3
 	add rsp, r15
 
+	add rsp, 8
 ; end of applic of lambda-simple code: 
 
 
@@ -3834,12 +3937,18 @@ done_closure122:
 L3:
 	; start of applic of lambda-simple code: 
 
+	mov rax, sobNil
+	push rax
 ; start of applic of lambda-simple code: 
 
+	mov rax, sobNil
+	push rax
 	mov rax, qword [rbp + (4+1)*8]
 	push rax
 ; start of applic of lambda-simple code: 
 
+	mov rax, sobNil
+	push rax
 	mov rax, qword [rbp + (4+0)*8]
 	push rax
 
@@ -3866,6 +3975,7 @@ done_closure121:
 	shl r15, 3
 	add rsp, r15
 
+	add rsp, 8
 ; end of applic of lambda-simple code: 
 
 	push rax
@@ -3893,11 +4003,14 @@ done_closure120:
 	shl r15, 3
 	add rsp, r15
 
+	add rsp, 8
 ; end of applic of lambda-simple code: 
 
 	push rax
 ; start of applic of lambda-simple code: 
 
+	mov rax, sobNil
+	push rax
 	mov rax, qword [rbp + (4+0)*8]
 	push rax
 
@@ -3924,6 +4037,7 @@ done_closure119:
 	shl r15, 3
 	add rsp, r15
 
+	add rsp, 8
 ; end of applic of lambda-simple code: 
 
 	push rax
@@ -3951,6 +4065,7 @@ done_closure118:
 	shl r15, 3
 	add rsp, r15
 
+	add rsp, 8
 ; end of applic of lambda-simple code: 
 
 
@@ -4052,161 +4167,6 @@ endLabel107:
 ; end
 
 ; start
-codegen_for_symbol_start_for_sobString9:
-
-	mov rax, sobString9
-	push rax
-	push SymbolTable
-	call findSymbol
-	add rsp, 2*8
-
-	;code gen for symbol end
-	mov rax, [rax]
-	push rax
-	call write_sob_if_not_void
-	add rsp, 8
-
-; end
-
-; start
-codegen_for_symbol_start_for_sobString10:
-
-	mov rax, sobString10
-	push rax
-	push SymbolTable
-	call findSymbol
-	add rsp, 2*8
-
-	;code gen for symbol end
-	mov rax, [rax]
-	push rax
-	call write_sob_if_not_void
-	add rsp, 8
-
-; end
-
-; start
-codegen_for_symbol_start_for_sobString7:
-
-	mov rax, sobString7
-	push rax
-	push SymbolTable
-	call findSymbol
-	add rsp, 2*8
-
-	;code gen for symbol end
-	mov rax, [rax]
-	push rax
-	call write_sob_if_not_void
-	add rsp, 8
-
-; end
-
-; start
-codegen_for_symbol_start_for_sobString8:
-
-	mov rax, sobString8
-	push rax
-	push SymbolTable
-	call findSymbol
-	add rsp, 2*8
-
-	;code gen for symbol end
-	mov rax, [rax]
-	push rax
-	call write_sob_if_not_void
-	add rsp, 8
-
-; end
-
-; start
-codegen_for_symbol_start_for_sobString5:
-
-	mov rax, sobString5
-	push rax
-	push SymbolTable
-	call findSymbol
-	add rsp, 2*8
-
-	;code gen for symbol end
-	mov rax, [rax]
-	push rax
-	call write_sob_if_not_void
-	add rsp, 8
-
-; end
-
-; start
-codegen_for_symbol_start_for_sobString6:
-
-	mov rax, sobString6
-	push rax
-	push SymbolTable
-	call findSymbol
-	add rsp, 2*8
-
-	;code gen for symbol end
-	mov rax, [rax]
-	push rax
-	call write_sob_if_not_void
-	add rsp, 8
-
-; end
-
-; start
-codegen_for_symbol_start_for_sobString3:
-
-	mov rax, sobString3
-	push rax
-	push SymbolTable
-	call findSymbol
-	add rsp, 2*8
-
-	;code gen for symbol end
-	mov rax, [rax]
-	push rax
-	call write_sob_if_not_void
-	add rsp, 8
-
-; end
-
-; start
-codegen_for_symbol_start_for_sobString4:
-
-	mov rax, sobString4
-	push rax
-	push SymbolTable
-	call findSymbol
-	add rsp, 2*8
-
-	;code gen for symbol end
-	mov rax, [rax]
-	push rax
-	call write_sob_if_not_void
-	add rsp, 8
-
-; end
-
-; start
-codegen_for_symbol_start_for_sobString1:
-
-	mov rax, sobString1
-	push rax
-	push SymbolTable
-	call findSymbol
-	add rsp, 2*8
-
-	;code gen for symbol end
-	mov rax, [rax]
-	push rax
-	call write_sob_if_not_void
-	add rsp, 8
-
-; end
-
-; start
-codegen_for_symbol_start_for_sobString2:
-
 	mov rax, sobString2
 	push rax
 	push SymbolTable
@@ -4222,9 +4182,203 @@ codegen_for_symbol_start_for_sobString2:
 ; end
 
 ; start
-	; codegen for const start
+	mov rax, sobString3
+	push rax
+	push SymbolTable
+	call findSymbol
+	add rsp, 2*8
+
+	;code gen for symbol end
+	mov rax, [rax]
+	push rax
+	call write_sob_if_not_void
+	add rsp, 8
+
+; end
+
+; start
 	mov rax, sobString0
+	push rax
+	push SymbolTable
+	call findSymbol
+	add rsp, 2*8
+
+	;code gen for symbol end
+	mov rax, [rax]
+	push rax
+	call write_sob_if_not_void
+	add rsp, 8
+
+; end
+
+; start
+; start of applic of lambda-simple code: 
+
+	mov rax, sobNil
+	push rax
+; start of applic of lambda-simple code: 
+
+	mov rax, sobNil
+	push rax
+	; codegen for const start
+	mov rax, sobString1
 	;code gen for constant end
+	push rax
+
+	push 1
+	mov rax, stringToSymbol
+	mov r10, [rax]
+	mov rcx, r10
+	TYPE rcx
+	cmp rcx, T_CLOSURE
+	jne not_a_closure130
+	mov rbx, r10
+	CLOSURE_ENV rbx
+	push rbx
+	CLOSURE_CODE r10
+	call r10
+	add rsp, 8*1
+	jmp done_closure130
+not_a_closure130:
+
+	mov rax, sobVoid
+done_closure130:
+
+	pop r15
+	shl r15, 3
+	add rsp, r15
+
+	add rsp, 8
+; end of applic of lambda-simple code: 
+
+	push rax
+; start of applic of lambda-simple code: 
+
+	mov rax, sobNil
+	push rax
+; start of applic of lambda-simple code: 
+
+	mov rax, sobNil
+	push rax
+; start of applic of lambda-simple code: 
+
+	mov rax, sobNil
+	push rax
+	; codegen for const start
+	mov rax, sobString1
+	;code gen for constant end
+	push rax
+
+	push 1
+	mov rax, stringToSymbol
+	mov r10, [rax]
+	mov rcx, r10
+	TYPE rcx
+	cmp rcx, T_CLOSURE
+	jne not_a_closure129
+	mov rbx, r10
+	CLOSURE_ENV rbx
+	push rbx
+	CLOSURE_CODE r10
+	call r10
+	add rsp, 8*1
+	jmp done_closure129
+not_a_closure129:
+
+	mov rax, sobVoid
+done_closure129:
+
+	pop r15
+	shl r15, 3
+	add rsp, r15
+
+	add rsp, 8
+; end of applic of lambda-simple code: 
+
+	push rax
+
+	push 1
+	mov rax, symbolToString
+	mov r10, [rax]
+	mov rcx, r10
+	TYPE rcx
+	cmp rcx, T_CLOSURE
+	jne not_a_closure128
+	mov rbx, r10
+	CLOSURE_ENV rbx
+	push rbx
+	CLOSURE_CODE r10
+	call r10
+	add rsp, 8*1
+	jmp done_closure128
+not_a_closure128:
+
+	mov rax, sobVoid
+done_closure128:
+
+	pop r15
+	shl r15, 3
+	add rsp, r15
+
+	add rsp, 8
+; end of applic of lambda-simple code: 
+
+	push rax
+
+	push 1
+	mov rax, stringToSymbol
+	mov r10, [rax]
+	mov rcx, r10
+	TYPE rcx
+	cmp rcx, T_CLOSURE
+	jne not_a_closure127
+	mov rbx, r10
+	CLOSURE_ENV rbx
+	push rbx
+	CLOSURE_CODE r10
+	call r10
+	add rsp, 8*1
+	jmp done_closure127
+not_a_closure127:
+
+	mov rax, sobVoid
+done_closure127:
+
+	pop r15
+	shl r15, 3
+	add rsp, r15
+
+	add rsp, 8
+; end of applic of lambda-simple code: 
+
+	push rax
+
+	push 2
+	mov rax, eq?
+	mov r10, [rax]
+	mov rcx, r10
+	TYPE rcx
+	cmp rcx, T_CLOSURE
+	jne not_a_closure126
+	mov rbx, r10
+	CLOSURE_ENV rbx
+	push rbx
+	CLOSURE_CODE r10
+	call r10
+	add rsp, 8*1
+	jmp done_closure126
+not_a_closure126:
+
+	mov rax, sobVoid
+done_closure126:
+
+	pop r15
+	shl r15, 3
+	add rsp, r15
+
+	add rsp, 8
+; end of applic of lambda-simple code: 
+
 	mov rax, [rax]
 	push rax
 	call write_sob_if_not_void

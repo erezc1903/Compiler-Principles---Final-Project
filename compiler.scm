@@ -33,12 +33,12 @@
 
 (define code-gen
 	  (lambda (pe depth const-table global-env)
-	  	;(display "const-table in code-gen: ") (display const-table) (newline)
-	  	;(display "pe in code-gen: ") (display pe) (newline) (newline)
+	  	(display "const-table in code-gen: ") (display const-table) (newline)
+	  	(display "pe in code-gen: ") (display pe) (newline) (newline)
 	      (string-append  
 	      	(cond ((and (tagged-by? pe 'const) (not (symbol? (cadr pe)))) (string-append "\t; codegen for const start\n\tmov rax, " (find-const-in-pairs (cadr pe) const-table) "\n\t;code gen for constant end\n"))
-	      		   ((and (tagged-by? pe 'const) (symbol? (cadr pe))) (string-append "codegen_for_symbol_start_for_" (find-const-in-pairs (cadr pe) const-table) ":\n\n"
-	      		   																								"\tmov rax, " (find-const-in-pairs (cadr pe) const-table) "\n"
+	      		   ((and (tagged-by? pe 'const) (symbol? (cadr pe))) (string-append 
+	      		   																								"\tmov rax, " (find-const-in-pairs (symbol->string (cadr pe)) const-table) "\n"
 	      		   																								"\tpush rax\n"
 	      		   																								"\tpush SymbolTable\n"
 	      		   																								"\tcall findSymbol\n" 
@@ -198,7 +198,7 @@
 			(fprintf out-port "; =============================== PRIMITIVE FUNCTIONS =========================\n")
 
 			(fprintf out-port "start_of_creation_of_symbol_table:\n\n")
-			(fprintf out-port (create-symbol-table-for-assembly const-table const-table-as-list-of-pairs))
+			(fprintf out-port (create-symbol-table-for-assembly (get_symbols input) const-table-as-list-of-pairs))
 
 			(fprintf out-port "\nstart_of_instructions:\n\n")
 			(fprintf out-port "\tpush rbp\n") 
@@ -232,7 +232,7 @@
 				(handle_number?) ;V
 				(handle_char?) ;V
 				(handle_string?) ;V
-				;(handle_symbol?)
+				(handle_symbol?)
 				(handle_vector?) ;V
 				(handle_not) ;V
 				(handle_rational?) ;V
@@ -265,6 +265,9 @@
 				(handle_set_car) ;V
 				(handle_set_cdr) ;V
 				(handle_divide) ;V
+				(handle_symbol->string)
+				(handle_string->symbol)
+				(handle_eq?)
 				 "")))
 
 
@@ -286,6 +289,8 @@
 				  ;(display "app: ") (display app) (newline)
 				  ;(if (equal? (cadr app) 'apply) (handle_apply app-exp depth const-table global-env)
 					  	(string-append "; start of applic of lambda-simple code: \n\n"
+					  					"\tmov rax, sobNil\n"
+					  					"\tpush rax\n"
 										(push-args (reverse args) (length args) depth const-table global-env)
 										"\tpush " (number->string (length args)) "\n"
 										(code-gen app depth const-table global-env)
@@ -307,6 +312,7 @@
 										"\tpop r15\n"
 										"\tshl r15, 3\n"
 										"\tadd rsp, r15\n\n"
+										"\tadd rsp, 8\n"
 										"; end of applic of lambda-simple code: \n\n"))
 					))
 
@@ -1685,57 +1691,6 @@
 ;=========================================================================================================================================
 ;======================================================= END OF FUNCTIONS FOR MAKE-STRING EXPRESSION =====================================
 ;=========================================================================================================================================
-
-
-;=========================================================================================================================================
-;======================================================= FUNCTIONS FOR SET-CAR EXPRESSION ================================================
-;=========================================================================================================================================
-
-
-(define handle_eq?
-		(lambda ()
-			(string-append (applic-prolog "eq?_code" "end_eq?code")
-
-				"\neq?_code:\n"
-				"\tpush rbp\n"
-				"\tmov rbp, rsp\n"
-				"\tmov rax, qword [rbp + 8*3]\n"
-				"\tcmp rax, 2\n"
-				"\tjne .badArgs\n"
-				"\tmov rax, qword [rbp + 8*4]\n"
-				"\tmov r10, [rax]\n"
-				"\tmov rbx, r10\n"
-				"\tTYPE rbx\n"
-				"\tcmp rbx, T_SYMBOL\n"
-				"\tjne .badArgs\n"
-
-				"\tmov rax, qword [rbp + 8*5]\n"
-				"\tmov r10, [rax]\n"
-				"\tmov rbx, r10\n"
-				"\tTYPE rbx\n"
-				"\tcmp rbx, T_SYMBOL\n"
-				"\tjne .badArgs\n"
-
-
-				"\tjmp .done\n\n"
-				".badArgs:\n"
-				"\tmov rax, sobVoid\n"
-				".done:\n"
-				"\tmov rsp, rbp\n" 
-				"\tpop rbp\n"
-				"\tret\n\n"
-
-				"end_eq?_code:\n"
-				"\tmov rax, [rax]\n"
-				"\tmov qword [eq?], rax\n\n")))
-
-
-
-
-;=========================================================================================================================================
-;======================================================= END OF FUNCTIONS FOR SET-CAR EXPRESSION =========================================
-;=========================================================================================================================================
-
 
 
 ;=========================================================================================================================================
@@ -3411,29 +3366,162 @@
 
 
 ;=========================================================================================================================================
-;======================================================= FUNCTIONS FOR STRING? EXPRESSION ================================================
+;======================================================= FUNCTIONS FOR EQ? EXPRESSION ====================================================
 ;=========================================================================================================================================
 
-;(define handle_symbol? 
-;		(lambda () 
-;			(string-append "\nhandle_symbol?:\n"
-;				"\tpush rbp\n"
-;				"\tmov rbp, rsp\n"
-;				"\tmov rax, qword [rbp + 8*4]\n"
-;				"\tmov rbx, rax\n"
-;				"\tTYPE rbx\n"
-;				"\tcmp rbx, T_SYMBOL\n"
-;				"\tje trueSymbol?\n"
-;				"\tmov rax, SOB_FALSE\n"
-;				"\tjmp doneSymbol?\n\n"
-;				"trueSymbol?:\n"
-;				"\tmov rax, SOB_TRUE\n\n"
-;				"doneSymbol?:\n"
-;				"\tmov rsp, rbp\n" "\tpop rbp\n"
-;				"\tret\n\n")))
+(define handle_eq? 
+		(lambda () 
+			(string-append (applic-prolog "eq?_code" "end_eq?_code")
+
+				"eq?_code:\n"
+				"\tpush rbp\n"
+				"\tmov rbp, rsp\n"
+				"\tmov r10, qword [rbp + 8*4]\n"
+				"\tmov r9, qword [rbp + 8*5]\n"
+				"\tmov r10, [r10]\n"
+				"\tDATA r10\n"
+				"\tpush r10\n"
+				"\tpush SymbolTable\n"
+				"\tcall findSymbol\n"
+				"\tadd rsp, 2*8\n"
+				"\tmov r14, rax\n"
+				"\tmov r9, [r9]\n"
+				"\tDATA r9\n"
+				"\tpush r9\n"
+				"\tpush SymbolTable\n"
+				"\tcall findSymbol\n"
+				"\tadd rsp, 2*8\n"
+				"\tcmp rax, r14\n"
+				"\tje .retTrue\n"
+				"\tmov rax, sobFalse\n"
+				"\tjmp .doneEq?\n"
+				".retTrue:\n"
+				"\tmov rax, sobTrue\n"
+				".doneEq?:\n"
+				"\tmov rsp, rbp\n" 
+				"\tpop rbp\n"
+				"\tret\n\n"
+
+				"end_eq?_code:\n"
+				"\tmov rax, [rax]\n"
+				"\tmov qword [eq?], rax\n\n")))
 
 ;=========================================================================================================================================
-;======================================================= END OF FUNCTIONS FOR STRING? EXPRESSION =========================================
+;======================================================= END OF FUNCTIONS FOR STRING->SYMBOL EXPRESSION ==================================
+;=========================================================================================================================================
+
+
+
+;=========================================================================================================================================
+;======================================================= FUNCTIONS FOR SYMBOL->STRING EXPRESSION =========================================
+;=========================================================================================================================================
+
+(define handle_symbol->string 
+		(lambda () 
+			(string-append (applic-prolog "symbolToString_code" "end_symbolToString_code")
+
+				"symbolToString_code:\n"
+				"\tpush rbp\n"
+				"\tmov rbp, rsp\n"
+				"\tmov rax, qword [rbp + 8*4]\n"
+				"\tmov r10, [rax]\n"
+				"\tDATA r10\n"
+				"\tpush r10\n"
+				"\tpush SymbolTable\n"
+				"\tcall findSymbol\n"
+				"\tadd rsp, 2*8\n"
+				"\tmov rax, [rax]\n"
+				"\tDATA rax\n"
+				".doneSymbolToString:\n"
+				"\tmov rsp, rbp\n" 
+				"\tpop rbp\n"
+				"\tret\n\n"
+
+				"end_symbolToString_code:\n"
+				"\tmov rax, [rax]\n"
+				"\tmov qword [symbolToString], rax\n\n")))
+
+;=========================================================================================================================================
+;======================================================= END OF FUNCTIONS FOR SYMBOL->STRING EXPRESSION ==================================
+;=========================================================================================================================================
+
+
+;=========================================================================================================================================
+;======================================================= FUNCTIONS FOR STRING->SYMBOL EXPRESSION =========================================
+;=========================================================================================================================================
+
+(define handle_string->symbol 
+		(lambda () 
+			(string-append (applic-prolog "stringToSymbol_code" "end_stringToSymbol_code")
+
+				"stringToSymbol_code:\n"
+				"\tpush rbp\n"
+				"\tmov rbp, rsp\n"
+				"\tmov r10, qword [rbp + 8*4]\n"
+				"\tmov rdi, 8\n"
+			    "\tcall malloc\n"
+			    "\tmov r9, rax\n"
+			    "\tmov r8, r10\n"
+			    "\tshl r8, 4\n"
+			    "\tor r8, T_SYMBOL\n"
+			    "\tmov qword [rax], r8\n"
+			    "\tpush rax\n"
+			    "\tpush SymbolTable\n"
+			    "\tcall addSymbol\n"
+			    "\tadd rsp, 2*8\n"
+				"\tmov rax, r9\n"
+				;"\tDATA rax\n"
+				".doneStringToSymbol:\n"
+				"\tmov rsp, rbp\n" 
+				"\tpop rbp\n"
+				"\tret\n\n"
+
+				"end_stringToSymbol_code:\n"
+				"\tmov rax, [rax]\n"
+				"\tmov qword [stringToSymbol], rax\n\n")))
+
+;=========================================================================================================================================
+;======================================================= END OF FUNCTIONS FOR STRING->SYMBOL EXPRESSION ==================================
+;=========================================================================================================================================
+
+
+
+
+
+
+
+;=========================================================================================================================================
+;======================================================= FUNCTIONS FOR SYMBOL? EXPRESSION ================================================
+;=========================================================================================================================================
+
+(define handle_symbol? 
+		(lambda () 
+			(string-append (applic-prolog "symbol?_code" "end_symbol?_code")
+
+				"symbol?_code:\n"
+				"\tpush rbp\n"
+				"\tmov rbp, rsp\n"
+				"\tmov rax, qword [rbp + 8*4]\n"
+				"\tmov r10, [rax]\n"
+				"\tmov rbx, r10\n"
+				"\tTYPE rbx\n"
+				"\tcmp rbx, T_SYMBOL\n"
+				"\tje trueSymbol?\n"
+				"\tmov rax, sobFalse\n"
+				"\tjmp doneSymbol?\n\n"
+				"trueSymbol?:\n"
+				"\tmov rax, sobTrue\n\n"
+				"doneSymbol?:\n"
+				"\tmov rsp, rbp\n" 
+				"\tpop rbp\n"
+				"\tret\n\n"
+
+				"end_symbol?_code:\n"
+				"\tmov rax, [rax]\n"
+				"\tmov qword [symbol?], rax\n\n")))
+
+;=========================================================================================================================================
+;======================================================= END OF FUNCTIONS FOR SYMBOL? EXPRESSION =========================================
 ;=========================================================================================================================================
 
 
@@ -4119,7 +4207,7 @@
 (define make_const_table
 	(lambda (exp)
 		(cond ((and (list? exp) (null? exp)) exp)
-			  ((and (list? exp) (= (length exp) 2) (equal? (car exp) 'const)) (list (cadr exp)))
+			  ((and (list? exp) (= (length exp) 2) (equal? (car exp) 'const) (not (symbol? (cadr exp)))) (list (cadr exp)))
 			  ((and (list? exp) (list? (car exp))) (append (make_const_table (car exp)) (make_const_table (cdr exp))))
 			  ((and (list? exp) (> (length exp) 0) (not (list? (car exp)))) (make_const_table (cdr exp))))))
 
@@ -4128,7 +4216,7 @@
 	(lambda (input-file)
 		;(display "const-table: ") (display (make_const_table input-file)) (newline) (newline)
 		;(display "input-file: ") (display input-file) (newline) (newline)
-		(reverse (remove-duplicates (reverse (append (list (void) #f #t '()) (expand-const-table (make_const_table input-file))))))))
+		(reverse (remove-duplicates (reverse (append (list (void) #f #t '()) (map add-strings-of-symbols (get_symbols input-file)) (expand-const-table (make_const_table input-file))))))))
 
 (define create_const_for_assembly
 	(lambda (const-table table-in-pairs num)
@@ -4244,13 +4332,13 @@
 ;======================================================= FUNCTIONS FOR SYMBOL TABLE ======================================================
 ;=========================================================================================================================================
 
-;(define get_symbols
-;	(lambda (exp)
-;		(cond ((and (list? exp) (null? exp)) exp)
-;			  ((and (list? exp) (equal? (car exp) 'const) (symbol? (cadr exp))) (list (cadr exp)))
-;			  ((and (list? exp) (list? (car exp))) (append (get_symbols (car exp)) (get_symbols (cdr exp))))
-;			  ((and (list? exp) (> (length exp) 0) (not (list? (car exp)))) (get_symbols (cdr exp)))
-;			  ((and (list? exp) (vector? (car exp))) (append (get_symbols (vector->list (car exp))) (get_symbols (cdr exp)))))))
+(define get_symbols
+	(lambda (exp)
+		(cond ((and (list? exp) (null? exp)) exp)
+			  ((and (list? exp) (equal? (car exp) 'const) (symbol? (cadr exp))) (list (cadr exp)))
+			  ((and (list? exp) (list? (car exp))) (append (get_symbols (car exp)) (get_symbols (cdr exp))))
+			  ((and (list? exp) (> (length exp) 0) (not (list? (car exp)))) (get_symbols (cdr exp)))
+			  ((and (list? exp) (vector? (car exp))) (append (get_symbols (vector->list (car exp))) (get_symbols (cdr exp)))))))
 
 ;(define create-symbol-table
 ;	(lambda (input-file)
@@ -4262,23 +4350,25 @@
 ;				""
 ;				(string-append (caar sym-table) ":" "\n" "\tMAKE_LITERAL_STRING \""  (symbol->string (cadar sym-table)) "\"\n\n" (create-string-of-symbols (cdr sym-table))))))
 
+(define add-strings-of-symbols
+		(lambda (sym)
+			(symbol->string sym)))
 
 (define create-symbol-table-for-assembly
-		(lambda (const-table table-in-pairs)
-			(cond ((null? const-table) "")
-				  ((symbol? (car const-table))
-							  (string-append "\tmov rdi, 8\n"
-										   "\tcall malloc\n"
-										   "\tmov r8, " (find-const-in-pairs (car const-table) table-in-pairs) "\n"
-										   "\tshl r8, 4\n"
-										   "\tor r8, T_SYMBOL\n"
-										   "\tmov qword [rax], r8\n"
-										   "\tpush rax\n"
-										   "\tpush SymbolTable\n"
-										   "\tcall addSymbol\n"
-										   "\tadd rsp, 2*8\n"
-										   (create-symbol-table-for-assembly (cdr const-table) table-in-pairs)))
-				(else (create-symbol-table-for-assembly (cdr const-table) table-in-pairs)))))
+		(lambda (symbol-table table-in-pairs)
+			(if (null? symbol-table) 
+				""
+				(string-append "\tmov rdi, 8\n"
+							   "\tcall malloc\n"
+							   "\tmov r8, " (find-const-in-pairs (symbol->string (car symbol-table)) table-in-pairs) "\n"
+							   "\tshl r8, 4\n"
+							   "\tor r8, T_SYMBOL\n"
+							   "\tmov qword [rax], r8\n"
+							   "\tpush rax\n"
+							   "\tpush SymbolTable\n"
+							   "\tcall addSymbol\n"
+							   "\tadd rsp, 2*8\n"
+							   (create-symbol-table-for-assembly (cdr symbol-table) table-in-pairs)))))
 
 
 (define check_for_special_symbols

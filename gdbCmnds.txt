@@ -1,6 +1,6 @@
 set logging file gdbDump.log
 set logging on
-break codegen_for_symbol_start_for_sobString2
+break eq?_code
 display /i $pc
 display /x $rax
 display /x $rbx
