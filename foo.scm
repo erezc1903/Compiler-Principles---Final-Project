@@ -225,15 +225,15 @@
 ;                 )
 ;    )
 ;(fun2 45)
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; FIX ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; FIX ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; FIX ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; test 76
 ;(define foo7 (lambda (x y) (
 ;                            begin
-;                            (set! y x)
-;                            (set! x y)
+                            ;(set! y x)
+                            ;(set! x y)
 ;                            (+ y x))
 ;                 )
 ;    )
@@ -329,14 +329,9 @@
 ;(define a (lambda (x y) (if (not (zero? x)) (denominator (/ y x)) (numerator y))))
 ;(a 0 5) ;V
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; FIX ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 ;;test 119
 ;(define x (lambda (a b) (if (> (string-length a) b) (string-ref a b) a)))
-;(char->integer (x "hello" 3))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; FIX ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+;(char->integer (x "hello" 3)) ;V
 
 
 ;; test 120
@@ -459,8 +454,8 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; FIX ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-
-;; test 151
+;(symbol->string (string->symbol "abc"))
+; test 151
 ;((lambda (list) (begin
 ;		(set-car! (car (cdr list)) (cons 1 2))
 ;		 list)) (list 1 (cons 22 66) 3 4)) ;V
@@ -699,57 +694,175 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; FIX ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-; test 178
-((lambda (x) (x x 10000))
- (lambda (x n)
-   (if (zero? n) #t
-       (x x (- n 1)))))
+;; test 178
+;((lambda (x) (x x 10000))
+; (lambda (x n)
+;   (if (zero? n) #t
+;       (x x (- n 1))))) ;V
 
 ; test 179
-(define not (lambda (x) (if x #f #t)))
+;(define not (lambda (x) (if x #f #t)))
 
-(and
- (boolean? #t)
- (boolean? #f)
- (not (boolean? 1234))
- (not (boolean? 'a))
- (symbol? 'b)
- (procedure? procedure?)
- (eq? (car '(a b c)) 'a)
- (= (car (cons 1 2)) 1)
- (integer? 1234)
- (char? #\a)
- (null? '())
- (string? "abc")
- (symbol? 'lambda)
- (not (string? 1234))
- (pair? '(a . b))
- (not (pair? '()))
- (zero? 0)
- (not (zero? 234))
- (= 97 (char->integer (string-ref "abc" 0)))
- (let ((n 10000))
-   (= n (string-length (make-string n))))
- (= 65 (char->integer #\A))
- (= 3 (remainder 7 4))
- (= 6 (* 1 2 3))
- (= 1 (*))
- (= 234 (* 234))
- (= 6 (+ 1 2 3))
- (zero? (+))
- (= 234 (+ 234))
- (= 1 (- 6 3 2))
- (< 1 2 3 4 5)
- (> 5 4 3 2 1)
- )
+;(and
+ ;(boolean? #t)
+ ;(boolean? #f)
+ ;(not (boolean? 1234))
+ ;(not (boolean? 'a))
+ ;(symbol? 'b)
+ ;(procedure? procedure?)
+;(eq? (car '(a b c)) 'a)
+ ;(= (car (cons 1 2)) 1)
+ ;(integer? 1234)
+ ;(char? #\a)
+ ;(null? '())
+ ;(string? "abc")
+ ;(symbol? 'lambda)
+ ;(not (string? 1234))
+ ;(pair? '(a . b))
+ ;;(not (pair? '()))
+ ;(zero? 0)
+ ;(not (zero? 234))
+ ;;;;;;;;;;;;;;;;;;;;;;;(= 97 (char->integer (string-ref "abc" 0)))
+ ;(let ((n 10000))
+ ;  (= n (string-length (make-string n))))
+ ;(= 65 (char->integer #\A))
+ ;(= 3 (remainder 7 4))
+ ;(= 6 (* 1 2 3))
+ ;(= 1 (*))
+ ;(= 234 (* 234))
+ ;(= 6 (+ 1 2 3))
+ ;(zero? (+))
+ ;(= 234 (+ 234))
+ ;(= 1 (- 6 3 2))
+ ;(< 1 2 3 4 5)
+ ;(> 5 4 3 2 1)
+ ;)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; FIX ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; test 180
+;(define positive? (lambda (n) (> n 0)))
+;(define even?
+;  (letrec ((even-1?
+;	    (lambda (n)
+;	      (or (zero? n)
+;		  (odd-2? (- n 1) 'odd-2))))
+;	   (odd-2?
+;	    (lambda (n _)
+;	      (and (positive? n)
+;		   (even-3? (- n 1) (+ n n) (+ n n n)))))
+;	   (even-3?
+;	    (lambda (n _1 _2)
+;	      (or (zero? n)
+;		  (odd-5? (- n 1) (+ n n) (* n n) 'odd-5 'odder-5))))
+;	   (odd-5?
+;	    (lambda (n _1 _2 _3 _4)
+;	      (and (positive? n)
+;		   (even-1? (- n 1))))))
+;    even-1?))
+
+;(even? 100)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; FIX ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
+;; test 181
+;(let ((a 1))
+;  (let ((b 2) (c 3))
+;    (let ((d 4) (e 5) (f 6))
+;      (= 720 (* a b c d e f))))) ;V
+
+;; test 182
+;(define sum (lambda (n) (/ (* n (+ n 1)) 2)))
+;(sum 300) ;V
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; FIX ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; test 183
+;(define with (lambda (s f) (apply f s)))
+;(define fact
+;  (letrec ((fact-1
+;	    (lambda (n r)
+;	      (if (zero? n)
+;		  r
+;		  (fact-2 (- n 1)
+;			  (* n r)
+;			  'moshe
+;			  'yosi))))
+;	   (fact-2
+;	    (lambda (n r _1 _2)
+;	      (if (zero? n)
+;		  r
+;		  (fact-3 (- n 1)
+;			  (* n r)
+;			  'dana
+;			  'michal
+;			  'olga
+;			  'sonia))))
+;	   (fact-3
+;	    (lambda (n r _1 _2 _3 _4)
+;	      (if (zero? n)
+;		  r
+;		  (fact-1 (- n 1)
+;			  (* n r))))))
+;    (lambda (n)
+;      (fact-1 n 1))))
+;(fact 10)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; FIX ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
+;; test 185
+;(+ 1 1/2) ;V
 
+;; test 186
+;(+ 1/2 1) ;V
 
+;; test 187
+;(+ 1/3 2/3) ;V
 
+;; test 188
+;(+) ;V
 
+;; test 189
+;(= (+ (/ 1 3) 5/3 (/ 9 27)) 7/3) ;V
+
+;; test 190
+;(*) ;V
+
+;; test 191
+;(or) ;V
+
+;; test 192
+;(and) ;V
+
+;; test 193
+;(+ 3 4 5/4 (* 1000 2/1000) 4/5 3 2 4 3/200) ;V
+
+;; test 194
+;(define f (lambda (x) (if (zero? x) x (+ 1 (f (- x 1))))))
+;(eq? 50 (f 50)) ;V
+
+;; test 195
+;`(+ 1 ,(car '(1 2)) ,@'(2 3)) ;V
+
+;; test 196
+;`((unquote-splicing (quote (3 4 5)))) ;V
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; DOESN'T WORK! TO DEBUGG THIS SHIT IS HELL SO FUCK IT!! ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; test 197
+;`(+ ,'(+ 1 2 3) ,'(+ 2 3) (+ ,@'( 6 7)))
+
+;; test 198
+;`(+ ,(+ 1 2 3) ,(+ 2 3) (+ ,@'( 6 7)))
+
+;; test 199
+;(quasiquote (+ ,(+ 1 2 3) ,(+ 2 3) (+ (unquote-splicing '( 6 7)))))
+
+;; test 200
+;`(+ ,(cons 2 3) ,@'((cons 2 3)) ,'( 2 3))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; DOESN'T WORK! TO DEBUGG THIS SHIT IS HELL SO FUCK IT!! ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
 
@@ -781,7 +894,7 @@
 ;(symbol? "a")
 ;; Constants
 ;(eq? 'a 'a)
-;(eq? (string->symbol (symbol->string (string->symbol "c"))) (string->symbol "c"))
+;(eq? (string->symbol "c") (string->symbol "c"))
 
 
 ;"+"
@@ -1244,10 +1357,6 @@
 
 
 ;((car '(+ 2 1)) 1 2)
-;(define s "abcde")
-;s
-;(string-set! s 3 #\g)
-;s
 ;vector?
 ;(vector?  '#(1 2 3) '(1 2 3)) ; exception incorrect arg count
 ;(vector? '#(1 2 3)) ; #t

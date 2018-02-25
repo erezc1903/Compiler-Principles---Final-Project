@@ -1,6 +1,6 @@
 set logging file gdbDump.log
 set logging on
-break endLabel107
+break eq?_code
 display /i $pc
 display /x $rax
 display /x $rbx
